@@ -1,0 +1,15 @@
+{
+  "name"         : "dv-blog",
+  "version"      : "1.0.0",
+  "description"  : "Dat Vu's Personal Blog App",
+  "main"         : "server.js",
+  "author"       : "Dat Vu",
+  "dependencies" : {
+    "body-parser"    : "^1.4.3",
+    "express"        : "^4.13.4",
+    "method-override": "^2.1.3",
+    "mongodb"        : "~2.0",
+    "mongoose"       : "^4.4.12",
+    "morgan"         : "^1.1.1"
+  }
+}
