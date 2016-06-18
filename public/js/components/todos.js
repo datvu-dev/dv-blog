@@ -153,7 +153,7 @@ var TodoForm = React.createClass({
   }
 });
 
-ReactDOM.render(
-  <TodoBox url="/api/todos" pollInterval={2000} />,
-  document.getElementById('main-content')
-);
+// ReactDOM.render(
+//   <TodoBox url="/api/todos" pollInterval={2000} />,
+//   document.getElementById('main-content')
+// );
