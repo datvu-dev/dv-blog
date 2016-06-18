@@ -1,4 +1,4 @@
-// server.js (final)
+// server.js
 
 // set up ======================================================================
 var express  = require('express');
