@@ -2,7 +2,7 @@
 <!doctype html>
 
 <!-- ASSIGN OUR ANGULAR MODULE -->
-<html ng-app="scotchTodo">
+<html>
 <head>
     <!-- META -->
     <meta charset="utf-8">
@@ -15,52 +15,15 @@
 
     <!-- SPELLS -->
     <script src="libraries/jquery.js"></script><!-- load jquery -->
-    <script src="libraries/angular.js"></script><!-- load angular -->
-    <script src="js/controllers/main.js"></script> <!-- load up our controller -->
-    <script src="js/services/todo.js"></script> <!-- load our todo service -->
-    <script src="js/scripts.js"></script>
-
+    <script src="libraries/react.js"></script><!-- load react -->
+    <script src="libraries/react-dom.js"></script><!-- load react -->
+    <script src="libraries/babel-core-browser.js"></script>
+    <script src="libraries/remarkable.js"></script>
 </head>
 <!-- SET THE CONTROLLER AND GET ALL TODOS -->
-<body ng-controller="mainController">
-    <div class="container">
-
-        <!-- HEADER AND TODO COUNT -->
-        <div class="jumbotron text-center">
-            <h1>I'm a Todo-aholic <span class="label label-info">{{ todos.length }}</span></h1>
-        </div>
-
-        <!-- TODO LIST -->
-        <div id="todo-list" class="row">
-            <div class="col-sm-4 col-sm-offset-4">
-
-                <!-- LOOP OVER THE TODOS IN $scope.todos -->
-                <div class="checkbox" ng-repeat="todo in todos">
-                    <label>
-                        <input type="checkbox" ng-click="deleteTodo(todo._id)"> {{ todo.text }}
-                    </label>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- FORM TO CREATE TODOS -->
-        <div id="todo-form" class="row">
-            <div class="col-sm-8 col-sm-offset-2 text-center">
-                <form>
-                    <div class="form-group">
-
-                        <!-- BIND THIS VALUE TO formData.text IN ANGULAR -->
-                        <input type="text" class="form-control input-lg text-center" placeholder="I want to buy a puppy that will love me forever" ng-model="formData.text">
-                    </div>
-
-                    <!-- createToDo() WILL CREATE NEW TODOS -->
-                    <button type="submit" class="btn btn-primary btn-lg" ng-click="createTodo()">Add</button>
-                </form>
-            </div>
-        </div>
-
+<body>
+    <div id="main-content">
     </div>
-
+    <script type="text/babel" src="js/scripts.js"></script>
 </body>
 </html>
