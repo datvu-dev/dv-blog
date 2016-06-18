@@ -6209,6 +6209,29 @@ a.bg-danger:focus, a.bg-danger:hover {
   }
 }
 
+body {
+  background: #eee;
+  padding: 20px 0;
+}
+.container {
+  background: #fff;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  -moz-box-shadow: #b9b9b9 0 1px 2px 0;
+  -webkit-box-shadow: #b9b9b9 0 1px 2px 0;
+  box-shadow: #b9b9b9 0 1px 2px 0;
+}
 header {
-  background: black;
+  height: 50px;
+  border-bottom: 1px solid #e3262e;
+}
+nav a {
+  display: inline-block;
+  height: 50px;
+  line-height: 50px;
+  margin-right: 20px;
+}
+a {
+  color: #e3262e;
 }

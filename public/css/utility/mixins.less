@@ -1,0 +1,34 @@
+// Border radius
+.border-radius(@ratio: 4px) {
+  -moz-border-radius: @ratio;
+  -webkit-border-radius: @ratio;
+  border-radius: @ratio;
+}
+
+// Box shadow
+.box-shadow() {
+  -moz-box-shadow: @grey 0 1px 2px 0;
+  -webkit-box-shadow: @grey 0 1px 2px 0;
+  box-shadow: @grey 0 1px 2px 0;
+}
+
+// Transition Effects
+.transition-all(@argument: 0.3) {
+  @duration: ~" @{argument}s";
+
+  -webkit-transition: all @duration ease-in-out;
+  -moz-transition: all @duration ease-in-out;
+  -ms-transition: all @duration ease-in-out;
+  -o-transition: all @duration ease-in-out;
+  transition: all @duration ease-in-out;
+}
+
+// Center Align
+.position-center(@type) {
+  position: @type;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%,-50%);
+  -ms-transform: translate(-50%,-50%);
+  transform: translate(-50%,-50%);
+}
