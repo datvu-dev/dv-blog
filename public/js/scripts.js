@@ -1,6 +1,4 @@
 // js/scripts.js
-
-// angular.module('scotchTodo', ['todoController', 'todoService']);
 var TodoBox = React.createClass({
   loadToDoList: function() {
     $.ajax({
@@ -102,7 +100,7 @@ var TodoItem = React.createClass({
     $.ajax({
       url: '/api/todos/' + this.props.id,
       dataType: 'json',
-      type: 'DELETE',  
+      type: 'DELETE',
       success: function(data) {
         // this.setState({data: data});
       }.bind(this),
