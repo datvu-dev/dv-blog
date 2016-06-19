@@ -24,10 +24,10 @@ module.exports = function(grunt) {
     concat: {
       scripts: {
         options: {
-          separator: ';'
+          separator: ''
         },
         src: [
-          'public/js/components/*.js',
+          'public/js/components/*.js', 'public/js/app-wrapper.js'
         ],
         dest: 'public/js/scripts.js'
       },
@@ -39,6 +39,7 @@ module.exports = function(grunt) {
             'public/libraries/jquery/jquery.min.js',
             'public/libraries/react/react.min.js',
             'public/libraries/react/react-dom.min.js',
+            'public/libraries/react/react-router.min.js',
             'public/libraries/babel/browser.min.js',
             'public/libraries/remarkable/remarkable.min.js'
         ],
@@ -47,14 +48,14 @@ module.exports = function(grunt) {
     },
     watch: {
       js: {
-        files: ['public/js/components/*.js'],
+        files: ['public/js/components/*.js', 'public/js/app-wrapper.js'],
         tasks: ['concat:scripts'],
         options: {
           livereload: true,
         }
       },
       css: {
-        files: ['public/css/styles.less','public/css/components/*.less', 'public/css/utility/*.less'],
+        files: ['public/css/components/*.less'],
         tasks: ['less:style'],
         options: {
           livereload: true

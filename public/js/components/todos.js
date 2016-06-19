@@ -1,15 +1,16 @@
 // js/scripts.js
+
 var TodoBox = React.createClass({
   loadToDoList: function() {
     $.ajax({
-      url: this.props.url,
+      url: this.props.route.url,
       dataType: 'json',
       cache: false,
       success: function(data) {
         this.setState({data: data});
       }.bind(this),
       error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
+        console.error(this.props.route.url, status, err.toString());
       }.bind(this)
     });
   },
@@ -18,7 +19,7 @@ var TodoBox = React.createClass({
     var newItems = items.concat([item]);
     this.setState({data: newItems});
     $.ajax({
-      url: this.props.url,
+      url: this.props.route.url,
       dataType: 'json',
       type: 'POST',
       data: item,
@@ -26,8 +27,8 @@ var TodoBox = React.createClass({
         this.setState({data: data});
       }.bind(this),
       error: function(xhr, status, err) {
-        this.setState({data: comments});
-        console.error(this.props.url, status, err.toString());
+        this.setState({data: items});
+        console.error(this.props.route.url, status, err.toString());
       }.bind(this)
     });
   },
@@ -45,7 +46,7 @@ var TodoBox = React.createClass({
       }.bind(this),
       error: function(xhr, status, err) {
         // this.setState({data: comments});
-        console.error(this.props.url, status, err.toString());
+        console.error(this.props.route.url, status, err.toString());
       }.bind(this)
     });
   },
@@ -54,11 +55,10 @@ var TodoBox = React.createClass({
   },
   componentDidMount: function() {
     this.loadToDoList();
-    setInterval(this.loadToDoList, this.props.pollInterval);
   },
   render: function() {
     return (
-      <div className="container">
+      <div>
         <Banner data={this.state.data} />
         <TodoList onTodoDelete={this.handleTodoDelete} data={this.state.data} />
         <TodoForm onTodoSubmit={this.handleTodoSubmit} />
@@ -106,7 +106,7 @@ var TodoItem = React.createClass({
       }.bind(this),
       error: function(xhr, status, err) {
         // this.setState({data: comments});
-        console.error(this.props.url, status, err.toString());
+        console.error(this.props.route.url, status, err.toString());
       }.bind(this)
     });
   },
@@ -152,8 +152,3 @@ var TodoForm = React.createClass({
     )
   }
 });
-
-// ReactDOM.render(
-//   <TodoBox url="/api/todos" pollInterval={2000} />,
-//   document.getElementById('main-content')
-// );
