@@ -27,6 +27,7 @@ ReactDOM.render(
     <Route path="/" component={App}>
       <IndexRoute component={Home}/>
       <Route path="todos" url="/api/todos" component={TodoBox} />
+      <Route path="projects" url="/api/projects" component={ProjectsList} />
     </Route>
   </Router>,
   document.getElementById('container')

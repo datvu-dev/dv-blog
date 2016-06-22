@@ -1,12 +1,140 @@
 // app/routes.js
 
-// load the todo model
-var Todo = require('./models/todo');
+// set up modules
+var path = require('path');
+var fs = require('fs');
+var formidable = require('formidable');
 
-// expose the routes to our app with module.exports
+// load the models
+var Todo = require('./models/todo');
+var Project = require('./models/project');
+
+// subpath for uploading files
+var uploadSubPath = '';
+
+// check if a directory exists, if not, create one
+function checkDirectorySync(directory) {
+  try {
+    fs.statSync(directory);
+  } catch(e) {
+    fs.mkdirSync(directory);
+  }
+}
+
+// APIs
 module.exports = function(app) {
 
-  // api ---------------------------------------------------------------------
+  // PROJECTS
+  // get all projects
+  app.get('/api/projects', function(req, res) {
+
+      Project.find(function(err, projects) {
+
+          // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+          if (err)
+              res.send(err)
+
+          res.json(projects);
+      });
+  });
+
+  // get one single project
+  app.get('/api/projects/:project_id', function(req, res) {
+
+      Project.find({ _id: req.params.project_id }, function(err, project) {
+          if (err)
+              res.send(err);
+
+          res.json(project);
+      });
+
+  });
+
+  // create project and send back all projects after creation
+  app.post('/api/projects', function(req, res) {
+
+      Project.create({
+          title : req.body.title,
+          year : req.body.year,
+          picture: req.body.picture,
+          description: req.body.description,
+          technologies: req.body.technologies
+      }, function(err, projects) {
+          if (err)
+              res.send(err);
+
+          // get and return all the projects after you create another
+          Project.find(function(err, projects) {
+              if (err)
+                  res.send(err)
+
+              var newProject = projects[projects.length - 1];
+              uploadSubPath = 'projects/' + newProject._id + '/';
+
+              res.json(projects);
+          });
+
+      });
+
+  });
+
+  app.post('/api/upload', function(req, res) {
+
+
+    // create an incoming form object
+    var form = new formidable.IncomingForm();
+
+    // specify that we want to allow the user to upload multiple files in a single request
+    form.multiples = true;
+
+    // check if the project directory exists, if not, create one
+    checkDirectorySync(path.join(__dirname, '../public/uploads/' + uploadSubPath));
+
+    // store all uploads in the /uploads directory
+    form.uploadDir = path.join(__dirname, '../public/uploads/' + uploadSubPath);
+
+    // every time a file has been uploaded successfully,
+    // rename it to it's orignal name
+    form.on('file', function(field, file) {
+      fs.rename(file.path, path.join(form.uploadDir, file.name), function(err) {
+        if (err) {
+          throw err;
+        }
+      });
+    });
+
+    // log any errors that occur
+    form.on('error', function(err) {
+      console.log('An error has occured: \n' + err);
+    });
+
+    // once all the files have been uploaded, send a response to the client
+    form.on('end', function() {
+      res.end('success');
+    });
+
+    // parse the incoming request containing the form data
+    form.parse(req);
+  });
+
+  // delete a project
+  app.delete('/api/projects/:project_id', function(req, res) {
+      Todo.remove({
+          _id : req.params.project_id
+      }, function(err, project) {
+          if (err)
+              res.send(err);
+
+          // get and return all the todos after you create another
+          Todo.find(function(err, projects) {
+              if (err)
+                  res.send(err)
+              res.json(projects);
+          });
+      });
+  });
+
+  // TODOS
   // get all todos
   app.get('/api/todos', function(req, res) {
 
