@@ -1,7 +1,7 @@
 var ProjectFormPage = React.createClass({
   handleProjectSubmit: function(item) {
     var projectID = this.props.params.project_id ? this.props.params.project_id : '';
-  
+
     $.ajax({
       url: this.props.route.url + projectID,
       dataType: 'json',
@@ -118,24 +118,43 @@ var ProjectForm = React.createClass({
     var title = this.state.title.trim();
     var year = this.state.year;
     var description = this.state.description.trim();
-    var picture = this.state.picture;
+    var pictureName = this.state.picture;
+    var pictureObj = $('#imgContainer img');
 
-    if (!title || !year || !description) {
-      return;
+    $('#form-message').hide();
+    $('.form-control').removeClass('required');
+
+    if (!title || !year || !description || pictureObj.length == 0) {
+      $('#form-message').show();
     }
 
-    this.props.onProjectSubmit({
-      title: title,
-      year: year,
-      picture: picture,
-      description: description,
-      technologies: 'Angular JS'
-    });
+    if (!title) {
+      $('#projectTitle').addClass('required');
+      this.setState({formMessage: 'Please put in title.'});
+    } else if (!year) {
+      $('#projectYear').addClass('required');
+      this.setState({formMessage: 'Please put in year.'});
+    } else if (!description) {
+      $('#projectDescription').addClass('required');
+      this.setState({formMessage: 'Please put in description.'});
+    } else if (pictureObj.length == 0) {
+      this.setState({formMessage: 'Please upload a screenshot.'});
+    } else {
+      this.props.onProjectSubmit({
+        title: title,
+        year: year,
+        picture: pictureName,
+        description: description,
+        technologies: 'Angular JS'
+      });
+    }
+
   },
   render: function() {
     return (
       <div id="project-form" className="row">
           <div className="col-sm-8 col-sm-offset-2 text-center">
+            <p id="form-message">{this.state.formMessage}</p>
             <form enctype="multipart/form-data" onSubmit={this.handleSubmit}>
               <fieldset className="form-group">
                 <label for="projectTitle">Title</label>
@@ -156,7 +175,7 @@ var ProjectForm = React.createClass({
                 <textarea className="form-control" id="projectDescription" rows="4"  value={this.state.description} onChange={this.handleDescriptionChange}></textarea>
               </fieldset>
               <fieldset className="form-group">
-                <label for="projectPicture">Screenshots</label>
+                <label for="projectPicture">Screenshot</label>
                 <input type="file" className="form-control-file" id="projectPicture"  onChange={this.handlePictureChange} />
                 <div id="imgContainer"></div>
               </fieldset>

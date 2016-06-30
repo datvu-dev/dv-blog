@@ -6224,7 +6224,7 @@ body {
 }
 header {
   height: 50px;
-  border-bottom: 1px solid #e3262e;
+  border-bottom: 1px solid #5AB953;
 }
 nav a {
   display: inline-block;
@@ -6233,5 +6233,23 @@ nav a {
   margin-right: 20px;
 }
 a {
-  color: #e3262e;
+  color: #5AB953;
+}
+form {
+  margin: 20px 0;
+}
+.required {
+  border: 1px solid #d9534f;
+}
+#form-message {
+  display: none;
+  color: #d9534f;
+  padding: 15px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  border: 1px solid #eee;
+  border-left: 3px solid #d9534f;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
 }
