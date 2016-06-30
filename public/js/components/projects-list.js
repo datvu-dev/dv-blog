@@ -76,10 +76,10 @@ var ProjectItem = React.createClass({
     return (
       <div className="box col-md-6 col-lg-4">
         <div className="box-img">
-          <img  src={'/uploads/projects/' + this.props.id + '/' + this.props.img} alt="Card image cap" />
-        </div>        
+          <img src={'/uploads/projects/' + this.props.id + '/' + this.props.img} alt="Card image cap" />
+        </div>
         <div className="box-content">
-          <h4 className="box-title">{this.props.title}</h4>
+          <h4 className="box-title"><Link to={'/project/' + this.props.id}>{this.props.title}</Link></h4>
           <p className="box-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
           <p><small><a onClick={this.editProject}>Edit</a></small></p>
         </div>

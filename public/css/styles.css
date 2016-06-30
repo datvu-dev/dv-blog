@@ -6235,6 +6235,9 @@ nav a {
   line-height: 50px;
   margin-right: 20px;
 }
+h1 {
+  font-size: 27px;
+}
 a {
   color: #5AB953;
 }
@@ -6257,7 +6260,7 @@ a {
   position: relative;
   display: block;
   padding: 0 15px;
-  cursor: pointer;
+  margin: 15px 0;
   border: 1px solid transparent;
 }
 .box:hover {

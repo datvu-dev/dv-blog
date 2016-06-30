@@ -213,6 +213,54 @@ var ProjectForm = React.createClass({
     )
   }
 });
+var ProjectViewPage = React.createClass({
+  loadProject: function() {
+    var projectID = this.props.params.project_id;
+
+    $.ajax({
+      url: this.props.route.url + projectID,
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        // console.log(data);
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.route.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+  getInitialState: function() {
+    return {data: '[]'};
+  },
+  componentDidMount: function() {
+    this.loadProject();
+  },
+  render: function() {
+    return (
+      <div>
+        <Project data={this.state.data} />
+      </div>
+    );
+  }
+});
+
+var Project = React.createClass({
+  render: function() {
+    var id = this.props.data[0]._id;
+    var title = this.props.data[0].title;
+    var picSrc = '/uploads/projects/' + id + '/' + this.props.data[0].picture;
+    var description = this.props.data[0].description;
+
+    return (
+      <div>
+        <h1>{title}</h1>
+        <p><img src={picSrc} /></p>
+        <p>{description}</p>
+      </div>
+    )
+  }
+});
 // js/projects.js
 
 var ProjectsPage = React.createClass({
@@ -291,10 +339,10 @@ var ProjectItem = React.createClass({
     return (
       <div className="box col-md-6 col-lg-4">
         <div className="box-img">
-          <img  src={'/uploads/projects/' + this.props.id + '/' + this.props.img} alt="Card image cap" />
-        </div>        
+          <img src={'/uploads/projects/' + this.props.id + '/' + this.props.img} alt="Card image cap" />
+        </div>
         <div className="box-content">
-          <h4 className="box-title">{this.props.title}</h4>
+          <h4 className="box-title"><Link to={'/project/' + this.props.id}>{this.props.title}</Link></h4>
           <p className="box-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
           <p><small><a onClick={this.editProject}>Edit</a></small></p>
         </div>
@@ -487,6 +535,7 @@ ReactDOM.render(
       <Route path="todos" url="/api/todos" component={TodoBox} />
       <Route path="projects" url="/api/projects/" component={ProjectsPage} />
       <Route path="project/new" url="/api/projects/" component={ProjectFormPage} />
+      <Route path="project/:project_id" url="/api/projects/" component={ProjectViewPage} />
       <Route path="project/:project_id/edit" url="/api/projects/" component={ProjectFormPage} />
     </Route>
   </Router>,
