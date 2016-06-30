@@ -61,6 +61,34 @@ var ProjectFormPage = React.createClass({
   }
 });
 
+var YearsSelect = React.createClass({
+  onSelectChange: function(e) {
+    this.props.onSelectChange(e.target.value);
+  },
+  render: function() {
+    var currentYear = new Date().getFullYear();
+    var years = [];
+    var startYear = 2010;
+
+    while (startYear <= currentYear) {
+      years.push(startYear++);
+    }
+
+    var yearItems = years.map(function(item) {
+      return (
+        <option value={item}>{item}</option>
+      );
+    });
+
+    return (
+      <select className="form-control" id="projectYear" value={this.props.value} onChange={this.onSelectChange}>
+        <option selected="true" disabled="disabled"> -- Select year --</option>
+        {yearItems}
+      </select>
+    )
+  }
+});
+
 var ProjectForm = React.createClass({
   getInitialState: function() {
     return this.props.data;
@@ -94,8 +122,8 @@ var ProjectForm = React.createClass({
   handleTitleChange: function(e) {
     this.setState({title: e.target.value});
   },
-  handleYearChange: function(e) {
-    this.setState({year: e.target.value});
+  handleYearChange: function(value) {
+    this.setState({year: value});
   },
   handleDescriptionChange: function(e) {
     this.setState({description: e.target.value});
@@ -167,13 +195,7 @@ var ProjectForm = React.createClass({
               </fieldset>
               <fieldset className="form-group">
                 <label for="projectYear">Year of completion</label>
-                <select className="form-control" id="projectYear" value={this.state.year} onChange={this.handleYearChange}>
-                  <option>2012</option>
-                  <option>2013</option>
-                  <option>2014</option>
-                  <option>2015</option>
-                  <option>2016</option>
-                </select>
+                <YearsSelect value={this.state.year} onSelectChange={this.handleYearChange} />
               </fieldset>
               <fieldset className="form-group">
                 <label for="projectDescription">Description</label>
