@@ -27,9 +27,7 @@ module.exports = function(app) {
   // PROJECTS
   // get all projects
   app.get('/api/projects', function(req, res) {
-
       Project.find(function(err, projects) {
-
           // if there is an error retrieving, send the error. nothing after res.send(err) will execute
           if (err)
               res.send(err)
@@ -40,8 +38,8 @@ module.exports = function(app) {
 
   // get one single project
   app.get('/api/projects/:project_id', function(req, res) {
-
-      Project.find({ _id: req.params.project_id }, function(err, project) {
+      var projectID = req.params.project_id;
+      Project.find({ _id: projectID}, function(err, project) {
           if (err)
               res.send(err);
 
@@ -50,9 +48,8 @@ module.exports = function(app) {
 
   });
 
-  // create project and send back all projects after creation
+  // create new project
   app.post('/api/projects', function(req, res) {
-
       Project.create({
           title : req.body.title,
           year : req.body.year,
@@ -70,17 +67,39 @@ module.exports = function(app) {
 
               var newProject = projects[projects.length - 1];
               uploadSubPath = 'projects/' + newProject._id + '/';
-
-              res.json(projects);
+              res.send(newProject);
           });
-
       });
-
   });
 
+  // update an existing project
+  app.post('/api/projects/:project_id', function(req, res) {
+    var projectID = req.params.project_id;
+
+    Project.update({ _id: projectID}, { $set: {
+      title : req.body.title,
+      year : req.body.year,
+      picture: req.body.picture,
+      description: req.body.description,
+      technologies: req.body.technologies
+    }}, function(err, projects) {
+        if (err)
+            res.send(err);
+
+        uploadSubPath = 'projects/' + projectID + '/';
+
+        Project.find({ _id: projectID}, function(err, project) {
+            if (err)
+                res.send(err);
+
+            res.json(project);
+        });
+    });
+  });
+
+  // upload files
   app.post('/api/upload', function(req, res) {
-
-
+    console.log('uploading');
     // create an incoming form object
     var form = new formidable.IncomingForm();
 
@@ -92,6 +111,9 @@ module.exports = function(app) {
 
     // store all uploads in the /uploads directory
     form.uploadDir = path.join(__dirname, '../public/uploads/' + uploadSubPath);
+
+    // reset upload subpath
+    uploadSubPath = '';
 
     // every time a file has been uploaded successfully,
     // rename it to it's orignal name

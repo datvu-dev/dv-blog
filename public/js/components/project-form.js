@@ -1,53 +1,20 @@
-// js/projects.js
-
-var ProjectsList = React.createClass({
-  loadProjectsList: function() {
+var ProjectFormPage = React.createClass({
+  handleProjectSubmit: function(item) {
+    var projectID = this.props.params.project_id ? this.props.params.project_id : '';
+  
     $.ajax({
-      url: this.props.route.url,
-      dataType: 'json',
-      cache: false,
-      success: function(data) {
-        console.log(data);
-        this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(this.props.route.url, status, err.toString());
-      }.bind(this)
-    });
-  },
-  loadSingleProject: function(project_id) {
-    $.ajax({
-      url: this.props.route.url + '/' + project_id,
-      dataType: 'json',
-      cache: false,
-      success: function(data) {
-        console.log(data);
-        // this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(this.props.route.url, status, err.toString());
-      }.bind(this)
-    });
-  },
-  handleProjectSubmit: function(item, pic) {
-    var items = this.state.data;
-    var newItems = items.concat([item]);
-    this.setState({data: newItems});
-    console.log(item);
-
-    $.ajax({
-      url: this.props.route.url,
+      url: this.props.route.url + projectID,
       dataType: 'json',
       type: 'POST',
       data: item,
       success: function(data) {
-        console.log(data);
+        if ($('#projectPicture')[0].files[0]) {
+          this.handleUpload();
+        }
 
-        this.handleUpload();
-        this.setState({data: data});
+        this.props.history.push('/projects');
       }.bind(this),
       error: function(xhr, status, err) {
-        this.setState({data: items});
         console.error(this.props.route.url, status, err.toString());
       }.bind(this)
     });
@@ -64,89 +31,60 @@ var ProjectsList = React.createClass({
       processData: false,
       contentType: false,
       success: function(data) {
-        console.log(formData);
-        console.log('upload complete');
-        console.log(data);
+
       }.bind(this),
       error: function(xhr, status, err) {
         console.error(this.props.route.url, status, err.toString());
       }.bind(this)
     })
   },
-  handleProjectDelete: function(id) {
-    $.ajax({
-      url: '/api/projects/' + id,
-      dataType: 'json',
-      type: 'DELETE',
-      data: item,
-      success: function(data) {
-        // this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        // this.setState({data: comments});
-        console.error(this.props.route.url, status, err.toString());
-      }.bind(this)
-    });
-  },
   getInitialState: function() {
-    return {data: []};
-  },
-  componentDidMount: function() {
-    this.loadProjectsList();
+    return {data: {
+      title : '',
+      year : null,
+      picture: '',
+      description: '',
+      technologies: ''
+    }};
   },
   render: function() {
     return (
       <div>
-        <ProjectsList data={this.state.data} />
-        <ProjectForm onProjectSubmit={this.handleProjectSubmit} />
+        <ProjectForm onProjectSubmit={this.handleProjectSubmit} data={this.state.data} projectID={this.props.params.project_id} />
       </div>
     );
   }
 });
 
-var ProjectsList = React.createClass({
-  render: function() {
-    var projectItems = this.props.data.map(function(item) {
-      return (
-        <ProjectItem title={item.title} img={item.picture} id={item._id} key={item._id} />
-      );
-    });
-
-    return (
-      <div id="projects-list">
-        {projectItems}
-      </div>
-    )
-  }
-});
-
-var ProjectItem = React.createClass({
-  editProject: function() {
-    console.log(this.props.id);
-  },
-  render: function() {
-    return (
-      <div className="card">
-        <img className="card-img-top" data-src="{this.props.img}" alt="Card image cap" />
-        <div className="card-block">
-          <h4 className="card-title">{this.props.title}</h4>
-          <p className="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-          <p><small><a onClick={this.editProject}>Edit</a></small></p>
-        </div>
-      </div>
-    )
-  }
-});
-
 var ProjectForm = React.createClass({
   getInitialState: function() {
-    return {
-      title : this.state.title,
-      year : this.state.year,
-      picture: '',
-      description: this.state.description,
-      technologies: ''
-    };
+    return this.props.data;
+  },
+  componentDidMount: function() {
+    if (this.props.projectID) {
+      var projectID = this.props.projectID;
+
+      this.serverRequest = $.ajax({
+        url: '/api/projects/' + projectID,
+        dataType: 'json',
+        cache: false,
+        success: function(data) {
+          // console.log(data);
+          this.setState(data[0]);
+
+          var imgCtr = $('<img/>').prop('src', '/uploads/projects/' + projectID + '/' +  data[0]['picture']);
+          $('#imgContainer').html(imgCtr);
+        }.bind(this),
+        error: function(xhr, status, err) {
+          console.error(this.props.route.url, status, err.toString());
+        }.bind(this)
+      });
+    }
+  },
+  componentWillUnmount: function() {
+    if (this.serverRequest) {
+      this.serverRequest.abort();
+    }
   },
   handleTitleChange: function(e) {
     this.setState({title: e.target.value});
@@ -158,7 +96,7 @@ var ProjectForm = React.createClass({
     this.setState({description: e.target.value});
   },
   handlePictureChange: function(e) {
-    console.log(e.target);
+    // console.log(e.target);
     localStorage.removeItem("imgData")
     var reader = new FileReader();
     reader.onload = function () {
@@ -173,15 +111,14 @@ var ProjectForm = React.createClass({
       $('#imgContainer').html(imgCtr);
     }, 500);
 
-    this.setState({picture: e.target.files[0]});
+    this.setState({picture: e.target.files[0].name});
   },
   handleSubmit: function(e) {
     e.preventDefault();
     var title = this.state.title.trim();
     var year = this.state.year;
     var description = this.state.description.trim();
-    var picture = this.state.picture.name;
-    var picObj = {name: picture, path: $('#imgContainer img').attr('src')};
+    var picture = this.state.picture;
 
     if (!title || !year || !description) {
       return;
@@ -193,14 +130,6 @@ var ProjectForm = React.createClass({
       picture: picture,
       description: description,
       technologies: 'Angular JS'
-    }, picObj);
-
-    this.setState({
-      title : '',
-      year : null,
-      picture: '',
-      description: '',
-      technologies: ''
     });
   },
   render: function() {
@@ -214,7 +143,7 @@ var ProjectForm = React.createClass({
               </fieldset>
               <fieldset className="form-group">
                 <label for="projectYear">Year of completion</label>
-                <select className="form-control" id="projectYear" selected={this.state.year} onChange={this.handleYearChange}>
+                <select className="form-control" id="projectYear" value={this.state.year} onChange={this.handleYearChange}>
                   <option>2012</option>
                   <option>2013</option>
                   <option>2014</option>
