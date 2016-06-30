@@ -6213,7 +6213,7 @@ body {
   background: #eee;
   padding: 20px 0;
 }
-.container {
+#main {
   background: #fff;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
@@ -6221,6 +6221,9 @@ body {
   -moz-box-shadow: #b9b9b9 0 1px 2px 0;
   -webkit-box-shadow: #b9b9b9 0 1px 2px 0;
   box-shadow: #b9b9b9 0 1px 2px 0;
+}
+#content {
+  padding: 20px 0;
 }
 header {
   height: 50px;
@@ -6234,9 +6237,6 @@ nav a {
 }
 a {
   color: #5AB953;
-}
-form {
-  margin: 20px 0;
 }
 .required {
   border: 1px solid #d9534f;
@@ -6252,4 +6252,37 @@ form {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
+}
+.box {
+  position: relative;
+  display: block;
+  padding: 0 15px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.box:hover {
+  border: 1px solid #e5e5e5;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+}
+.box-img {
+  overflow: hidden;
+  position: relative;
+  height: 200px;
+}
+.box-img img {
+  max-width: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+.box-content {
+  padding: 1.25rem;
+}
+.box-title {
+  margin-bottom: .75rem;
 }

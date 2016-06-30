@@ -222,7 +222,7 @@ var ProjectsPage = React.createClass({
       dataType: 'json',
       cache: false,
       success: function(data) {
-        // console.log(data);
+        console.log(data);
         this.setState({data: data});
       }.bind(this),
       error: function(xhr, status, err) {
@@ -274,8 +274,10 @@ var ProjectsList = React.createClass({
     });
 
     return (
-      <div id="projects-list">
-        {projectItems}
+      <div id="projects-list" className="container">
+        <div className="row">
+          {projectItems}
+        </div>
       </div>
     )
   }
@@ -287,11 +289,13 @@ var ProjectItem = React.createClass({
   },
   render: function() {
     return (
-      <div className="card">
-        <img className="card-img-top" data-src="{this.props.img}" alt="Card image cap" />
-        <div className="card-block">
-          <h4 className="card-title">{this.props.title}</h4>
-          <p className="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+      <div className="box col-md-6 col-lg-4">
+        <div className="box-img">
+          <img  src={'/uploads/projects/' + this.props.id + '/' + this.props.img} alt="Card image cap" />
+        </div>        
+        <div className="box-content">
+          <h4 className="box-title">{this.props.title}</h4>
+          <p className="box-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
           <p><small><a onClick={this.editProject}>Edit</a></small></p>
         </div>
       </div>
@@ -468,7 +472,7 @@ var App = React.createClass({
             <Link to="/todos">To-do List</Link>
           </nav>
         </header>
-        <div id="main-content">{this.props.children}</div>
+        <div id="content">{this.props.children}</div>
         <footer>
         </footer>
       </div>
@@ -486,5 +490,5 @@ ReactDOM.render(
       <Route path="project/:project_id/edit" url="/api/projects/" component={ProjectFormPage} />
     </Route>
   </Router>,
-  document.getElementById('container')
+  document.getElementById('main')
 );

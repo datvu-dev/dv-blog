@@ -14,7 +14,7 @@ var App = React.createClass({
             <Link to="/todos">To-do List</Link>
           </nav>
         </header>
-        <div id="main-content">{this.props.children}</div>
+        <div id="content">{this.props.children}</div>
         <footer>
         </footer>
       </div>
@@ -32,5 +32,5 @@ ReactDOM.render(
       <Route path="project/:project_id/edit" url="/api/projects/" component={ProjectFormPage} />
     </Route>
   </Router>,
-  document.getElementById('container')
+  document.getElementById('main')
 );
