@@ -49,7 +49,7 @@ var ProjectFormPage = React.createClass({
       year : null,
       picture: '',
       description: '',
-      technologies: ''
+      technologies: []
     }};
   },
   render: function() {
@@ -88,6 +88,8 @@ var YearsSelect = React.createClass({
     )
   }
 });
+
+var TagsInput = ReactTagsInput;
 
 var ProjectForm = React.createClass({
   getInitialState: function() {
@@ -128,6 +130,9 @@ var ProjectForm = React.createClass({
   handleDescriptionChange: function(e) {
     this.setState({description: e.target.value});
   },
+  handleTechnologyChange: function(tags) {
+    this.setState({technologies: tags});
+  },
   handlePictureChange: function(e) {
     // console.log(e.target);
     localStorage.removeItem("imgData")
@@ -151,13 +156,14 @@ var ProjectForm = React.createClass({
     var title = this.state.title.trim();
     var year = this.state.year;
     var description = this.state.description.trim();
+    var technologies = this.state.technologies;
     var pictureName = this.state.picture;
     var pictureObj = $('#imgContainer img');
 
     $('#form-message').hide();
-    $('.form-control').removeClass('required');
+    $('.form-control, .react-tagsinput').removeClass('required');
 
-    if (!title || !year || !description || pictureObj.length == 0) {
+    if (!title || !year || !description || technologies.length == 0 || pictureObj.length == 0) {
       $('#form-message').show();
     }
 
@@ -170,6 +176,9 @@ var ProjectForm = React.createClass({
     } else if (!description) {
       $('#projectDescription').addClass('required');
       this.setState({formMessage: 'Please put in description.'});
+    } else if (technologies.length == 0) {
+      $('.react-tagsinput').addClass('required');
+      this.setState({formMessage: 'Please put in technologies.'});
     } else if (pictureObj.length == 0) {
       this.setState({formMessage: 'Please upload a screenshot.'});
     } else {
@@ -178,7 +187,7 @@ var ProjectForm = React.createClass({
         year: year,
         picture: pictureName,
         description: description,
-        technologies: 'Angular JS'
+        technologies: technologies
       });
     }
 
@@ -200,6 +209,10 @@ var ProjectForm = React.createClass({
               <fieldset className="form-group">
                 <label for="projectDescription">Description</label>
                 <textarea className="form-control" id="projectDescription" rows="4"  value={this.state.description} onChange={this.handleDescriptionChange}></textarea>
+              </fieldset>
+              <fieldset className="form-group">
+                <label for="projectTechnologies">Technologies</label>
+                <TagsInput value={this.state.technologies} onChange={this.handleTechnologyChange} />
               </fieldset>
               <fieldset className="form-group">
                 <label for="projectPicture">Screenshot</label>
@@ -270,7 +283,7 @@ var ProjectsPage = React.createClass({
       dataType: 'json',
       cache: false,
       success: function(data) {
-        console.log(data);
+        // console.log(data);
         this.setState({data: data});
       }.bind(this),
       error: function(xhr, status, err) {

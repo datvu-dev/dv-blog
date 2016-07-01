@@ -40,8 +40,10 @@ module.exports = function(grunt) {
             'public/libraries/react/react.min.js',
             'public/libraries/react/react-dom.min.js',
             'public/libraries/react/react-router.min.js',
+            'public/libraries/react/react-tagsinput.min.js',
             'public/libraries/babel/browser.min.js',
-            'public/libraries/remarkable/remarkable.min.js'
+            'public/libraries/remarkable/remarkable.min.js',
+
         ],
         dest: 'public/libraries/libraries.js'
       },
