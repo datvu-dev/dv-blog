@@ -235,7 +235,7 @@ var ProjectViewPage = React.createClass({
       dataType: 'json',
       cache: false,
       success: function(data) {
-        // console.log(data);
+        console.log(data);
         this.setState({data: data});
       }.bind(this),
       error: function(xhr, status, err) {
@@ -264,12 +264,22 @@ var Project = React.createClass({
     var title = this.props.data[0].title;
     var picSrc = '/uploads/projects/' + id + '/' + this.props.data[0].picture;
     var description = this.props.data[0].description;
+    var tags = this.props.data[0].technologies;
+
+    if (tags) {
+      var tagItems = tags.map(function(item) {
+        return (
+          <span className="tag">{item}</span>
+        );
+      });
+    }
 
     return (
       <div>
         <h1>{title}</h1>
         <p><img src={picSrc} /></p>
-        <p>{description}</p>
+        <p>{tagItems}</p>
+        <p>{description}</p>        
       </div>
     )
   }
