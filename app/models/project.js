@@ -6,5 +6,5 @@ module.exports = mongoose.model('Project', {
     year : Number,
     picture: String,
     description: String,
-    technologies: [String]
+    technologies: [{_id: Number, text: String}]
 });

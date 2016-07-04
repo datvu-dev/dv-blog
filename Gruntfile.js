@@ -27,7 +27,7 @@ module.exports = function(grunt) {
           separator: ''
         },
         src: [
-          'public/js/components/*.js', 'public/js/app-wrapper.js'
+          'public/js/require.js','public/js/components/*.js', 'public/js/app-wrapper.js'
         ],
         dest: 'public/js/scripts.js'
       },
@@ -37,10 +37,6 @@ module.exports = function(grunt) {
         },
         src: [
             'public/libraries/jquery/jquery.min.js',
-            'public/libraries/react/react.min.js',
-            'public/libraries/react/react-dom.min.js',
-            'public/libraries/react/react-router.min.js',
-            'public/libraries/react/react-tagsinput.min.js',
             'public/libraries/babel/browser.min.js',
             'public/libraries/remarkable/remarkable.min.js',
 
@@ -50,7 +46,7 @@ module.exports = function(grunt) {
     },
     watch: {
       js: {
-        files: ['public/js/components/*.js', 'public/js/app-wrapper.js'],
+        files: ['public/js/require.js','public/js/components/*.js', 'public/js/app-wrapper.js'],
         tasks: ['concat:scripts'],
         options: {
           livereload: true,

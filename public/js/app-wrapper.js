@@ -1,6 +1,4 @@
-// app-render.js
-
-var {Router, Route, IndexRoute, IndexLink, Link} = ReactRouter;
+// app-wrapper.js
 
 var App = React.createClass({
   render: function() {
@@ -23,7 +21,7 @@ var App = React.createClass({
 });
 
 ReactDOM.render(
-  <Router>
+  <Router history={hashHistory}>
     <Route path="/" component={App}>
       <IndexRoute component={Home}/>
       <Route path="todos" url="/api/todos" component={TodoBox} />

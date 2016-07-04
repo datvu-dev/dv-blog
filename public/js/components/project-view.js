@@ -39,9 +39,10 @@ var Project = React.createClass({
     var tags = this.props.data[0].technologies;
 
     if (tags) {
+      var count = 0;
       var tagItems = tags.map(function(item) {
         return (
-          <span className="tag">{item}</span>
+          <span key={item._id} className="tag">{item.text}</span>
         );
       });
     }
@@ -51,7 +52,7 @@ var Project = React.createClass({
         <h1>{title}</h1>
         <p><img src={picSrc} /></p>
         <p>{tagItems}</p>
-        <p>{description}</p>        
+        <p>{description}</p>
       </div>
     )
   }

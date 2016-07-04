@@ -1,3 +1,15 @@
+// require.js
+
+var React = require('react');
+var ReactDOM = require('react-dom');
+// var {Router, Route, IndexRoute, IndexLink, Link} = require('react-router');
+var Router = require('react-router').Router;
+var Route = require('react-router').Route;
+var Link = require('react-router').Link;
+var IndexRoute = require('react-router').IndexRoute;
+var IndexLink = require('react-router').IndexLink;
+var hashHistory = require('react-router').hashHistory;
+var ReactTags = require('react-tag-input').WithContext;
 var Home = React.createClass({
   render: function() {
     return (<h1>Welcome to the Home Page</h1>);
@@ -46,7 +58,7 @@ var ProjectFormPage = React.createClass({
   getInitialState: function() {
     return {data: {
       title : '',
-      year : null,
+      year : '',
       picture: '',
       description: '',
       technologies: []
@@ -76,20 +88,18 @@ var YearsSelect = React.createClass({
 
     var yearItems = years.map(function(item) {
       return (
-        <option value={item}>{item}</option>
+        <option key={item} value={item}>{item}</option>
       );
     });
 
     return (
       <select className="form-control" id="projectYear" value={this.props.value} onChange={this.onSelectChange}>
-        <option selected="true" disabled="disabled"> -- Select year --</option>
+        <option value="" disabled="disabled"> -- Select year --</option>
         {yearItems}
       </select>
     )
   }
 });
-
-var TagsInput = ReactTagsInput;
 
 var ProjectForm = React.createClass({
   getInitialState: function() {
@@ -132,6 +142,29 @@ var ProjectForm = React.createClass({
   },
   handleTechnologyChange: function(tags) {
     this.setState({technologies: tags});
+  },
+  handleDelete: function(i) {
+      var tags = this.state.technologies;
+      tags.splice(i, 1);
+      this.handleTechnologyChange(tags);
+  },
+  handleAddition: function(tag) {
+      var tags = this.state.technologies;
+      tags.push({
+          _id: tags.length + 1,
+          text: tag
+      });
+      this.handleTechnologyChange(tags);
+  },
+  handleDrag: function(tag, currPos, newPos) {
+      var tags = this.state.technologies;
+
+      // mutate array
+      tags.splice(currPos, 1);
+      tags.splice(newPos, 0, tag);
+
+      // re-render
+      this.handleTechnologyChange(tags);
   },
   handlePictureChange: function(e) {
     // console.log(e.target);
@@ -197,25 +230,37 @@ var ProjectForm = React.createClass({
       <div id="project-form" className="row">
           <div className="col-sm-8 col-sm-offset-2 text-center">
             <p id="form-message">{this.state.formMessage}</p>
-            <form enctype="multipart/form-data" onSubmit={this.handleSubmit}>
+            <form encType="multipart/form-data" onSubmit={this.handleSubmit}>
               <fieldset className="form-group">
-                <label for="projectTitle">Title</label>
+                <label htmlFor="projectTitle">Title</label>
                 <input type="text" className="form-control" id="projectTitle" value={this.state.title} onChange={this.handleTitleChange} />
               </fieldset>
               <fieldset className="form-group">
-                <label for="projectYear">Year of completion</label>
+                <label htmlFor="projectYear">Year of completion</label>
                 <YearsSelect value={this.state.year} onSelectChange={this.handleYearChange} />
               </fieldset>
               <fieldset className="form-group">
-                <label for="projectDescription">Description</label>
+                <label htmlFor="projectDescription">Description</label>
                 <textarea className="form-control" id="projectDescription" rows="4"  value={this.state.description} onChange={this.handleDescriptionChange}></textarea>
               </fieldset>
               <fieldset className="form-group">
-                <label for="projectTechnologies">Technologies</label>
-                <TagsInput value={this.state.technologies} onChange={this.handleTechnologyChange} />
+                <label htmlFor="projectTechnologies">Technologies</label>
+                <ReactTags tags={this.state.technologies}
+                    handleDelete={this.handleDelete}
+                    handleAddition={this.handleAddition}
+                    handleDrag={this.handleDrag}
+                    classNames={{
+                      tags: 'ReactTags__tags',
+                      tagInput: 'ReactTags__tagInput',
+                      selected: 'ReactTags__selected',
+                      tag: 'ReactTags__tag',
+                      remove: 'ReactTags__remove',
+                      suggestions: 'suggestionsClass'
+                    }}
+                  />
               </fieldset>
               <fieldset className="form-group">
-                <label for="projectPicture">Screenshot</label>
+                <label htmlFor="projectPicture">Screenshot</label>
                 <input type="file" className="form-control-file" id="projectPicture"  onChange={this.handlePictureChange} />
                 <div id="imgContainer"></div>
               </fieldset>
@@ -267,9 +312,10 @@ var Project = React.createClass({
     var tags = this.props.data[0].technologies;
 
     if (tags) {
+      var count = 0;
       var tagItems = tags.map(function(item) {
         return (
-          <span className="tag">{item}</span>
+          <span key={item._id} className="tag">{item.text}</span>
         );
       });
     }
@@ -279,7 +325,7 @@ var Project = React.createClass({
         <h1>{title}</h1>
         <p><img src={picSrc} /></p>
         <p>{tagItems}</p>
-        <p>{description}</p>        
+        <p>{description}</p>
       </div>
     )
   }
@@ -527,9 +573,7 @@ var TodoForm = React.createClass({
     )
   }
 });
-// app-render.js
-
-var {Router, Route, IndexRoute, IndexLink, Link} = ReactRouter;
+// app-wrapper.js
 
 var App = React.createClass({
   render: function() {
@@ -552,7 +596,7 @@ var App = React.createClass({
 });
 
 ReactDOM.render(
-  <Router>
+  <Router history={hashHistory}>
     <Route path="/" component={App}>
       <IndexRoute component={Home}/>
       <Route path="todos" url="/api/todos" component={TodoBox} />
