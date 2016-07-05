@@ -16,7 +16,7 @@ var ProjectsPage = React.createClass({
     });
   },
   goToProjectEdit: function(id) {
-    this.props.history.push('/project/' + id + '/edit');
+    this.context.router.push('/project/' + id + '/edit');
   },
   handleProjectDelete: function(id) {
     $.ajax({
@@ -48,6 +48,10 @@ var ProjectsPage = React.createClass({
     );
   }
 });
+
+ProjectsPage.contextTypes = {
+  router: React.PropTypes.object.isRequired
+}
 
 var ProjectsList = React.createClass({
   render: function() {

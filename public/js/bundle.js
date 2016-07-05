@@ -38372,7 +38372,7 @@ var ProjectFormPage = React.createClass({
           this.handleUpload();
         }
 
-        this.props.history.push('/projects');
+        this.context.router.push('/projects');
       }.bind(this),
       error: function (xhr, status, err) {
         console.error(this.props.route.url, status, err.toString());
@@ -38413,6 +38413,10 @@ var ProjectFormPage = React.createClass({
     );
   }
 });
+
+ProjectFormPage.contextTypes = {
+  router: React.PropTypes.object.isRequired
+};
 
 var YearsSelect = React.createClass({
   displayName: 'YearsSelect',
@@ -38764,7 +38768,7 @@ var ProjectsPage = React.createClass({
     });
   },
   goToProjectEdit: function (id) {
-    this.props.history.push('/project/' + id + '/edit');
+    this.context.router.push('/project/' + id + '/edit');
   },
   handleProjectDelete: function (id) {
     $.ajax({
@@ -38800,6 +38804,10 @@ var ProjectsPage = React.createClass({
     );
   }
 });
+
+ProjectsPage.contextTypes = {
+  router: React.PropTypes.object.isRequired
+};
 
 var ProjectsList = React.createClass({
   displayName: 'ProjectsList',
