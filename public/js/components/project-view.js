@@ -1,3 +1,5 @@
+// public/js/components/project-view.js
+
 var ProjectViewPage = React.createClass({
   loadProject: function() {
     var projectID = this.props.params.project_id;

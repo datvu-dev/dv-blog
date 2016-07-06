@@ -1,4 +1,4 @@
-// app-wrapper.js
+// public/js/app-wrapper.js
 
 var App = React.createClass({
   render: function() {

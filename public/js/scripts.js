@@ -1,4 +1,4 @@
-// require.js
+// public/js/require.js
 
 var React = require('react');
 var ReactDOM = require('react-dom');
@@ -10,11 +10,15 @@ var IndexRoute = require('react-router').IndexRoute;
 var IndexLink = require('react-router').IndexLink;
 var hashHistory = require('react-router').hashHistory;
 var ReactTags = require('react-tag-input').WithContext;
+// public/js/components/home.js
+
 var Home = React.createClass({
   render: function() {
     return (<h1>Welcome to the Home Page</h1>);
   }
 });
+// public/js/components/project-form.js
+
 var ProjectFormPage = React.createClass({
   handleProjectSubmit: function(item) {
     var projectID = this.props.params.project_id ? this.props.params.project_id : '';
@@ -110,6 +114,8 @@ var ProjectForm = React.createClass({
     return this.props.data;
   },
   componentDidMount: function() {
+    $('.tag-input input').addClass('form-control').blur();
+
     if (this.props.projectID) {
       var projectID = this.props.projectID;
 
@@ -232,7 +238,7 @@ var ProjectForm = React.createClass({
   render: function() {
     return (
       <div id="project-form" className="row">
-          <div className="col-sm-8 col-sm-offset-2 text-center">
+          <div className="col-sm-8 col-sm-offset-2">
             <p id="form-message">{this.state.formMessage}</p>
             <form encType="multipart/form-data" onSubmit={this.handleSubmit}>
               <fieldset className="form-group">
@@ -254,12 +260,10 @@ var ProjectForm = React.createClass({
                     handleAddition={this.handleAddition}
                     handleDrag={this.handleDrag}
                     classNames={{
-                      tags: 'ReactTags__tags',
-                      tagInput: 'ReactTags__tagInput',
-                      selected: 'ReactTags__selected',
-                      tag: 'ReactTags__tag',
-                      remove: 'ReactTags__remove',
-                      suggestions: 'suggestionsClass'
+                      tags: 'tags-container',
+                      tagInput: 'tag-input',
+                      tag: 'tag',
+                      remove: 'tag-remove',
                     }}
                   />
               </fieldset>
@@ -275,6 +279,8 @@ var ProjectForm = React.createClass({
     )
   }
 });
+// public/js/components/project-view.js
+
 var ProjectViewPage = React.createClass({
   loadProject: function() {
     var projectID = this.props.params.project_id;
@@ -334,7 +340,7 @@ var Project = React.createClass({
     )
   }
 });
-// public/js/projects.js
+// public/js/components/projects-list.js
 
 var ProjectsPage = React.createClass({
   loadProjectsList: function() {
@@ -581,7 +587,7 @@ var TodoForm = React.createClass({
     )
   }
 });
-// app-wrapper.js
+// public/js/app-wrapper.js
 
 var App = React.createClass({
   render: function() {

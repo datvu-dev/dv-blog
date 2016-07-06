@@ -1,4 +1,4 @@
-// require.js
+// public/js/require.js
 
 var React = require('react');
 var ReactDOM = require('react-dom');

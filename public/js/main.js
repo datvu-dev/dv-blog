@@ -38333,7 +38333,7 @@ module.exports = warning;
 
 }).call(this,require('_process'))
 },{"_process":288}],508:[function(require,module,exports){
-// require.js
+// public/js/require.js
 
 var React = require('react');
 var ReactDOM = require('react-dom');
@@ -38345,11 +38345,15 @@ var IndexRoute = require('react-router').IndexRoute;
 var IndexLink = require('react-router').IndexLink;
 var hashHistory = require('react-router').hashHistory;
 var ReactTags = require('react-tag-input').WithContext;
+// public/js/components/home.js
+
 var Home = React.createClass({displayName: "Home",
   render: function() {
     return (React.createElement("h1", null, "Welcome to the Home Page"));
   }
 });
+// public/js/components/project-form.js
+
 var ProjectFormPage = React.createClass({displayName: "ProjectFormPage",
   handleProjectSubmit: function(item) {
     var projectID = this.props.params.project_id ? this.props.params.project_id : '';
@@ -38445,6 +38449,8 @@ var ProjectForm = React.createClass({displayName: "ProjectForm",
     return this.props.data;
   },
   componentDidMount: function() {
+    $('.tag-input input').addClass('form-control').blur();
+
     if (this.props.projectID) {
       var projectID = this.props.projectID;
 
@@ -38567,7 +38573,7 @@ var ProjectForm = React.createClass({displayName: "ProjectForm",
   render: function() {
     return (
       React.createElement("div", {id: "project-form", className: "row"}, 
-          React.createElement("div", {className: "col-sm-8 col-sm-offset-2 text-center"}, 
+          React.createElement("div", {className: "col-sm-8 col-sm-offset-2"}, 
             React.createElement("p", {id: "form-message"}, this.state.formMessage), 
             React.createElement("form", {encType: "multipart/form-data", onSubmit: this.handleSubmit}, 
               React.createElement("fieldset", {className: "form-group"}, 
@@ -38589,12 +38595,10 @@ var ProjectForm = React.createClass({displayName: "ProjectForm",
                     handleAddition: this.handleAddition, 
                     handleDrag: this.handleDrag, 
                     classNames: {
-                      tags: 'ReactTags__tags',
-                      tagInput: 'ReactTags__tagInput',
-                      selected: 'ReactTags__selected',
-                      tag: 'ReactTags__tag',
-                      remove: 'ReactTags__remove',
-                      suggestions: 'suggestionsClass'
+                      tags: 'tags-container',
+                      tagInput: 'tag-input',
+                      tag: 'tag',
+                      remove: 'tag-remove',
                     }}
                   )
               ), 
@@ -38610,6 +38614,8 @@ var ProjectForm = React.createClass({displayName: "ProjectForm",
     )
   }
 });
+// public/js/components/project-view.js
+
 var ProjectViewPage = React.createClass({displayName: "ProjectViewPage",
   loadProject: function() {
     var projectID = this.props.params.project_id;
@@ -38669,7 +38675,7 @@ var Project = React.createClass({displayName: "Project",
     )
   }
 });
-// public/js/projects.js
+// public/js/components/projects-list.js
 
 var ProjectsPage = React.createClass({displayName: "ProjectsPage",
   loadProjectsList: function() {
@@ -38916,7 +38922,7 @@ var TodoForm = React.createClass({displayName: "TodoForm",
     )
   }
 });
-// app-wrapper.js
+// public/js/app-wrapper.js
 
 var App = React.createClass({displayName: "App",
   render: function() {
