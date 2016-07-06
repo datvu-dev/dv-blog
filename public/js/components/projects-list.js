@@ -15,14 +15,16 @@ var ProjectsPage = React.createClass({
       }.bind(this)
     });
   },
+  goToProjectEdit: function(id) {
+    this.context.router.push('/project/' + id + '/edit');
+  },
   handleProjectDelete: function(id) {
     $.ajax({
-      url: '/api/projects/' + id,
+      url: this.props.route.url + id,
       dataType: 'json',
       type: 'DELETE',
-      data: item,
       success: function(data) {
-        // this.setState({data: data});
+        this.setState({data: data});
       }.bind(this),
       error: function(xhr, status, err) {
         // this.setState({data: comments});
@@ -40,7 +42,7 @@ var ProjectsPage = React.createClass({
     return (
       <div>
         <Link to="/project/new" className="btn btn-primary">New Project</Link>
-        <ProjectsList data={this.state.data} />
+        <ProjectsList data={this.state.data} onProjectEdit={this.goToProjectEdit} onProjectDelete={this.handleProjectDelete} />
       </div>
     );
   }
@@ -53,9 +55,10 @@ ProjectsPage.contextTypes = {
 var ProjectsList = React.createClass({
   render: function() {
     var projectEditFunc = this.props.onProjectEdit;
+    var projectDeleteFunc = this.props.onProjectDelete;
     var projectItems = this.props.data.map(function(item) {
       return (
-        <ProjectItem title={item.title} img={item.picture} id={item._id} key={item._id} onProjectEdit={projectEditFunc} />
+        <ProjectItem title={item.title} img={item.picture} id={item._id} key={item._id} onProjectEdit={projectEditFunc} onProjectDelete={projectDeleteFunc} />
       );
     });
 
@@ -70,6 +73,12 @@ var ProjectsList = React.createClass({
 });
 
 var ProjectItem = React.createClass({
+  editProject: function() {
+    this.props.onProjectEdit(this.props.id);
+  },
+  deleteProject: function() {
+    this.props.onProjectDelete(this.props.id);
+  },
   render: function() {
     return (
       <div className="box col-md-6 col-lg-4">
@@ -79,7 +88,10 @@ var ProjectItem = React.createClass({
         <div className="box-content">
           <h4 className="box-title"><Link to={'/project/' + this.props.id}>{this.props.title}</Link></h4>
           <p className="box-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-          <p><small><Link to={'/project/' + this.props.id + '/edit'}>Edit</Link></small></p>
+          <p>
+            <a className="utility-link" onClick={this.editProject}><small>Edit</small></a>
+            <a className="utility-link" onClick={this.deleteProject}><small>Delete</small></a>
+          </p>
         </div>
       </div>
     )

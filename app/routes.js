@@ -99,7 +99,6 @@ module.exports = function(app) {
 
   // upload files
   app.post('/api/upload', function(req, res) {
-    console.log('uploading');
     // create an incoming form object
     var form = new formidable.IncomingForm();
 
@@ -141,14 +140,39 @@ module.exports = function(app) {
 
   // delete a project
   app.delete('/api/projects/:project_id', function(req, res) {
-      Todo.remove({
-          _id : req.params.project_id
+      var projectID = req.params.project_id;
+
+      Project.remove({
+          _id : projectID
       }, function(err, project) {
           if (err)
               res.send(err);
 
-          // get and return all the todos after you create another
-          Todo.find(function(err, projects) {
+          var filePath = path.join(__dirname, '../public/uploads/projects/' + projectID);
+
+          // get project file
+          fs.readdir(filePath, function(err, files) {
+            if (err) {
+              throw err;
+            }
+
+            // remove file
+            fs.unlink(filePath + '/' + files[0], function(err) {
+              if (err) {
+                throw err;
+              }
+
+              // remove folder that contains project file
+              fs.rmdir(filePath, function(err) {
+                if (err) {
+                  throw err;
+                }
+              });
+            });
+          });
+
+          // get and return all the projects
+          Project.find(function(err, projects) {
               if (err)
                   res.send(err)
               res.json(projects);

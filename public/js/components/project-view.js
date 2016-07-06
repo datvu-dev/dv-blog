@@ -17,6 +17,23 @@ var ProjectViewPage = React.createClass({
       }.bind(this)
     });
   },
+  goToProjectEdit: function(id) {
+    this.context.router.push('/project/' + id + '/edit');
+  },
+  handleProjectDelete: function(id) {
+    $.ajax({
+      url: this.props.route.url + id,
+      dataType: 'json',
+      type: 'DELETE',
+      success: function(data) {
+        this.context.router.push('/projects');
+      }.bind(this),
+      error: function(xhr, status, err) {
+        // this.setState({data: comments});
+        console.error(this.props.route.url, status, err.toString());
+      }.bind(this)
+    });
+  },
   getInitialState: function() {
     return {data: '[]'};
   },
@@ -26,13 +43,23 @@ var ProjectViewPage = React.createClass({
   render: function() {
     return (
       <div>
-        <Project data={this.state.data} />
+        <Project data={this.state.data} onProjectEdit={this.goToProjectEdit} onProjectDelete={this.handleProjectDelete} />
       </div>
     );
   }
 });
 
+ProjectViewPage.contextTypes = {
+  router: React.PropTypes.object.isRequired
+}
+
 var Project = React.createClass({
+  editProject: function() {
+    this.props.onProjectEdit(this.props.data[0]._id);
+  },
+  deleteProject: function() {
+    this.props.onProjectDelete(this.props.data[0]._id);
+  },
   render: function() {
     var id = this.props.data[0]._id;
     var title = this.props.data[0].title;
@@ -52,7 +79,10 @@ var Project = React.createClass({
     return (
       <div>
         <h1>{title}</h1>
-        <p><small><Link to={'/project/' + id + '/edit'}>Edit</Link></small></p>
+        <p>
+          <a className="utility-link" onClick={this.editProject}><small>Edit</small></a>
+          <a className="utility-link" onClick={this.deleteProject}><small>Delete</small></a>
+        </p>
         <p><img src={picSrc} /></p>
         <p>{tagItems}</p>
         <p>{description}</p>

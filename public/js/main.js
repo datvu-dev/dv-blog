@@ -38633,6 +38633,23 @@ var ProjectViewPage = React.createClass({displayName: "ProjectViewPage",
       }.bind(this)
     });
   },
+  goToProjectEdit: function(id) {
+    this.context.router.push('/project/' + id + '/edit');
+  },
+  handleProjectDelete: function(id) {
+    $.ajax({
+      url: this.props.route.url + id,
+      dataType: 'json',
+      type: 'DELETE',
+      success: function(data) {
+        this.context.router.push('/projects');
+      }.bind(this),
+      error: function(xhr, status, err) {
+        // this.setState({data: comments});
+        console.error(this.props.route.url, status, err.toString());
+      }.bind(this)
+    });
+  },
   getInitialState: function() {
     return {data: '[]'};
   },
@@ -38642,13 +38659,23 @@ var ProjectViewPage = React.createClass({displayName: "ProjectViewPage",
   render: function() {
     return (
       React.createElement("div", null, 
-        React.createElement(Project, {data: this.state.data})
+        React.createElement(Project, {data: this.state.data, onProjectEdit: this.goToProjectEdit, onProjectDelete: this.handleProjectDelete})
       )
     );
   }
 });
 
+ProjectViewPage.contextTypes = {
+  router: React.PropTypes.object.isRequired
+}
+
 var Project = React.createClass({displayName: "Project",
+  editProject: function() {
+    this.props.onProjectEdit(this.props.data[0]._id);
+  },
+  deleteProject: function() {
+    this.props.onProjectDelete(this.props.data[0]._id);
+  },
   render: function() {
     var id = this.props.data[0]._id;
     var title = this.props.data[0].title;
@@ -38668,7 +38695,10 @@ var Project = React.createClass({displayName: "Project",
     return (
       React.createElement("div", null, 
         React.createElement("h1", null, title), 
-        React.createElement("p", null, React.createElement("small", null, React.createElement(Link, {to: '/project/' + id + '/edit'}, "Edit"))), 
+        React.createElement("p", null, 
+          React.createElement("a", {className: "utility-link", onClick: this.editProject}, React.createElement("small", null, "Edit")), 
+          React.createElement("a", {className: "utility-link", onClick: this.deleteProject}, React.createElement("small", null, "Delete"))
+        ), 
         React.createElement("p", null, React.createElement("img", {src: picSrc})), 
         React.createElement("p", null, tagItems), 
         React.createElement("p", null, description)
@@ -38693,14 +38723,16 @@ var ProjectsPage = React.createClass({displayName: "ProjectsPage",
       }.bind(this)
     });
   },
+  goToProjectEdit: function(id) {
+    this.context.router.push('/project/' + id + '/edit');
+  },
   handleProjectDelete: function(id) {
     $.ajax({
-      url: '/api/projects/' + id,
+      url: this.props.route.url + id,
       dataType: 'json',
       type: 'DELETE',
-      data: item,
       success: function(data) {
-        // this.setState({data: data});
+        this.setState({data: data});
       }.bind(this),
       error: function(xhr, status, err) {
         // this.setState({data: comments});
@@ -38718,7 +38750,7 @@ var ProjectsPage = React.createClass({displayName: "ProjectsPage",
     return (
       React.createElement("div", null, 
         React.createElement(Link, {to: "/project/new", className: "btn btn-primary"}, "New Project"), 
-        React.createElement(ProjectsList, {data: this.state.data})
+        React.createElement(ProjectsList, {data: this.state.data, onProjectEdit: this.goToProjectEdit, onProjectDelete: this.handleProjectDelete})
       )
     );
   }
@@ -38731,9 +38763,10 @@ ProjectsPage.contextTypes = {
 var ProjectsList = React.createClass({displayName: "ProjectsList",
   render: function() {
     var projectEditFunc = this.props.onProjectEdit;
+    var projectDeleteFunc = this.props.onProjectDelete;
     var projectItems = this.props.data.map(function(item) {
       return (
-        React.createElement(ProjectItem, {title: item.title, img: item.picture, id: item._id, key: item._id, onProjectEdit: projectEditFunc})
+        React.createElement(ProjectItem, {title: item.title, img: item.picture, id: item._id, key: item._id, onProjectEdit: projectEditFunc, onProjectDelete: projectDeleteFunc})
       );
     });
 
@@ -38748,6 +38781,12 @@ var ProjectsList = React.createClass({displayName: "ProjectsList",
 });
 
 var ProjectItem = React.createClass({displayName: "ProjectItem",
+  editProject: function() {
+    this.props.onProjectEdit(this.props.id);
+  },
+  deleteProject: function() {
+    this.props.onProjectDelete(this.props.id);
+  },
   render: function() {
     return (
       React.createElement("div", {className: "box col-md-6 col-lg-4"}, 
@@ -38757,7 +38796,10 @@ var ProjectItem = React.createClass({displayName: "ProjectItem",
         React.createElement("div", {className: "box-content"}, 
           React.createElement("h4", {className: "box-title"}, React.createElement(Link, {to: '/project/' + this.props.id}, this.props.title)), 
           React.createElement("p", {className: "box-text"}, "This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer."), 
-          React.createElement("p", null, React.createElement("small", null, React.createElement(Link, {to: '/project/' + this.props.id + '/edit'}, "Edit")))
+          React.createElement("p", null, 
+            React.createElement("a", {className: "utility-link", onClick: this.editProject}, React.createElement("small", null, "Edit")), 
+            React.createElement("a", {className: "utility-link", onClick: this.deleteProject}, React.createElement("small", null, "Delete"))
+          )
         )
       )
     )

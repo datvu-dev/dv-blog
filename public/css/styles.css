@@ -6756,7 +6756,11 @@ h1 {
   font-size: 27px;
 }
 a {
+  cursor: pointer;
   color: #5AB953;
+}
+.utility-link {
+  margin-right: 10px;
 }
 .required {
   border: 1px solid #d9534f;
