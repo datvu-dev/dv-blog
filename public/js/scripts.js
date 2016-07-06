@@ -114,7 +114,7 @@ var ProjectForm = React.createClass({
     return this.props.data;
   },
   componentDidMount: function() {
-    $('.tag-input input').addClass('form-control').blur();
+    $('.tag-input input').addClass('form-control').attr('id', 'projectTechnologies').blur();
 
     if (this.props.projectID) {
       var projectID = this.props.projectID;
@@ -204,7 +204,7 @@ var ProjectForm = React.createClass({
     var pictureObj = $('#imgContainer img');
 
     $('#form-message').hide();
-    $('.form-control, .react-tagsinput').removeClass('required');
+    $('.form-control').removeClass('required');
 
     if (!title || !year || !description || technologies.length == 0 || pictureObj.length == 0) {
       $('#form-message').show();
@@ -220,8 +220,8 @@ var ProjectForm = React.createClass({
       $('#projectDescription').addClass('required');
       this.setState({formMessage: 'Please put in description.'});
     } else if (technologies.length == 0) {
-      $('.react-tagsinput').addClass('required');
-      this.setState({formMessage: 'Please put in technologies.'});
+      $('#projectTechnologies').addClass('required');
+      this.setState({formMessage: 'Please put in at least one technology.'});
     } else if (pictureObj.length == 0) {
       this.setState({formMessage: 'Please upload a screenshot.'});
     } else {
