@@ -52,6 +52,7 @@ var Project = React.createClass({
     return (
       <div>
         <h1>{title}</h1>
+        <p><small><Link to={'/project/' + id + '/edit'}>Edit</Link></small></p>
         <p><img src={picSrc} /></p>
         <p>{tagItems}</p>
         <p>{description}</p>

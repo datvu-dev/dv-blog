@@ -38668,6 +38668,7 @@ var Project = React.createClass({displayName: "Project",
     return (
       React.createElement("div", null, 
         React.createElement("h1", null, title), 
+        React.createElement("p", null, React.createElement("small", null, React.createElement(Link, {to: '/project/' + id + '/edit'}, "Edit"))), 
         React.createElement("p", null, React.createElement("img", {src: picSrc})), 
         React.createElement("p", null, tagItems), 
         React.createElement("p", null, description)
@@ -38691,9 +38692,6 @@ var ProjectsPage = React.createClass({displayName: "ProjectsPage",
         console.error(this.props.route.url, status, err.toString());
       }.bind(this)
     });
-  },
-  goToProjectEdit: function(id) {
-    this.context.router.push('/project/' + id + '/edit');
   },
   handleProjectDelete: function(id) {
     $.ajax({
@@ -38720,7 +38718,7 @@ var ProjectsPage = React.createClass({displayName: "ProjectsPage",
     return (
       React.createElement("div", null, 
         React.createElement(Link, {to: "/project/new", className: "btn btn-primary"}, "New Project"), 
-        React.createElement(ProjectsList, {data: this.state.data, onProjectEdit: this.goToProjectEdit})
+        React.createElement(ProjectsList, {data: this.state.data})
       )
     );
   }
@@ -38750,9 +38748,6 @@ var ProjectsList = React.createClass({displayName: "ProjectsList",
 });
 
 var ProjectItem = React.createClass({displayName: "ProjectItem",
-  editProject: function() {
-    this.props.onProjectEdit(this.props.id);
-  },
   render: function() {
     return (
       React.createElement("div", {className: "box col-md-6 col-lg-4"}, 
@@ -38762,7 +38757,7 @@ var ProjectItem = React.createClass({displayName: "ProjectItem",
         React.createElement("div", {className: "box-content"}, 
           React.createElement("h4", {className: "box-title"}, React.createElement(Link, {to: '/project/' + this.props.id}, this.props.title)), 
           React.createElement("p", {className: "box-text"}, "This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer."), 
-          React.createElement("p", null, React.createElement("small", null, React.createElement("a", {onClick: this.editProject}, "Edit")))
+          React.createElement("p", null, React.createElement("small", null, React.createElement(Link, {to: '/project/' + this.props.id + '/edit'}, "Edit")))
         )
       )
     )

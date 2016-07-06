@@ -333,6 +333,7 @@ var Project = React.createClass({
     return (
       <div>
         <h1>{title}</h1>
+        <p><small><Link to={'/project/' + id + '/edit'}>Edit</Link></small></p>
         <p><img src={picSrc} /></p>
         <p>{tagItems}</p>
         <p>{description}</p>
@@ -356,9 +357,6 @@ var ProjectsPage = React.createClass({
         console.error(this.props.route.url, status, err.toString());
       }.bind(this)
     });
-  },
-  goToProjectEdit: function(id) {
-    this.context.router.push('/project/' + id + '/edit');
   },
   handleProjectDelete: function(id) {
     $.ajax({
@@ -385,7 +383,7 @@ var ProjectsPage = React.createClass({
     return (
       <div>
         <Link to="/project/new" className="btn btn-primary">New Project</Link>
-        <ProjectsList data={this.state.data} onProjectEdit={this.goToProjectEdit} />
+        <ProjectsList data={this.state.data} />
       </div>
     );
   }
@@ -415,9 +413,6 @@ var ProjectsList = React.createClass({
 });
 
 var ProjectItem = React.createClass({
-  editProject: function() {
-    this.props.onProjectEdit(this.props.id);
-  },
   render: function() {
     return (
       <div className="box col-md-6 col-lg-4">
@@ -427,7 +422,7 @@ var ProjectItem = React.createClass({
         <div className="box-content">
           <h4 className="box-title"><Link to={'/project/' + this.props.id}>{this.props.title}</Link></h4>
           <p className="box-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-          <p><small><a onClick={this.editProject}>Edit</a></small></p>
+          <p><small><Link to={'/project/' + this.props.id + '/edit'}>Edit</Link></small></p>
         </div>
       </div>
     )
