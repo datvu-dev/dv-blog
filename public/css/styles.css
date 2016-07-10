@@ -6762,6 +6762,12 @@ a {
 .utility-link {
   margin-right: 10px;
 }
+#imgContainer {
+  margin-top: 15px;
+}
+#imgContainer img {
+  max-width: 300px;
+}
 .required {
   border: 1px solid #d9534f;
 }
@@ -6789,7 +6795,7 @@ a {
 .box {
   position: relative;
   display: block;
-  padding: 0 15px;
+  padding: 15px;
   margin: 15px 0;
   border: 1px solid transparent;
 }
@@ -6814,7 +6820,7 @@ a {
   transform: translate(-50%, -50%);
 }
 .box-content {
-  padding: 1.25rem;
+  padding-top: 10px;
 }
 .box-title {
   margin-bottom: .75rem;
