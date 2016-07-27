@@ -34,8 +34,6 @@ var Confirm = React.createClass({
   },
   componentDidMount: function() {
     this.promise = new Promise();
-
-    // return ReactDOM.findDOMNode(this.refs.confirm).focus();
   },
   render: function() {
     return React.createElement(Modal, null,
