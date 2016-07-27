@@ -77,7 +77,15 @@ var ProjectItem = React.createClass({
     this.props.onProjectEdit(this.props.id);
   },
   deleteProject: function() {
-    this.props.onProjectDelete(this.props.id);
+    var propsObj = this.props;
+
+    confirmAction('Are you sure?', {
+      description: 'Would you like to delete this project?',
+      confirmLabel: 'Delete',
+      abortLabel: 'Cancel'
+    }).then(function() {
+      propsObj.onProjectDelete(propsObj.id);
+    });
   },
   render: function() {
     return (
