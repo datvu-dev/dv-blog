@@ -138,7 +138,8 @@ var ProjectFormPage = React.createClass({
       year : '',
       picture: '',
       description: '',
-      technologies: []
+      technologies: [],
+      suggestions: []
     }};
   },
   render: function() {
@@ -186,6 +187,28 @@ var ProjectForm = React.createClass({
   getInitialState: function() {
     return this.props.data;
   },
+  getTagSuggestions: function() {
+    var skillsUrl = 'http://trendyskills.com/service?q=keywords&key=77MGlB3wzQbD9KfZ';
+
+    $.ajax({
+      url: skillsUrl,
+      method: 'GET',
+      dataType: 'jsonp',
+      success: function(res) {
+        var suggestionsArr = [];
+
+        res.keywords.map(function(item) {
+          suggestionsArr.push(item.keyName);
+        });
+
+        this.setState({suggestions: suggestionsArr});
+
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(status, err.toString());
+      }
+    });
+  },
   componentDidMount: function() {
     $('.tag-input input').addClass('form-control').attr('id', 'projectTechnologies').blur();
 
@@ -208,6 +231,8 @@ var ProjectForm = React.createClass({
         }.bind(this)
       });
     }
+
+    this.getTagSuggestions();
   },
   componentWillUnmount: function() {
     if (this.serverRequest) {
@@ -332,11 +357,13 @@ var ProjectForm = React.createClass({
                     handleDelete={this.handleDelete}
                     handleAddition={this.handleAddition}
                     handleDrag={this.handleDrag}
+                    suggestions={this.state.suggestions}
                     classNames={{
                       tags: 'tags-container',
                       tagInput: 'tag-input',
                       tag: 'tag',
                       remove: 'tag-remove',
+                      suggestions: 'tag-suggestions'
                     }}
                   />
               </fieldset>

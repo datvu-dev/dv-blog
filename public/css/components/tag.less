@@ -22,3 +22,32 @@
   margin-left: 5px;
   cursor: pointer;
 }
+
+// Tag Suggestions List
+.tag-suggestions {
+  position: absolute;
+  width: 100%;
+
+  ul {
+    list-style-type: none;
+    box-shadow: .05em .01em .5em rgba(0,0,0,.2);
+    background: white;
+    padding-left: 0;
+  }
+
+  li {
+    border-bottom: 1px solid #ddd;
+    padding: 5px 10px;
+    margin: 0;
+
+    &.active {
+        background: #b7cfe0;
+        cursor: pointer;
+    }
+
+    mark {        
+        background: none;
+        font-weight: 600;
+    }
+  }
+}
