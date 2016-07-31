@@ -1,4 +1,4 @@
-// public/js/components/project-form.js
+// public/js/pages/project-form.js
 
 var ProjectFormPage = React.createClass({
   handleProjectSubmit: function(item) {

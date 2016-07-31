@@ -1,4 +1,4 @@
-// public/js/components/projects-list.js
+// public/js/pages/projects-list.js
 
 var ProjectsPage = React.createClass({
   loadProjectsList: function() {

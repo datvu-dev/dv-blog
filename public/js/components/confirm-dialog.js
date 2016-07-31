@@ -1,3 +1,5 @@
+// public/js/components/confirm-dialog.js
+
 var Modal = React.createClass({
   displayName: 'Modal',
   render: function() {

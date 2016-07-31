@@ -38345,6 +38345,8 @@ var IndexRoute = require('react-router').IndexRoute;
 var IndexLink = require('react-router').IndexLink;
 var hashHistory = require('react-router').hashHistory;
 var ReactTags = require('react-tag-input').WithContext;
+// public/js/components/confirm-dialog.js
+
 var Modal = React.createClass({
   displayName: 'Modal',
   render: function() {
@@ -38418,14 +38420,14 @@ var confirmAction = function(message, options) {
 
   return component.promise.always(cleanup).promise();
 }
-// public/js/components/home.js
+// public/js/pages/home.js
 
 var Home = React.createClass({displayName: "Home",
   render: function() {
     return (React.createElement("h1", null, "Welcome to the Home Page"));
   }
 });
-// public/js/components/project-form.js
+// public/js/pages/project-form.js
 
 var ProjectFormPage = React.createClass({displayName: "ProjectFormPage",
   handleProjectSubmit: function(item) {
@@ -38714,7 +38716,7 @@ var ProjectForm = React.createClass({displayName: "ProjectForm",
     )
   }
 });
-// public/js/components/project-view.js
+// public/js/pages/project-view.js
 
 var ProjectViewPage = React.createClass({displayName: "ProjectViewPage",
   loadProject: function() {
@@ -38814,7 +38816,7 @@ var Project = React.createClass({displayName: "Project",
     )
   }
 });
-// public/js/components/projects-list.js
+// public/js/pages/projects-list.js
 
 var ProjectsPage = React.createClass({displayName: "ProjectsPage",
   loadProjectsList: function() {

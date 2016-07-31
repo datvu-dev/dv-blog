@@ -1,4 +1,4 @@
-// public/js/components/home.js
+// public/js/pages/home.js
 
 var Home = React.createClass({
   render: function() {

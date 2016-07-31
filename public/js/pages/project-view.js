@@ -1,4 +1,4 @@
-// public/js/components/project-view.js
+// public/js/pages/project-view.js
 
 var ProjectViewPage = React.createClass({
   loadProject: function() {
