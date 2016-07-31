@@ -103,15 +103,26 @@ var PopupForm = React.createClass({
 
 var PopupButtons = React.createClass({
   cancel: function() {
-    var component = ReactDOM.findDOMNode(document.getElementById('modal').parentNode);
+    var wrapper = document.getElementById('modal');
 
-    ReactDOM.unmountComponentAtNode(component);
+    if (wrapper) {
+      var component = ReactDOM.findDOMNode(wrapper.parentNode);
+
+      ReactDOM.unmountComponentAtNode(component);
+    }
+  },
+  submit: function() {
+    var _this = this;
+
+    $(document).ajaxComplete(function() {
+      _this.cancel();
+    });
   },
   render: function() {
     return (
       <div className="text-right">
         <button type="button" className="btn btn-default" onClick={this.cancel}>Cancel</button>
-        <button type="submit" className="btn btn-primary">Save</button>
+        <button type="submit" className="btn btn-primary" onClick={this.submit}>Save</button>
       </div>
     )
   }
@@ -641,8 +652,19 @@ var Qualifications = React.createClass({
       description: '',
     }};
   },
-  handleSubmit: function() {
-    console.log('submitting');
+  handleSubmit: function(item) {
+    $.ajax({
+      url: '/api/resume/qualification',
+      dataType: 'json',
+      type: 'POST',
+      data: item,
+      success: function(data) {
+        console.log(data);
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(status, err.toString());
+      }.bind(this)
+    });
   },
   showAddForm: function() {
     var wrapper = document.body.appendChild(document.createElement('div'));
@@ -676,8 +698,8 @@ var QualificationForm = React.createClass({
   handleCourseChange: function(e) {
     this.setState({course: e.target.value});
   },
-  handleYearChange: function(e) {
-    this.setState({year: e.target.value});
+  handleYearChange: function(value) {
+    this.setState({year: value});
   },
   handleDescriptionChange: function(e) {
     this.setState({description: e.target.value});
@@ -710,11 +732,10 @@ var QualificationForm = React.createClass({
       this.setState({formMessage: 'Please provide description.'});
     } else {
       this.props.onSubmit({
-        title: title,
+        school: school,
+        course: course,
         year: year,
-        picture: pictureName,
         description: description,
-        technologies: technologies
       });
     }
   },

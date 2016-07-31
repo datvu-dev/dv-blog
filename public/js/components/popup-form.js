@@ -15,15 +15,26 @@ var PopupForm = React.createClass({
 
 var PopupButtons = React.createClass({
   cancel: function() {
-    var component = ReactDOM.findDOMNode(document.getElementById('modal').parentNode);
+    var wrapper = document.getElementById('modal');
 
-    ReactDOM.unmountComponentAtNode(component);
+    if (wrapper) {
+      var component = ReactDOM.findDOMNode(wrapper.parentNode);
+
+      ReactDOM.unmountComponentAtNode(component);
+    }
+  },
+  submit: function() {
+    var _this = this;
+
+    $(document).ajaxComplete(function() {
+      _this.cancel();
+    });
   },
   render: function() {
     return (
       <div className="text-right">
         <button type="button" className="btn btn-default" onClick={this.cancel}>Cancel</button>
-        <button type="submit" className="btn btn-primary">Save</button>
+        <button type="submit" className="btn btn-primary" onClick={this.submit}>Save</button>
       </div>
     )
   }
