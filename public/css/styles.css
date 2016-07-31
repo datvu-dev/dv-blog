@@ -6755,6 +6755,9 @@ nav a {
 h1 {
   font-size: 27px;
 }
+h2 {
+  font-size: 24px;
+}
 a {
   cursor: pointer;
   color: #5AB953;
