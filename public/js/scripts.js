@@ -73,7 +73,7 @@ var Modal = React.createClass({
   displayName: 'Modal',
   render: function() {
     return (
-      <div>
+      <div id="modal">
         <div className="modal-backdrop in"></div>
         <div className="modal in" tabIndex="-1" role="dialog" aria-hidden="false" ref="modal" style={{display: 'block'}}>
           <div className="modal-dialog">
@@ -83,6 +83,65 @@ var Modal = React.createClass({
           </div>
         </div>
       </div>
+    )
+  }
+});
+// public/js/components/popup-form.js
+
+var PopupForm = React.createClass({
+  render: function() {
+    return React.createElement(Modal, null,
+      <div>
+        <div className="modal-header">
+          <h4 className="modal-title">Add New Thing</h4>
+        </div>
+        <div className="modal-body">{this.props.children}</div>
+      </div>
+    )
+  }
+});
+
+var PopupButtons = React.createClass({
+  cancel: function() {
+    var component = ReactDOM.findDOMNode(document.getElementById('modal').parentNode);
+
+    ReactDOM.unmountComponentAtNode(component);
+  },
+  render: function() {
+    return (
+      <div className="text-right">
+        <button type="button" className="btn btn-default" onClick={this.cancel}>Cancel</button>
+        <button type="submit" className="btn btn-primary">Save</button>
+      </div>
+    )
+  }
+});
+// public/js/components/year-dropdown.js
+
+var YearsSelect = React.createClass({
+  onSelectChange: function(e) {
+    this.props.onSelectChange(e.target.value);
+  },
+  render: function() {
+    var currentYear = new Date().getFullYear();
+    var years = [];
+    var startYear = 2010;
+
+    while (startYear <= currentYear) {
+      years.push(startYear++);
+    }
+
+    var yearItems = years.map(function(item) {
+      return (
+        <option key={item} value={item}>{item}</option>
+      );
+    });
+
+    return (
+      <select className="form-control" id="projectYear" value={this.props.value} onChange={this.onSelectChange}>
+        <option value="" disabled="disabled"> -- Select year --</option>
+        {yearItems}
+      </select>
     )
   }
 });
@@ -157,34 +216,6 @@ var ProjectFormPage = React.createClass({
 ProjectFormPage.contextTypes = {
   router: React.PropTypes.object.isRequired
 }
-
-var YearsSelect = React.createClass({
-  onSelectChange: function(e) {
-    this.props.onSelectChange(e.target.value);
-  },
-  render: function() {
-    var currentYear = new Date().getFullYear();
-    var years = [];
-    var startYear = 2010;
-
-    while (startYear <= currentYear) {
-      years.push(startYear++);
-    }
-
-    var yearItems = years.map(function(item) {
-      return (
-        <option key={item} value={item}>{item}</option>
-      );
-    });
-
-    return (
-      <select className="form-control" id="projectYear" value={this.props.value} onChange={this.onSelectChange}>
-        <option value="" disabled="disabled"> -- Select year --</option>
-        {yearItems}
-      </select>
-    )
-  }
-});
 
 var ProjectForm = React.createClass({
   getInitialState: function() {
@@ -589,6 +620,131 @@ var ProjectItem = React.createClass({
     )
   }
 });
+// public/js/pages/resume.js
+
+var ResumePage = React.createClass({
+  render: function() {
+    return (
+      <div>
+        <Qualifications />
+      </div>
+    );
+  }
+});
+
+var Qualifications = React.createClass({
+  getInitialState: function() {
+    return {data: {
+      school : '',
+      course : '',
+      year: '',
+      description: '',
+    }};
+  },
+  handleSubmit: function() {
+    console.log('submitting');
+  },
+  showAddForm: function() {
+    var wrapper = document.body.appendChild(document.createElement('div'));
+    var props = {
+      onSubmit: this.handleSubmit,
+      data: this.state.data
+    }
+    var component = ReactDOM.render(React.createElement(QualificationForm, props), wrapper);
+
+    return component;
+  },
+  render: function() {
+    return (
+      <div>
+        <div className="section-header">
+          <h2>Qualifications</h2>
+          <a onClick={this.showAddForm}>Add</a>
+        </div>
+      </div>
+    );
+  }
+});
+
+var QualificationForm = React.createClass({
+  getInitialState: function() {
+    return this.props.data;
+  },
+  handleSchoolChange: function(e) {
+    this.setState({school: e.target.value});
+  },
+  handleCourseChange: function(e) {
+    this.setState({course: e.target.value});
+  },
+  handleYearChange: function(e) {
+    this.setState({year: e.target.value});
+  },
+  handleDescriptionChange: function(e) {
+    this.setState({description: e.target.value});
+  },
+  handleSubmit: function(e) {
+    e.preventDefault();
+    var school = this.state.school.trim();
+    var course = this.state.course.trim();
+    var year = this.state.year;
+    var description = this.state.description.trim();
+
+    $('#form-message').hide();
+    $('.form-control').removeClass('required');
+
+    if (!school || !course || !year || !description) {
+      $('#form-message').show();
+    }
+
+    if (!school) {
+      $('#qualSchool').addClass('required');
+      this.setState({formMessage: 'Please provide school.'});
+    } else if (!course) {
+      $('#qualCourse').addClass('required');
+      this.setState({formMessage: 'Please provide course.'});
+    } else if (!year) {
+      $('#qualYear').addClass('required');
+      this.setState({formMessage: 'Please provide year.'});
+    } else if (!description) {
+      $('#qualDescription').addClass('required');
+      this.setState({formMessage: 'Please provide description.'});
+    } else {
+      this.props.onSubmit({
+        title: title,
+        year: year,
+        picture: pictureName,
+        description: description,
+        technologies: technologies
+      });
+    }
+  },
+  render: function() {
+    return React.createElement(PopupForm, null,
+      <div id="qualification-form" className="">
+          <p id="form-message">{this.state.formMessage}</p>
+          <form encType="multipart/form-data" onSubmit={this.handleSubmit}>
+            <fieldset className="form-group">
+              <label htmlFor="qualSchool">School</label>
+              <input type="text" className="form-control" id="qualSchool" value={this.state.school} onChange={this.handleSchoolChange} />
+            </fieldset>
+            <fieldset className="form-group">
+              <label htmlFor="qualCourse">Course</label>
+              <input type="text" className="form-control" id="qualCourse" value={this.state.course} onChange={this.handleCourseChange} />
+            </fieldset>
+            <fieldset className="form-group">
+              <label htmlFor="qualYear">Year of completion</label>
+              <YearsSelect value={this.state.year} onSelectChange={this.handleYearChange} />
+            </fieldset>
+            <fieldset className="form-group">
+              <label htmlFor="qualDescription">Description</label>
+              <textarea className="form-control" id="qualDescription" rows="4" value={this.state.description} onChange={this.handleDescriptionChange} ></textarea>
+            </fieldset>
+            <PopupButtons />
+          </form>
+      </div>
+    );
+  }
+});
 // js/scripts.js
 
 var TodoBox = React.createClass({
@@ -770,6 +926,7 @@ ReactDOM.render(
     <Route path="/" component={App}>
       <IndexRoute component={Home}/>
       <Route path="todos" url="/api/todos" component={TodoBox} />
+      <Route path="resume" url="/api/resume/" component={ResumePage} />
       <Route path="projects" url="/api/projects/" component={ProjectsPage} />
       <Route path="project/new" url="/api/projects/" component={ProjectFormPage} />
       <Route path="project/:project_id" url="/api/projects/" component={ProjectViewPage} />

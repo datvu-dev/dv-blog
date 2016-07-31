@@ -38408,7 +38408,7 @@ var Modal = React.createClass({
   displayName: 'Modal',
   render: function() {
     return (
-      React.createElement("div", null, 
+      React.createElement("div", {id: "modal"}, 
         React.createElement("div", {className: "modal-backdrop in"}), 
         React.createElement("div", {className: "modal in", tabIndex: "-1", role: "dialog", "aria-hidden": "false", ref: "modal", style: {display: 'block'}}, 
           React.createElement("div", {className: "modal-dialog"}, 
@@ -38417,6 +38417,65 @@ var Modal = React.createClass({
             )
           )
         )
+      )
+    )
+  }
+});
+// public/js/components/popup-form.js
+
+var PopupForm = React.createClass({displayName: "PopupForm",
+  render: function() {
+    return React.createElement(Modal, null,
+      React.createElement("div", null, 
+        React.createElement("div", {className: "modal-header"}, 
+          React.createElement("h4", {className: "modal-title"}, "Add New Thing")
+        ), 
+        React.createElement("div", {className: "modal-body"}, this.props.children)
+      )
+    )
+  }
+});
+
+var PopupButtons = React.createClass({displayName: "PopupButtons",
+  cancel: function() {
+    var component = ReactDOM.findDOMNode(document.getElementById('modal').parentNode);
+
+    ReactDOM.unmountComponentAtNode(component);
+  },
+  render: function() {
+    return (
+      React.createElement("div", {className: "text-right"}, 
+        React.createElement("button", {type: "button", className: "btn btn-default", onClick: this.cancel}, "Cancel"), 
+        React.createElement("button", {type: "submit", className: "btn btn-primary"}, "Save")
+      )
+    )
+  }
+});
+// public/js/components/year-dropdown.js
+
+var YearsSelect = React.createClass({displayName: "YearsSelect",
+  onSelectChange: function(e) {
+    this.props.onSelectChange(e.target.value);
+  },
+  render: function() {
+    var currentYear = new Date().getFullYear();
+    var years = [];
+    var startYear = 2010;
+
+    while (startYear <= currentYear) {
+      years.push(startYear++);
+    }
+
+    var yearItems = years.map(function(item) {
+      return (
+        React.createElement("option", {key: item, value: item}, item)
+      );
+    });
+
+    return (
+      React.createElement("select", {className: "form-control", id: "projectYear", value: this.props.value, onChange: this.onSelectChange}, 
+        React.createElement("option", {value: "", disabled: "disabled"}, " -- Select year --"), 
+        yearItems
       )
     )
   }
@@ -38492,34 +38551,6 @@ var ProjectFormPage = React.createClass({displayName: "ProjectFormPage",
 ProjectFormPage.contextTypes = {
   router: React.PropTypes.object.isRequired
 }
-
-var YearsSelect = React.createClass({displayName: "YearsSelect",
-  onSelectChange: function(e) {
-    this.props.onSelectChange(e.target.value);
-  },
-  render: function() {
-    var currentYear = new Date().getFullYear();
-    var years = [];
-    var startYear = 2010;
-
-    while (startYear <= currentYear) {
-      years.push(startYear++);
-    }
-
-    var yearItems = years.map(function(item) {
-      return (
-        React.createElement("option", {key: item, value: item}, item)
-      );
-    });
-
-    return (
-      React.createElement("select", {className: "form-control", id: "projectYear", value: this.props.value, onChange: this.onSelectChange}, 
-        React.createElement("option", {value: "", disabled: "disabled"}, " -- Select year --"), 
-        yearItems
-      )
-    )
-  }
-});
 
 var ProjectForm = React.createClass({displayName: "ProjectForm",
   getInitialState: function() {
@@ -38924,6 +38955,131 @@ var ProjectItem = React.createClass({displayName: "ProjectItem",
     )
   }
 });
+// public/js/pages/resume.js
+
+var ResumePage = React.createClass({displayName: "ResumePage",
+  render: function() {
+    return (
+      React.createElement("div", null, 
+        React.createElement(Qualifications, null)
+      )
+    );
+  }
+});
+
+var Qualifications = React.createClass({displayName: "Qualifications",
+  getInitialState: function() {
+    return {data: {
+      school : '',
+      course : '',
+      year: '',
+      description: '',
+    }};
+  },
+  handleSubmit: function() {
+    console.log('submitting');
+  },
+  showAddForm: function() {
+    var wrapper = document.body.appendChild(document.createElement('div'));
+    var props = {
+      onSubmit: this.handleSubmit,
+      data: this.state.data
+    }
+    var component = ReactDOM.render(React.createElement(QualificationForm, props), wrapper);
+
+    return component;
+  },
+  render: function() {
+    return (
+      React.createElement("div", null, 
+        React.createElement("div", {className: "section-header"}, 
+          React.createElement("h2", null, "Qualifications"), 
+          React.createElement("a", {onClick: this.showAddForm}, "Add")
+        )
+      )
+    );
+  }
+});
+
+var QualificationForm = React.createClass({displayName: "QualificationForm",
+  getInitialState: function() {
+    return this.props.data;
+  },
+  handleSchoolChange: function(e) {
+    this.setState({school: e.target.value});
+  },
+  handleCourseChange: function(e) {
+    this.setState({course: e.target.value});
+  },
+  handleYearChange: function(e) {
+    this.setState({year: e.target.value});
+  },
+  handleDescriptionChange: function(e) {
+    this.setState({description: e.target.value});
+  },
+  handleSubmit: function(e) {
+    e.preventDefault();
+    var school = this.state.school.trim();
+    var course = this.state.course.trim();
+    var year = this.state.year;
+    var description = this.state.description.trim();
+
+    $('#form-message').hide();
+    $('.form-control').removeClass('required');
+
+    if (!school || !course || !year || !description) {
+      $('#form-message').show();
+    }
+
+    if (!school) {
+      $('#qualSchool').addClass('required');
+      this.setState({formMessage: 'Please provide school.'});
+    } else if (!course) {
+      $('#qualCourse').addClass('required');
+      this.setState({formMessage: 'Please provide course.'});
+    } else if (!year) {
+      $('#qualYear').addClass('required');
+      this.setState({formMessage: 'Please provide year.'});
+    } else if (!description) {
+      $('#qualDescription').addClass('required');
+      this.setState({formMessage: 'Please provide description.'});
+    } else {
+      this.props.onSubmit({
+        title: title,
+        year: year,
+        picture: pictureName,
+        description: description,
+        technologies: technologies
+      });
+    }
+  },
+  render: function() {
+    return React.createElement(PopupForm, null,
+      React.createElement("div", {id: "qualification-form", className: ""}, 
+          React.createElement("p", {id: "form-message"}, this.state.formMessage), 
+          React.createElement("form", {encType: "multipart/form-data", onSubmit: this.handleSubmit}, 
+            React.createElement("fieldset", {className: "form-group"}, 
+              React.createElement("label", {htmlFor: "qualSchool"}, "School"), 
+              React.createElement("input", {type: "text", className: "form-control", id: "qualSchool", value: this.state.school, onChange: this.handleSchoolChange})
+            ), 
+            React.createElement("fieldset", {className: "form-group"}, 
+              React.createElement("label", {htmlFor: "qualCourse"}, "Course"), 
+              React.createElement("input", {type: "text", className: "form-control", id: "qualCourse", value: this.state.course, onChange: this.handleCourseChange})
+            ), 
+            React.createElement("fieldset", {className: "form-group"}, 
+              React.createElement("label", {htmlFor: "qualYear"}, "Year of completion"), 
+              React.createElement(YearsSelect, {value: this.state.year, onSelectChange: this.handleYearChange})
+            ), 
+            React.createElement("fieldset", {className: "form-group"}, 
+              React.createElement("label", {htmlFor: "qualDescription"}, "Description"), 
+              React.createElement("textarea", {className: "form-control", id: "qualDescription", rows: "4", value: this.state.description, onChange: this.handleDescriptionChange})
+            ), 
+            React.createElement(PopupButtons, null)
+          )
+      )
+    );
+  }
+});
 // js/scripts.js
 
 var TodoBox = React.createClass({displayName: "TodoBox",
@@ -39105,6 +39261,7 @@ ReactDOM.render(
     React.createElement(Route, {path: "/", component: App}, 
       React.createElement(IndexRoute, {component: Home}), 
       React.createElement(Route, {path: "todos", url: "/api/todos", component: TodoBox}), 
+      React.createElement(Route, {path: "resume", url: "/api/resume/", component: ResumePage}), 
       React.createElement(Route, {path: "projects", url: "/api/projects/", component: ProjectsPage}), 
       React.createElement(Route, {path: "project/new", url: "/api/projects/", component: ProjectFormPage}), 
       React.createElement(Route, {path: "project/:project_id", url: "/api/projects/", component: ProjectViewPage}), 
