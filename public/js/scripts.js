@@ -12,24 +12,6 @@ var hashHistory = require('react-router').hashHistory;
 var ReactTags = require('react-tag-input').WithContext;
 // public/js/components/confirm-dialog.js
 
-var Modal = React.createClass({
-  displayName: 'Modal',
-  render: function() {
-    return (
-      <div>
-        <div className="modal-backdrop in"></div>
-        <div className="modal in" tabIndex="-1" role="dialog" aria-hidden="false" ref="modal" style={{display: 'block'}}>
-          <div className="modal-dialog">
-            <div className="modal-content">
-              {this.props.children}
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-});
-
 var Promise = $.Deferred;
 
 var Confirm = React.createClass({
@@ -85,6 +67,25 @@ var confirmAction = function(message, options) {
 
   return component.promise.always(cleanup).promise();
 }
+// public/js/components/modal.js
+
+var Modal = React.createClass({
+  displayName: 'Modal',
+  render: function() {
+    return (
+      <div>
+        <div className="modal-backdrop in"></div>
+        <div className="modal in" tabIndex="-1" role="dialog" aria-hidden="false" ref="modal" style={{display: 'block'}}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              {this.props.children}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+});
 // public/js/pages/home.js
 
 var Home = React.createClass({

@@ -38347,24 +38347,6 @@ var hashHistory = require('react-router').hashHistory;
 var ReactTags = require('react-tag-input').WithContext;
 // public/js/components/confirm-dialog.js
 
-var Modal = React.createClass({
-  displayName: 'Modal',
-  render: function() {
-    return (
-      React.createElement("div", null, 
-        React.createElement("div", {className: "modal-backdrop in"}), 
-        React.createElement("div", {className: "modal in", tabIndex: "-1", role: "dialog", "aria-hidden": "false", ref: "modal", style: {display: 'block'}}, 
-          React.createElement("div", {className: "modal-dialog"}, 
-            React.createElement("div", {className: "modal-content"}, 
-              this.props.children
-            )
-          )
-        )
-      )
-    )
-  }
-});
-
 var Promise = $.Deferred;
 
 var Confirm = React.createClass({
@@ -38420,6 +38402,25 @@ var confirmAction = function(message, options) {
 
   return component.promise.always(cleanup).promise();
 }
+// public/js/components/modal.js
+
+var Modal = React.createClass({
+  displayName: 'Modal',
+  render: function() {
+    return (
+      React.createElement("div", null, 
+        React.createElement("div", {className: "modal-backdrop in"}), 
+        React.createElement("div", {className: "modal in", tabIndex: "-1", role: "dialog", "aria-hidden": "false", ref: "modal", style: {display: 'block'}}, 
+          React.createElement("div", {className: "modal-dialog"}, 
+            React.createElement("div", {className: "modal-content"}, 
+              this.props.children
+            )
+          )
+        )
+      )
+    )
+  }
+});
 // public/js/pages/home.js
 
 var Home = React.createClass({displayName: "Home",
