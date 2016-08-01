@@ -38491,6 +38491,172 @@ var YearsSelect = React.createClass({displayName: "YearsSelect",
     )
   }
 });
+var QualificationForm = React.createClass({displayName: "QualificationForm",
+  getInitialState: function() {
+    return {
+      school : '',
+      course: '',
+      year : '',
+      description: ''
+    };
+  },
+  handleSchoolChange: function(e) {
+    this.setState({school: e.target.value});
+  },
+  handleCourseChange: function(e) {
+    this.setState({course: e.target.value});
+  },
+  handleYearChange: function(value) {
+    this.setState({year: value});
+  },
+  handleDescriptionChange: function(e) {
+    this.setState({description: e.target.value});
+  },
+  handleSubmit: function(e) {
+    e.preventDefault();
+    var school = this.state.school.trim();
+    var course = this.state.course.trim();
+    var year = this.state.year;
+    var description = this.state.description.trim();
+
+    $('#form-message').hide();
+    $('.form-control').removeClass('required');
+
+    if (!school || !course || !year || !description) {
+      $('#form-message').show();
+    }
+
+    if (!school) {
+      $('#qualSchool').addClass('required');
+      this.setState({formMessage: 'Please provide school.'});
+    } else if (!course) {
+      $('#qualCourse').addClass('required');
+      this.setState({formMessage: 'Please provide course.'});
+    } else if (!year) {
+      $('#qualYear').addClass('required');
+      this.setState({formMessage: 'Please provide year.'});
+    } else if (!description) {
+      $('#qualDescription').addClass('required');
+      this.setState({formMessage: 'Please provide description.'});
+    } else {
+      this.props.onSubmit({
+        school: school,
+        course: course,
+        year: year,
+        description: description,
+      });
+    }
+  },
+  render: function() {
+    return React.createElement(PopupForm, null,
+      React.createElement("div", {id: "qualification-form", className: ""}, 
+          React.createElement("p", {id: "form-message"}, this.state.formMessage), 
+          React.createElement("form", {encType: "multipart/form-data", onSubmit: this.handleSubmit}, 
+            React.createElement("fieldset", {className: "form-group"}, 
+              React.createElement("label", {htmlFor: "qualSchool"}, "School"), 
+              React.createElement("input", {type: "text", className: "form-control", id: "qualSchool", value: this.state.school, onChange: this.handleSchoolChange})
+            ), 
+            React.createElement("fieldset", {className: "form-group"}, 
+              React.createElement("label", {htmlFor: "qualCourse"}, "Course"), 
+              React.createElement("input", {type: "text", className: "form-control", id: "qualCourse", value: this.state.course, onChange: this.handleCourseChange})
+            ), 
+            React.createElement("fieldset", {className: "form-group"}, 
+              React.createElement("label", {htmlFor: "qualYear"}, "Year of completion"), 
+              React.createElement(YearsSelect, {value: this.state.year, onSelectChange: this.handleYearChange})
+            ), 
+            React.createElement("fieldset", {className: "form-group"}, 
+              React.createElement("label", {htmlFor: "qualDescription"}, "Description"), 
+              React.createElement("textarea", {className: "form-control", id: "qualDescription", rows: "4", value: this.state.description, onChange: this.handleDescriptionChange})
+            ), 
+            React.createElement(PopupButtons, null)
+          )
+      )
+    );
+  }
+});
+var Qualifications = React.createClass({displayName: "Qualifications",
+  loadQualificationList: function() {
+    $.ajax({
+      url: '/api/resume/qualification',
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.route.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+  handleSubmit: function(item) {
+    $.ajax({
+      url: '/api/resume/qualification',
+      dataType: 'json',
+      type: 'POST',
+      data: item,
+      success: function(items) {
+        this.setState({data: items});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(status, err.toString());
+      }.bind(this)
+    });
+  },
+  showAddForm: function() {
+    var wrapper = document.body.appendChild(document.createElement('div'));
+    var props = {
+      onSubmit: this.handleSubmit,
+      data: this.state.data
+    }
+    var component = ReactDOM.render(React.createElement(QualificationForm, props), wrapper);
+
+    return component;
+  },
+  getInitialState: function() {
+    return {data: []};
+  },
+  componentDidMount: function() {
+    this.loadQualificationList();
+  },
+  render: function() {
+    return (
+      React.createElement("div", null, 
+        React.createElement("div", {className: "section-header"}, 
+          React.createElement("h2", null, "Qualifications"), 
+          React.createElement("a", {onClick: this.showAddForm}, "Add")
+        ), 
+        React.createElement(QualificationList, {data: this.state.data})
+      )
+    );
+  }
+});
+
+var QualificationList = React.createClass({displayName: "QualificationList",
+  render: function() {
+    var qualificationItems = this.props.data.map(function(item) {
+      return (
+        React.createElement(QualificationItem, {school: item.school, course: item.course, id: item._id, key: item._id})
+      );
+    });
+
+    return (
+      React.createElement("div", null, 
+        qualificationItems
+      )
+    );
+  }
+});
+
+var QualificationItem = React.createClass({displayName: "QualificationItem",
+  render: function() {
+    return (
+      React.createElement("p", null, 
+        React.createElement("span", null, this.props.school), 
+        React.createElement("span", null, this.props.course)
+      )
+    );
+  }
+});
 // public/js/pages/home.js
 
 var Home = React.createClass({displayName: "Home",
@@ -38973,174 +39139,6 @@ var ResumePage = React.createClass({displayName: "ResumePage",
     return (
       React.createElement("div", null, 
         React.createElement(Qualifications, null)
-      )
-    );
-  }
-});
-
-var Qualifications = React.createClass({displayName: "Qualifications",
-  loadQualificationList: function() {
-    $.ajax({
-      url: '/api/resume/qualification',
-      dataType: 'json',
-      cache: false,
-      success: function(data) {
-        this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(this.props.route.url, status, err.toString());
-      }.bind(this)
-    });
-  },
-  handleSubmit: function(item) {
-    $.ajax({
-      url: '/api/resume/qualification',
-      dataType: 'json',
-      type: 'POST',
-      data: item,
-      success: function(items) {
-        this.setState({data: items});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(status, err.toString());
-      }.bind(this)
-    });
-  },
-  showAddForm: function() {
-    var wrapper = document.body.appendChild(document.createElement('div'));
-    var props = {
-      onSubmit: this.handleSubmit,
-      data: this.state.data
-    }
-    var component = ReactDOM.render(React.createElement(QualificationForm, props), wrapper);
-
-    return component;
-  },
-  getInitialState: function() {
-    return {data: []};
-  },
-  componentDidMount: function() {
-    this.loadQualificationList();
-  },
-  render: function() {
-    return (
-      React.createElement("div", null, 
-        React.createElement("div", {className: "section-header"}, 
-          React.createElement("h2", null, "Qualifications"), 
-          React.createElement("a", {onClick: this.showAddForm}, "Add")
-        ), 
-        React.createElement(QualificationList, {data: this.state.data})
-      )
-    );
-  }
-});
-
-var QualificationList = React.createClass({displayName: "QualificationList",
-  render: function() {
-    var qualificationItems = this.props.data.map(function(item) {
-      return (
-        React.createElement(QualificationItem, {school: item.school, course: item.course, id: item._id, key: item._id})
-      );
-    });
-
-    return (
-      React.createElement("div", null, 
-        qualificationItems
-      )
-    );
-  }
-});
-
-var QualificationItem = React.createClass({displayName: "QualificationItem",
-  render: function() {
-    return (
-      React.createElement("p", null, 
-        React.createElement("span", null, this.props.school), 
-        React.createElement("span", null, this.props.course)
-      )
-    );
-  }
-});
-
-var QualificationForm = React.createClass({displayName: "QualificationForm",
-  getInitialState: function() {
-    return {
-      school : '',
-      course: '',
-      year : '',
-      description: ''
-    };
-  },
-  handleSchoolChange: function(e) {
-    this.setState({school: e.target.value});
-  },
-  handleCourseChange: function(e) {
-    this.setState({course: e.target.value});
-  },
-  handleYearChange: function(value) {
-    this.setState({year: value});
-  },
-  handleDescriptionChange: function(e) {
-    this.setState({description: e.target.value});
-  },
-  handleSubmit: function(e) {
-    e.preventDefault();
-    var school = this.state.school.trim();
-    var course = this.state.course.trim();
-    var year = this.state.year;
-    var description = this.state.description.trim();
-
-    $('#form-message').hide();
-    $('.form-control').removeClass('required');
-
-    if (!school || !course || !year || !description) {
-      $('#form-message').show();
-    }
-
-    if (!school) {
-      $('#qualSchool').addClass('required');
-      this.setState({formMessage: 'Please provide school.'});
-    } else if (!course) {
-      $('#qualCourse').addClass('required');
-      this.setState({formMessage: 'Please provide course.'});
-    } else if (!year) {
-      $('#qualYear').addClass('required');
-      this.setState({formMessage: 'Please provide year.'});
-    } else if (!description) {
-      $('#qualDescription').addClass('required');
-      this.setState({formMessage: 'Please provide description.'});
-    } else {
-      this.props.onSubmit({
-        school: school,
-        course: course,
-        year: year,
-        description: description,
-      });
-    }
-  },
-  render: function() {
-    return React.createElement(PopupForm, null,
-      React.createElement("div", {id: "qualification-form", className: ""}, 
-          React.createElement("p", {id: "form-message"}, this.state.formMessage), 
-          React.createElement("form", {encType: "multipart/form-data", onSubmit: this.handleSubmit}, 
-            React.createElement("fieldset", {className: "form-group"}, 
-              React.createElement("label", {htmlFor: "qualSchool"}, "School"), 
-              React.createElement("input", {type: "text", className: "form-control", id: "qualSchool", value: this.state.school, onChange: this.handleSchoolChange})
-            ), 
-            React.createElement("fieldset", {className: "form-group"}, 
-              React.createElement("label", {htmlFor: "qualCourse"}, "Course"), 
-              React.createElement("input", {type: "text", className: "form-control", id: "qualCourse", value: this.state.course, onChange: this.handleCourseChange})
-            ), 
-            React.createElement("fieldset", {className: "form-group"}, 
-              React.createElement("label", {htmlFor: "qualYear"}, "Year of completion"), 
-              React.createElement(YearsSelect, {value: this.state.year, onSelectChange: this.handleYearChange})
-            ), 
-            React.createElement("fieldset", {className: "form-group"}, 
-              React.createElement("label", {htmlFor: "qualDescription"}, "Description"), 
-              React.createElement("textarea", {className: "form-control", id: "qualDescription", rows: "4", value: this.state.description, onChange: this.handleDescriptionChange})
-            ), 
-            React.createElement(PopupButtons, null)
-          )
       )
     );
   }

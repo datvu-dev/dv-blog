@@ -29,7 +29,7 @@ module.exports = function(grunt) {
           separator: ''
         },
         src: [
-          'public/js/require.js','public/js/components/*.js', 'public/js/pages/*.js', 'public/js/app-wrapper.js'
+          'public/js/require.js','public/js/components/*.js', 'public/js/partials/*.js', 'public/js/pages/*.js', 'public/js/app-wrapper.js'
         ],
         dest: 'public/js/scripts.js'
       },
@@ -58,7 +58,7 @@ module.exports = function(grunt) {
     },
     watch: {
       js: {
-        files: ['public/js/require.js', 'public/js/components/*.js', 'public/js/pages/*.js', 'public/js/app-wrapper.js'],
+        files: ['public/js/require.js', 'public/js/components/*.js', 'public/js/partials/*.js', 'public/js/pages/*.js', 'public/js/app-wrapper.js'],
         tasks: ['concat:scripts', 'browserify'],
         options: {
           livereload: true,
