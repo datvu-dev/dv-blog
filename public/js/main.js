@@ -38979,13 +38979,18 @@ var ResumePage = React.createClass({displayName: "ResumePage",
 });
 
 var Qualifications = React.createClass({displayName: "Qualifications",
-  getInitialState: function() {
-    return {data: {
-      school : '',
-      course : '',
-      year: '',
-      description: '',
-    }};
+  loadQualificationList: function() {
+    $.ajax({
+      url: '/api/resume/qualification',
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.route.url, status, err.toString());
+      }.bind(this)
+    });
   },
   handleSubmit: function(item) {
     $.ajax({
@@ -38993,8 +38998,8 @@ var Qualifications = React.createClass({displayName: "Qualifications",
       dataType: 'json',
       type: 'POST',
       data: item,
-      success: function(data) {
-        console.log(data);
+      success: function(items) {
+        this.setState({data: items});
       }.bind(this),
       error: function(xhr, status, err) {
         console.error(status, err.toString());
@@ -39011,13 +39016,47 @@ var Qualifications = React.createClass({displayName: "Qualifications",
 
     return component;
   },
+  getInitialState: function() {
+    return {data: []};
+  },
+  componentDidMount: function() {
+    this.loadQualificationList();
+  },
   render: function() {
     return (
       React.createElement("div", null, 
         React.createElement("div", {className: "section-header"}, 
           React.createElement("h2", null, "Qualifications"), 
           React.createElement("a", {onClick: this.showAddForm}, "Add")
-        )
+        ), 
+        React.createElement(QualificationList, {data: this.state.data})
+      )
+    );
+  }
+});
+
+var QualificationList = React.createClass({displayName: "QualificationList",
+  render: function() {
+    var qualificationItems = this.props.data.map(function(item) {
+      return (
+        React.createElement(QualificationItem, {school: item.school, course: item.course, id: item._id, key: item._id})
+      );
+    });
+
+    return (
+      React.createElement("div", null, 
+        qualificationItems
+      )
+    );
+  }
+});
+
+var QualificationItem = React.createClass({displayName: "QualificationItem",
+  render: function() {
+    return (
+      React.createElement("p", null, 
+        React.createElement("span", null, this.props.school), 
+        React.createElement("span", null, this.props.course)
       )
     );
   }
@@ -39025,7 +39064,12 @@ var Qualifications = React.createClass({displayName: "Qualifications",
 
 var QualificationForm = React.createClass({displayName: "QualificationForm",
   getInitialState: function() {
-    return this.props.data;
+    return {
+      school : '',
+      course: '',
+      year : '',
+      description: ''
+    };
   },
   handleSchoolChange: function(e) {
     this.setState({school: e.target.value});

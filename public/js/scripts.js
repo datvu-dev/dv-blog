@@ -644,13 +644,18 @@ var ResumePage = React.createClass({
 });
 
 var Qualifications = React.createClass({
-  getInitialState: function() {
-    return {data: {
-      school : '',
-      course : '',
-      year: '',
-      description: '',
-    }};
+  loadQualificationList: function() {
+    $.ajax({
+      url: '/api/resume/qualification',
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.route.url, status, err.toString());
+      }.bind(this)
+    });
   },
   handleSubmit: function(item) {
     $.ajax({
@@ -658,8 +663,8 @@ var Qualifications = React.createClass({
       dataType: 'json',
       type: 'POST',
       data: item,
-      success: function(data) {
-        console.log(data);
+      success: function(items) {
+        this.setState({data: items});
       }.bind(this),
       error: function(xhr, status, err) {
         console.error(status, err.toString());
@@ -676,6 +681,12 @@ var Qualifications = React.createClass({
 
     return component;
   },
+  getInitialState: function() {
+    return {data: []};
+  },
+  componentDidMount: function() {
+    this.loadQualificationList();
+  },
   render: function() {
     return (
       <div>
@@ -683,14 +694,47 @@ var Qualifications = React.createClass({
           <h2>Qualifications</h2>
           <a onClick={this.showAddForm}>Add</a>
         </div>
+        <QualificationList data={this.state.data} />
       </div>
+    );
+  }
+});
+
+var QualificationList = React.createClass({
+  render: function() {
+    var qualificationItems = this.props.data.map(function(item) {
+      return (
+        <QualificationItem school={item.school} course={item.course} id={item._id} key={item._id} />
+      );
+    });
+
+    return (
+      <div>
+        {qualificationItems}
+      </div>
+    );
+  }
+});
+
+var QualificationItem = React.createClass({
+  render: function() {
+    return (
+      <p>
+        <span>{this.props.school}</span>
+        <span>{this.props.course}</span>
+      </p>
     );
   }
 });
 
 var QualificationForm = React.createClass({
   getInitialState: function() {
-    return this.props.data;
+    return {
+      school : '',
+      course: '',
+      year : '',
+      description: ''
+    };
   },
   handleSchoolChange: function(e) {
     this.setState({school: e.target.value});

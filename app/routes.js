@@ -182,6 +182,16 @@ module.exports = function(app) {
   });
 
   // QUALIFICATION
+  // get all Qualifications
+  app.get('/api/resume/qualification', function(req, res) {
+      Qualification.find(function(err, qualifications) {
+          if (err)
+              res.send(err)
+
+          res.json(qualifications);
+      });
+  });
+
   // add new qualification
   app.post('/api/resume/qualification', function(req, res) {
       Qualification.create({
@@ -193,7 +203,12 @@ module.exports = function(app) {
           if (err)
               res.send(err);
 
-          res.send(item);          
+          Qualification.find(function(err, items) {
+              if (err)
+                  res.send(err)
+
+              res.json(items);
+          });
       });
   });
 
