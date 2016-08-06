@@ -39081,11 +39081,11 @@ ProjectsPage.contextTypes = {
 
 var ProjectsList = React.createClass({displayName: "ProjectsList",
   render: function() {
-    var projectEditFunc = this.props.onProjectEdit;
-    var projectDeleteFunc = this.props.onProjectDelete;
+    var _this =  this;
+
     var projectItems = this.props.data.map(function(item) {
       return (
-        React.createElement(ProjectItem, {title: item.title, img: item.picture, id: item._id, key: item._id, onProjectEdit: projectEditFunc, onProjectDelete: projectDeleteFunc})
+        React.createElement(ProjectItem, {title: item.title, img: item.picture, id: item._id, key: item._id, onProjectEdit: _this.props.onProjectEdit, onProjectDelete: _this.props.onProjectDelete})
       );
     });
 
