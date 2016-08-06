@@ -1,7 +1,20 @@
 // public/js/app-wrapper.js
 
 var App = React.createClass({
+  componentWillReceiveProps(nextProps) {
+    // if we changed routes...
+    if (nextProps.location.key !== this.props.location.key &&
+      nextProps.location.state &&
+      nextProps.location.state.modal) {
+      // save the old children (just like animation)
+      this.previousChildren = this.props.children
+    }
+  },
   render: function() {
+    var {location} = this.props;
+    var isModal = (location.state && location.state.modal &&
+      this.previousChildren);
+
     return (
       <div>
         <header>
@@ -12,7 +25,14 @@ var App = React.createClass({
             <Link to="/todos">To-do List</Link>
           </nav>
         </header>
-        <div id="content">{this.props.children}</div>
+        <div id="content">
+          {isModal ? this.previousChildren : this.props.children}
+          {isModal && (
+            <Modal isOpen={true} returnTo={location.state.returnTo}>
+              {this.props.children}
+            </Modal>
+          )}
+        </div>
         <footer>
         </footer>
       </div>
@@ -21,11 +41,12 @@ var App = React.createClass({
 });
 
 ReactDOM.render(
-  <Router history={hashHistory}>
+  <Router history={browserHistory}>
     <Route path="/" component={App}>
       <IndexRoute component={Home}/>
       <Route path="todos" url="/api/todos" component={TodoBox} />
       <Route path="resume" url="/api/resume/" component={ResumePage} />
+      <Route path="resume/qualification/add" url="/api/resume/" component={QualificationForm} />
       <Route path="projects" url="/api/projects/" component={ProjectsPage} />
       <Route path="project/new" url="/api/projects/" component={ProjectFormPage} />
       <Route path="project/:project_id" url="/api/projects/" component={ProjectViewPage} />

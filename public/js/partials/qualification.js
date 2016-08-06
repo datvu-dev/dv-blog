@@ -11,31 +11,7 @@ var Qualifications = React.createClass({
         console.error(this.props.route.url, status, err.toString());
       }.bind(this)
     });
-  },
-  handleSubmit: function(item) {
-    $.ajax({
-      url: '/api/resume/qualification',
-      dataType: 'json',
-      type: 'POST',
-      data: item,
-      success: function(items) {
-        this.setState({data: items});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(status, err.toString());
-      }.bind(this)
-    });
-  },
-  showAddForm: function() {
-    var wrapper = document.body.appendChild(document.createElement('div'));
-    var props = {
-      onSubmit: this.handleSubmit,
-      data: this.state.data
-    }
-    var component = ReactDOM.render(React.createElement(QualificationForm, props), wrapper);
-
-    return component;
-  },
+  },  
   getInitialState: function() {
     return {data: []};
   },
@@ -47,7 +23,10 @@ var Qualifications = React.createClass({
       <div>
         <div className="section-header">
           <h2>Qualifications</h2>
-          <a onClick={this.showAddForm}>Add</a>
+          <Link to={{
+            pathname: '/resume/qualification/add',
+            state: {modal: true, returnTo: '/resume'}
+          }}>Add</Link>
         </div>
         <QualificationList data={this.state.data} />
       </div>

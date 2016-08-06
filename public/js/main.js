@@ -38343,7 +38343,7 @@ var Route = require('react-router').Route;
 var Link = require('react-router').Link;
 var IndexRoute = require('react-router').IndexRoute;
 var IndexLink = require('react-router').IndexLink;
-var hashHistory = require('react-router').hashHistory;
+var browserHistory = require('react-router').browserHistory;
 var ReactTags = require('react-tag-input').WithContext;
 // public/js/components/confirm-dialog.js
 
@@ -38438,20 +38438,7 @@ var PopupForm = React.createClass({displayName: "PopupForm",
 
 var PopupButtons = React.createClass({displayName: "PopupButtons",
   cancel: function() {
-    var wrapper = document.getElementById('modal');
-
-    if (wrapper) {
-      var component = ReactDOM.findDOMNode(wrapper.parentNode);
-
-      ReactDOM.unmountComponentAtNode(component);
-    }
-  },
-  submit: function() {
-    var _this = this;
-
-    $(document).ajaxComplete(function() {
-      _this.cancel();
-    });
+    window.history.back();;
   },
   render: function() {
     return (
@@ -38512,7 +38499,7 @@ var QualificationForm = React.createClass({displayName: "QualificationForm",
   handleDescriptionChange: function(e) {
     this.setState({description: e.target.value});
   },
-  handleSubmit: function(e) {
+  handleValidation: function(e) {
     e.preventDefault();
     var school = this.state.school.trim();
     var course = this.state.course.trim();
@@ -38539,7 +38526,7 @@ var QualificationForm = React.createClass({displayName: "QualificationForm",
       $('#qualDescription').addClass('required');
       this.setState({formMessage: 'Please provide description.'});
     } else {
-      this.props.onSubmit({
+      this.handleSubmit({
         school: school,
         course: course,
         year: year,
@@ -38547,11 +38534,25 @@ var QualificationForm = React.createClass({displayName: "QualificationForm",
       });
     }
   },
+  handleSubmit: function(item) {
+    $.ajax({
+      url: '/api/resume/qualification',
+      dataType: 'json',
+      type: 'POST',
+      data: item,
+      success: function(items) {
+        this.context.router.push('/resume');
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(status, err.toString());
+      }.bind(this)
+    });
+  },
   render: function() {
-    return React.createElement(PopupForm, null,
+    return (
       React.createElement("div", {id: "qualification-form", className: ""}, 
           React.createElement("p", {id: "form-message"}, this.state.formMessage), 
-          React.createElement("form", {encType: "multipart/form-data", onSubmit: this.handleSubmit}, 
+          React.createElement("form", {encType: "multipart/form-data", onSubmit: this.handleValidation}, 
             React.createElement("fieldset", {className: "form-group"}, 
               React.createElement("label", {htmlFor: "qualSchool"}, "School"), 
               React.createElement("input", {type: "text", className: "form-control", id: "qualSchool", value: this.state.school, onChange: this.handleSchoolChange})
@@ -38574,6 +38575,10 @@ var QualificationForm = React.createClass({displayName: "QualificationForm",
     );
   }
 });
+
+QualificationForm.contextTypes = {
+  router: React.PropTypes.object.isRequired
+}
 var Qualifications = React.createClass({displayName: "Qualifications",
   loadQualificationList: function() {
     $.ajax({
@@ -38587,31 +38592,7 @@ var Qualifications = React.createClass({displayName: "Qualifications",
         console.error(this.props.route.url, status, err.toString());
       }.bind(this)
     });
-  },
-  handleSubmit: function(item) {
-    $.ajax({
-      url: '/api/resume/qualification',
-      dataType: 'json',
-      type: 'POST',
-      data: item,
-      success: function(items) {
-        this.setState({data: items});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(status, err.toString());
-      }.bind(this)
-    });
-  },
-  showAddForm: function() {
-    var wrapper = document.body.appendChild(document.createElement('div'));
-    var props = {
-      onSubmit: this.handleSubmit,
-      data: this.state.data
-    }
-    var component = ReactDOM.render(React.createElement(QualificationForm, props), wrapper);
-
-    return component;
-  },
+  },  
   getInitialState: function() {
     return {data: []};
   },
@@ -38623,7 +38604,10 @@ var Qualifications = React.createClass({displayName: "Qualifications",
       React.createElement("div", null, 
         React.createElement("div", {className: "section-header"}, 
           React.createElement("h2", null, "Qualifications"), 
-          React.createElement("a", {onClick: this.showAddForm}, "Add")
+          React.createElement(Link, {to: {
+            pathname: '/resume/qualification/add',
+            state: {modal: true, returnTo: '/resume'}
+          }}, "Add")
         ), 
         React.createElement(QualificationList, {data: this.state.data})
       )
@@ -39300,7 +39284,20 @@ var TodoForm = React.createClass({displayName: "TodoForm",
 // public/js/app-wrapper.js
 
 var App = React.createClass({displayName: "App",
+  componentWillReceiveProps(nextProps) {
+    // if we changed routes...
+    if (nextProps.location.key !== this.props.location.key &&
+      nextProps.location.state &&
+      nextProps.location.state.modal) {
+      // save the old children (just like animation)
+      this.previousChildren = this.props.children
+    }
+  },
   render: function() {
+    var {location} = this.props;
+    var isModal = (location.state && location.state.modal &&
+      this.previousChildren);
+
     return (
       React.createElement("div", null, 
         React.createElement("header", null, 
@@ -39311,7 +39308,14 @@ var App = React.createClass({displayName: "App",
             React.createElement(Link, {to: "/todos"}, "To-do List")
           )
         ), 
-        React.createElement("div", {id: "content"}, this.props.children), 
+        React.createElement("div", {id: "content"}, 
+          isModal ? this.previousChildren : this.props.children, 
+          isModal && (
+            React.createElement(Modal, {isOpen: true, returnTo: location.state.returnTo}, 
+              this.props.children
+            )
+          )
+        ), 
         React.createElement("footer", null
         )
       )
@@ -39320,11 +39324,12 @@ var App = React.createClass({displayName: "App",
 });
 
 ReactDOM.render(
-  React.createElement(Router, {history: hashHistory}, 
+  React.createElement(Router, {history: browserHistory}, 
     React.createElement(Route, {path: "/", component: App}, 
       React.createElement(IndexRoute, {component: Home}), 
       React.createElement(Route, {path: "todos", url: "/api/todos", component: TodoBox}), 
       React.createElement(Route, {path: "resume", url: "/api/resume/", component: ResumePage}), 
+      React.createElement(Route, {path: "resume/qualification/add", url: "/api/resume/", component: QualificationForm}), 
       React.createElement(Route, {path: "projects", url: "/api/projects/", component: ProjectsPage}), 
       React.createElement(Route, {path: "project/new", url: "/api/projects/", component: ProjectFormPage}), 
       React.createElement(Route, {path: "project/:project_id", url: "/api/projects/", component: ProjectViewPage}), 

@@ -19,7 +19,7 @@ var QualificationForm = React.createClass({
   handleDescriptionChange: function(e) {
     this.setState({description: e.target.value});
   },
-  handleSubmit: function(e) {
+  handleValidation: function(e) {
     e.preventDefault();
     var school = this.state.school.trim();
     var course = this.state.course.trim();
@@ -46,7 +46,7 @@ var QualificationForm = React.createClass({
       $('#qualDescription').addClass('required');
       this.setState({formMessage: 'Please provide description.'});
     } else {
-      this.props.onSubmit({
+      this.handleSubmit({
         school: school,
         course: course,
         year: year,
@@ -54,11 +54,25 @@ var QualificationForm = React.createClass({
       });
     }
   },
+  handleSubmit: function(item) {
+    $.ajax({
+      url: '/api/resume/qualification',
+      dataType: 'json',
+      type: 'POST',
+      data: item,
+      success: function(items) {
+        this.context.router.push('/resume');
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(status, err.toString());
+      }.bind(this)
+    });
+  },
   render: function() {
-    return React.createElement(PopupForm, null,
+    return (
       <div id="qualification-form" className="">
           <p id="form-message">{this.state.formMessage}</p>
-          <form encType="multipart/form-data" onSubmit={this.handleSubmit}>
+          <form encType="multipart/form-data" onSubmit={this.handleValidation}>
             <fieldset className="form-group">
               <label htmlFor="qualSchool">School</label>
               <input type="text" className="form-control" id="qualSchool" value={this.state.school} onChange={this.handleSchoolChange} />
@@ -81,3 +95,7 @@ var QualificationForm = React.createClass({
     );
   }
 });
+
+QualificationForm.contextTypes = {
+  router: React.PropTypes.object.isRequired
+}

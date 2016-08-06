@@ -8,7 +8,7 @@ var Route = require('react-router').Route;
 var Link = require('react-router').Link;
 var IndexRoute = require('react-router').IndexRoute;
 var IndexLink = require('react-router').IndexLink;
-var hashHistory = require('react-router').hashHistory;
+var browserHistory = require('react-router').browserHistory;
 var ReactTags = require('react-tag-input').WithContext;
 // public/js/components/confirm-dialog.js
 
@@ -103,20 +103,7 @@ var PopupForm = React.createClass({
 
 var PopupButtons = React.createClass({
   cancel: function() {
-    var wrapper = document.getElementById('modal');
-
-    if (wrapper) {
-      var component = ReactDOM.findDOMNode(wrapper.parentNode);
-
-      ReactDOM.unmountComponentAtNode(component);
-    }
-  },
-  submit: function() {
-    var _this = this;
-
-    $(document).ajaxComplete(function() {
-      _this.cancel();
-    });
+    window.history.back();;
   },
   render: function() {
     return (
@@ -177,7 +164,7 @@ var QualificationForm = React.createClass({
   handleDescriptionChange: function(e) {
     this.setState({description: e.target.value});
   },
-  handleSubmit: function(e) {
+  handleValidation: function(e) {
     e.preventDefault();
     var school = this.state.school.trim();
     var course = this.state.course.trim();
@@ -204,7 +191,7 @@ var QualificationForm = React.createClass({
       $('#qualDescription').addClass('required');
       this.setState({formMessage: 'Please provide description.'});
     } else {
-      this.props.onSubmit({
+      this.handleSubmit({
         school: school,
         course: course,
         year: year,
@@ -212,11 +199,25 @@ var QualificationForm = React.createClass({
       });
     }
   },
+  handleSubmit: function(item) {
+    $.ajax({
+      url: '/api/resume/qualification',
+      dataType: 'json',
+      type: 'POST',
+      data: item,
+      success: function(items) {
+        this.context.router.push('/resume');
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(status, err.toString());
+      }.bind(this)
+    });
+  },
   render: function() {
-    return React.createElement(PopupForm, null,
+    return (
       <div id="qualification-form" className="">
           <p id="form-message">{this.state.formMessage}</p>
-          <form encType="multipart/form-data" onSubmit={this.handleSubmit}>
+          <form encType="multipart/form-data" onSubmit={this.handleValidation}>
             <fieldset className="form-group">
               <label htmlFor="qualSchool">School</label>
               <input type="text" className="form-control" id="qualSchool" value={this.state.school} onChange={this.handleSchoolChange} />
@@ -239,6 +240,10 @@ var QualificationForm = React.createClass({
     );
   }
 });
+
+QualificationForm.contextTypes = {
+  router: React.PropTypes.object.isRequired
+}
 var Qualifications = React.createClass({
   loadQualificationList: function() {
     $.ajax({
@@ -252,31 +257,7 @@ var Qualifications = React.createClass({
         console.error(this.props.route.url, status, err.toString());
       }.bind(this)
     });
-  },
-  handleSubmit: function(item) {
-    $.ajax({
-      url: '/api/resume/qualification',
-      dataType: 'json',
-      type: 'POST',
-      data: item,
-      success: function(items) {
-        this.setState({data: items});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(status, err.toString());
-      }.bind(this)
-    });
-  },
-  showAddForm: function() {
-    var wrapper = document.body.appendChild(document.createElement('div'));
-    var props = {
-      onSubmit: this.handleSubmit,
-      data: this.state.data
-    }
-    var component = ReactDOM.render(React.createElement(QualificationForm, props), wrapper);
-
-    return component;
-  },
+  },  
   getInitialState: function() {
     return {data: []};
   },
@@ -288,7 +269,10 @@ var Qualifications = React.createClass({
       <div>
         <div className="section-header">
           <h2>Qualifications</h2>
-          <a onClick={this.showAddForm}>Add</a>
+          <Link to={{
+            pathname: '/resume/qualification/add',
+            state: {modal: true, returnTo: '/resume'}
+          }}>Add</Link>
         </div>
         <QualificationList data={this.state.data} />
       </div>
@@ -965,7 +949,20 @@ var TodoForm = React.createClass({
 // public/js/app-wrapper.js
 
 var App = React.createClass({
+  componentWillReceiveProps(nextProps) {
+    // if we changed routes...
+    if (nextProps.location.key !== this.props.location.key &&
+      nextProps.location.state &&
+      nextProps.location.state.modal) {
+      // save the old children (just like animation)
+      this.previousChildren = this.props.children
+    }
+  },
   render: function() {
+    var {location} = this.props;
+    var isModal = (location.state && location.state.modal &&
+      this.previousChildren);
+
     return (
       <div>
         <header>
@@ -976,7 +973,14 @@ var App = React.createClass({
             <Link to="/todos">To-do List</Link>
           </nav>
         </header>
-        <div id="content">{this.props.children}</div>
+        <div id="content">
+          {isModal ? this.previousChildren : this.props.children}
+          {isModal && (
+            <Modal isOpen={true} returnTo={location.state.returnTo}>
+              {this.props.children}
+            </Modal>
+          )}
+        </div>
         <footer>
         </footer>
       </div>
@@ -985,11 +989,12 @@ var App = React.createClass({
 });
 
 ReactDOM.render(
-  <Router history={hashHistory}>
+  <Router history={browserHistory}>
     <Route path="/" component={App}>
       <IndexRoute component={Home}/>
       <Route path="todos" url="/api/todos" component={TodoBox} />
       <Route path="resume" url="/api/resume/" component={ResumePage} />
+      <Route path="resume/qualification/add" url="/api/resume/" component={QualificationForm} />
       <Route path="projects" url="/api/projects/" component={ProjectsPage} />
       <Route path="project/new" url="/api/projects/" component={ProjectFormPage} />
       <Route path="project/:project_id" url="/api/projects/" component={ProjectViewPage} />

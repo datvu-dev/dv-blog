@@ -15,20 +15,7 @@ var PopupForm = React.createClass({
 
 var PopupButtons = React.createClass({
   cancel: function() {
-    var wrapper = document.getElementById('modal');
-
-    if (wrapper) {
-      var component = ReactDOM.findDOMNode(wrapper.parentNode);
-
-      ReactDOM.unmountComponentAtNode(component);
-    }
-  },
-  submit: function() {
-    var _this = this;
-
-    $(document).ajaxComplete(function() {
-      _this.cancel();
-    });
+    window.history.back();;
   },
   render: function() {
     return (

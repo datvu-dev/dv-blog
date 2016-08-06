@@ -8,5 +8,5 @@ var Route = require('react-router').Route;
 var Link = require('react-router').Link;
 var IndexRoute = require('react-router').IndexRoute;
 var IndexLink = require('react-router').IndexLink;
-var hashHistory = require('react-router').hashHistory;
+var browserHistory = require('react-router').browserHistory;
 var ReactTags = require('react-tag-input').WithContext;
