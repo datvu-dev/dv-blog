@@ -46,7 +46,8 @@ ReactDOM.render(
       <IndexRoute component={Home}/>
       <Route path="todos" url="/api/todos" component={TodoBox} />
       <Route path="resume" url="/api/resume/" component={ResumePage} />
-      <Route path="resume/qualification/add" url="/api/resume/" component={QualificationForm} />
+      <Route path="resume/qualification/add" url="/api/resume/qualification" component={QualificationForm} />
+      <Route path="resume/qualification/edit/:id" url="/api/resume/qualification" component={QualificationForm} />
       <Route path="projects" url="/api/projects/" component={ProjectsPage} />
       <Route path="project/new" url="/api/projects/" component={ProjectFormPage} />
       <Route path="project/:project_id" url="/api/projects/" component={ProjectViewPage} />

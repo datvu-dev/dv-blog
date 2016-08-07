@@ -38487,6 +38487,23 @@ var QualificationForm = React.createClass({displayName: "QualificationForm",
       description: ''
     };
   },
+  componentDidMount: function() {
+    var id = this.props.params.id ? this.props.params.id : null;
+
+    if (id) {
+      $.ajax({
+        url: '/api/resume/qualification/' + id,
+        dataType: 'json',
+        cache: false,
+        success: function(data) {
+          this.setState(data[0]);
+        }.bind(this),
+        error: function(xhr, status, err) {
+          console.error(this.props.route.url, status, err.toString());
+        }.bind(this)
+      });
+    }
+  },
   handleSchoolChange: function(e) {
     this.setState({school: e.target.value});
   },
@@ -38535,8 +38552,10 @@ var QualificationForm = React.createClass({displayName: "QualificationForm",
     }
   },
   handleSubmit: function(item) {
+    var id = this.props.params.id ? this.props.params.id : '';
+
     $.ajax({
-      url: '/api/resume/qualification',
+      url: '/api/resume/qualification/' + id,
       dataType: 'json',
       type: 'POST',
       data: item,
@@ -38639,7 +38658,11 @@ var QualificationItem = React.createClass({displayName: "QualificationItem",
     return (
       React.createElement("p", null, 
         React.createElement("span", null, this.props.school), 
-        React.createElement("span", null, this.props.course)
+        React.createElement("span", null, this.props.course), 
+        React.createElement(Link, {to: {
+          pathname: '/resume/qualification/edit/' + this.props.id,
+          state: {modal: true, returnTo: '/resume'}
+        }}, "Edit")
       )
     );
   }
@@ -39332,7 +39355,8 @@ ReactDOM.render(
       React.createElement(IndexRoute, {component: Home}), 
       React.createElement(Route, {path: "todos", url: "/api/todos", component: TodoBox}), 
       React.createElement(Route, {path: "resume", url: "/api/resume/", component: ResumePage}), 
-      React.createElement(Route, {path: "resume/qualification/add", url: "/api/resume/", component: QualificationForm}), 
+      React.createElement(Route, {path: "resume/qualification/add", url: "/api/resume/qualification", component: QualificationForm}), 
+      React.createElement(Route, {path: "resume/qualification/edit/:id", url: "/api/resume/qualification", component: QualificationForm}), 
       React.createElement(Route, {path: "projects", url: "/api/projects/", component: ProjectsPage}), 
       React.createElement(Route, {path: "project/new", url: "/api/projects/", component: ProjectFormPage}), 
       React.createElement(Route, {path: "project/:project_id", url: "/api/projects/", component: ProjectViewPage}), 

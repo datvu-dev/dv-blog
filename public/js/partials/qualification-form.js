@@ -7,6 +7,23 @@ var QualificationForm = React.createClass({
       description: ''
     };
   },
+  componentDidMount: function() {
+    var id = this.props.params.id ? this.props.params.id : null;
+
+    if (id) {
+      $.ajax({
+        url: '/api/resume/qualification/' + id,
+        dataType: 'json',
+        cache: false,
+        success: function(data) {
+          this.setState(data[0]);
+        }.bind(this),
+        error: function(xhr, status, err) {
+          console.error(this.props.route.url, status, err.toString());
+        }.bind(this)
+      });
+    }
+  },
   handleSchoolChange: function(e) {
     this.setState({school: e.target.value});
   },
@@ -55,8 +72,10 @@ var QualificationForm = React.createClass({
     }
   },
   handleSubmit: function(item) {
+    var id = this.props.params.id ? this.props.params.id : '';
+
     $.ajax({
-      url: '/api/resume/qualification',
+      url: '/api/resume/qualification/' + id,
       dataType: 'json',
       type: 'POST',
       data: item,

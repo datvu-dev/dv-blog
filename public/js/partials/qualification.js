@@ -59,6 +59,10 @@ var QualificationItem = React.createClass({
       <p>
         <span>{this.props.school}</span>
         <span>{this.props.course}</span>
+        <Link to={{
+          pathname: '/resume/qualification/edit/' + this.props.id,
+          state: {modal: true, returnTo: '/resume'}
+        }}>Edit</Link>
       </p>
     );
   }

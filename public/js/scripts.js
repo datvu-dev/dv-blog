@@ -152,6 +152,23 @@ var QualificationForm = React.createClass({
       description: ''
     };
   },
+  componentDidMount: function() {
+    var id = this.props.params.id ? this.props.params.id : null;
+
+    if (id) {
+      $.ajax({
+        url: '/api/resume/qualification/' + id,
+        dataType: 'json',
+        cache: false,
+        success: function(data) {
+          this.setState(data[0]);
+        }.bind(this),
+        error: function(xhr, status, err) {
+          console.error(this.props.route.url, status, err.toString());
+        }.bind(this)
+      });
+    }
+  },
   handleSchoolChange: function(e) {
     this.setState({school: e.target.value});
   },
@@ -200,8 +217,10 @@ var QualificationForm = React.createClass({
     }
   },
   handleSubmit: function(item) {
+    var id = this.props.params.id ? this.props.params.id : '';
+
     $.ajax({
-      url: '/api/resume/qualification',
+      url: '/api/resume/qualification/' + id,
       dataType: 'json',
       type: 'POST',
       data: item,
@@ -305,6 +324,10 @@ var QualificationItem = React.createClass({
       <p>
         <span>{this.props.school}</span>
         <span>{this.props.course}</span>
+        <Link to={{
+          pathname: '/resume/qualification/edit/' + this.props.id,
+          state: {modal: true, returnTo: '/resume'}
+        }}>Edit</Link>
       </p>
     );
   }
@@ -997,7 +1020,8 @@ ReactDOM.render(
       <IndexRoute component={Home}/>
       <Route path="todos" url="/api/todos" component={TodoBox} />
       <Route path="resume" url="/api/resume/" component={ResumePage} />
-      <Route path="resume/qualification/add" url="/api/resume/" component={QualificationForm} />
+      <Route path="resume/qualification/add" url="/api/resume/qualification" component={QualificationForm} />
+      <Route path="resume/qualification/edit/:id" url="/api/resume/qualification" component={QualificationForm} />
       <Route path="projects" url="/api/projects/" component={ProjectsPage} />
       <Route path="project/new" url="/api/projects/" component={ProjectFormPage} />
       <Route path="project/:project_id" url="/api/projects/" component={ProjectViewPage} />

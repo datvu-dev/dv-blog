@@ -37,7 +37,7 @@ module.exports = function(app) {
       });
   });
 
-  // get one single project
+  // get project by id
   app.get('/api/projects/:project_id', function(req, res) {
       var projectID = req.params.project_id;
       Project.find({ _id: projectID}, function(err, project) {
@@ -182,7 +182,7 @@ module.exports = function(app) {
   });
 
   // QUALIFICATION
-  // get all Qualifications
+  // get all qualifications
   app.get('/api/resume/qualification', function(req, res) {
       Qualification.find(function(err, qualifications) {
           if (err)
@@ -190,6 +190,19 @@ module.exports = function(app) {
 
           res.json(qualifications);
       });
+  });
+
+  // get qualification by id
+  app.get('/api/resume/qualification/:id', function(req, res) {
+      var id = req.params.id;
+
+      Qualification.find({ _id: id}, function(err, item) {
+          if (err)
+              res.send(err);
+
+          res.json(item);
+      });
+
   });
 
   // add new qualification
@@ -203,13 +216,25 @@ module.exports = function(app) {
           if (err)
               res.send(err);
 
-          Qualification.find(function(err, items) {
-              if (err)
-                  res.send(err)
-
-              res.json(items);
-          });
+          res.json(item);
       });
+  });
+
+  // update an existing qualification
+  app.post('/api/resume/qualification/:id', function(req, res) {
+    var id = req.params.id;
+
+    Qualification.update({ _id: id}, { $set: {
+      school : req.body.school,
+      course : req.body.course,
+      year: req.body.year,
+      description: req.body.description,
+    }}, function(err, item) {
+        if (err)
+            res.send(err);
+
+        res.json(item);
+    });
   });
 
   // application -------------------------------------------------------------
