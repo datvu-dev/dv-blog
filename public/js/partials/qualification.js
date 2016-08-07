@@ -12,6 +12,20 @@ var Qualifications = React.createClass({
       }.bind(this)
     });
   },
+  handleQualificationDelete: function(id) {
+    $.ajax({
+      url: '/api/resume/qualification/' + id,
+      dataType: 'json',
+      type: 'DELETE',
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        // this.setState({data: comments});
+        console.error(this.props.route.url, status, err.toString());
+      }.bind(this)
+    });
+  },
   getInitialState: function() {
     return {data: []};
   },
@@ -31,7 +45,8 @@ var Qualifications = React.createClass({
             state: {modal: true, returnTo: '/resume'}
           }}>Add</Link>
         </div>
-        <QualificationList data={this.state.data} />
+        <QualificationList data={this.state.data}
+        onQualificationDelete={this.handleQualificationDelete} />
       </div>
     );
   }
@@ -39,9 +54,12 @@ var Qualifications = React.createClass({
 
 var QualificationList = React.createClass({
   render: function() {
+    var _this = this;
+
     var qualificationItems = this.props.data.map(function(item) {
       return (
-        <QualificationItem school={item.school} course={item.course} id={item._id} key={item._id} />
+        <QualificationItem school={item.school} course={item.course}
+        id={item._id} key={item._id} onItemDelete={_this.props.onQualificationDelete} />
       );
     });
 
@@ -54,6 +72,17 @@ var QualificationList = React.createClass({
 });
 
 var QualificationItem = React.createClass({
+  deleteItem: function() {
+    var _this = this;
+
+    confirmAction('Are you sure?', {
+      description: 'Would you like to delete this qualification?',
+      confirmLabel: 'Delete',
+      abortLabel: 'Cancel'
+    }).then(function() {
+      _this.props.onItemDelete(_this.props.id);
+    });
+  },
   render: function() {
     return (
       <p>
@@ -63,6 +92,7 @@ var QualificationItem = React.createClass({
           pathname: '/resume/qualification/edit/' + this.props.id,
           state: {modal: true, returnTo: '/resume'}
         }}>Edit</Link>
+        <a onClick={this.deleteItem}>Delete</a>
       </p>
     );
   }

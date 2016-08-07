@@ -38612,6 +38612,20 @@ var Qualifications = React.createClass({displayName: "Qualifications",
       }.bind(this)
     });
   },
+  handleQualificationDelete: function(id) {
+    $.ajax({
+      url: '/api/resume/qualification/' + id,
+      dataType: 'json',
+      type: 'DELETE',
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        // this.setState({data: comments});
+        console.error(this.props.route.url, status, err.toString());
+      }.bind(this)
+    });
+  },
   getInitialState: function() {
     return {data: []};
   },
@@ -38631,7 +38645,8 @@ var Qualifications = React.createClass({displayName: "Qualifications",
             state: {modal: true, returnTo: '/resume'}
           }}, "Add")
         ), 
-        React.createElement(QualificationList, {data: this.state.data})
+        React.createElement(QualificationList, {data: this.state.data, 
+        onQualificationDelete: this.handleQualificationDelete})
       )
     );
   }
@@ -38639,9 +38654,12 @@ var Qualifications = React.createClass({displayName: "Qualifications",
 
 var QualificationList = React.createClass({displayName: "QualificationList",
   render: function() {
+    var _this = this;
+
     var qualificationItems = this.props.data.map(function(item) {
       return (
-        React.createElement(QualificationItem, {school: item.school, course: item.course, id: item._id, key: item._id})
+        React.createElement(QualificationItem, {school: item.school, course: item.course, 
+        id: item._id, key: item._id, onItemDelete: _this.props.onQualificationDelete})
       );
     });
 
@@ -38654,6 +38672,17 @@ var QualificationList = React.createClass({displayName: "QualificationList",
 });
 
 var QualificationItem = React.createClass({displayName: "QualificationItem",
+  deleteItem: function() {
+    var _this = this;
+
+    confirmAction('Are you sure?', {
+      description: 'Would you like to delete this qualification?',
+      confirmLabel: 'Delete',
+      abortLabel: 'Cancel'
+    }).then(function() {
+      _this.props.onItemDelete(_this.props.id);
+    });
+  },
   render: function() {
     return (
       React.createElement("p", null, 
@@ -38662,7 +38691,8 @@ var QualificationItem = React.createClass({displayName: "QualificationItem",
         React.createElement(Link, {to: {
           pathname: '/resume/qualification/edit/' + this.props.id,
           state: {modal: true, returnTo: '/resume'}
-        }}, "Edit")
+        }}, "Edit"), 
+        React.createElement("a", {onClick: this.deleteItem}, "Delete")
       )
     );
   }

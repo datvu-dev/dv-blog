@@ -237,6 +237,26 @@ module.exports = function(app) {
     });
   });
 
+  // delete a qualification
+  app.delete('/api/resume/qualification/:id', function(req, res) {
+      var id = req.params.id;
+
+      Qualification.remove({
+          _id : id
+      }, function(err, item) {
+          if (err)
+              res.send(err);
+
+          // get and return all the qualifications
+          Qualification.find(function(err, items) {
+              if (err)
+                  res.send(err)
+                  
+              res.json(items);
+          });
+      });
+  });
+
   // application -------------------------------------------------------------
   app.get('*', function(req, res) {
       res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
