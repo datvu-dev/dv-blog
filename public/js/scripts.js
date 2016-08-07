@@ -257,11 +257,14 @@ var Qualifications = React.createClass({
         console.error(this.props.route.url, status, err.toString());
       }.bind(this)
     });
-  },  
+  },
   getInitialState: function() {
     return {data: []};
   },
   componentDidMount: function() {
+    this.loadQualificationList();
+  },
+  componentWillReceiveProps: function() {
     this.loadQualificationList();
   },
   render: function() {
