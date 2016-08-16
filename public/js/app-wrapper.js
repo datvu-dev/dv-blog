@@ -1,5 +1,5 @@
 // public/js/app-wrapper.js
-
+"use strict";
 var App = React.createClass({
   componentWillReceiveProps(nextProps) {
     // if we changed routes...
@@ -9,6 +9,25 @@ var App = React.createClass({
       // save the old children (just like animation)
       this.previousChildren = this.props.children
     }
+  },
+  componentDidMount: function() {
+    $.ajax({
+      url: '/api/checkauthentication',
+      dataType: 'json',
+      cache: false,
+      success: function(authenticated) {
+        if (authenticated) {
+          localStorage.setItem('user', 'datvu');
+        }
+        else {
+          localStorage.removeItem('user');
+        }
+
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(status, err.toString());
+      }.bind(this)
+    });
   },
   render: function() {
     var {location} = this.props;
