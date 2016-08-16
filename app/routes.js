@@ -279,10 +279,6 @@ module.exports = function(app, passport) {
   });
 
   // application routes
-  app.get('/', function(req, res) {
-      res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
-  });
-
   app.get('/login', function(req, res) {
       res.sendfile('./public/login.html', {message: req.flash('loginMessage')});
   });
@@ -294,6 +290,10 @@ module.exports = function(app, passport) {
   app.get('/logout', function(req, res) {
       req.logout();
       res.redirect('/');
+  });
+
+  app.get('/*', function(req, res) {
+      res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
   });
 
   // route middleware to ensure a user is logged in
