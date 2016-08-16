@@ -23,7 +23,28 @@ function checkDirectorySync(directory) {
 }
 
 // APIs
-module.exports = function(app) {
+module.exports = function(app, passport) {
+  // SIGNUP
+  app.post('/signup', passport.authenticate('local-signup', {
+      successRedirect : '/', // redirect to home page
+      failureRedirect : '/signup', // redirect back to the signup page if there is an error
+      failureFlash : true // allow flash messages
+  }));
+
+  // LOGIN
+  // process login
+  app.post('/login', passport.authenticate('local-login', {
+      successRedirect : '/', // redirect to the secure profile section
+      failureRedirect : '/login', // redirect back to the signup page if there is an error
+      failureFlash : true // allow flash messages
+  }));
+
+  // check if user is logged in
+  app.get('/api/checkauthentication', function(req, res) {
+      var authenticated = req.isAuthenticated();
+
+      res.send(authenticated);
+  });
 
   // PROJECTS
   // get all projects
@@ -251,15 +272,40 @@ module.exports = function(app) {
           Qualification.find(function(err, items) {
               if (err)
                   res.send(err)
-                  
+
               res.json(items);
           });
       });
   });
 
-  // application -------------------------------------------------------------
-  app.get('*', function(req, res) {
+  // application routes
+  app.get('/', function(req, res) {
       res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
   });
 
+  app.get('/login', function(req, res) {
+      res.sendfile('./public/login.html', {message: req.flash('loginMessage')});
+  });
+
+  app.get('/signup', function(req, res) {
+      res.sendfile('./public/signup.html', {message: req.flash('signupMessage')});
+  });
+
+  app.get('/logout', function(req, res) {
+      req.logout();
+      res.redirect('/');
+  });
+
+  // route middleware to ensure a user is logged in
+  function isLoggedIn(req, res, next) {
+
+    // if user is authenticated in the session, carry on
+    if (req.isAuthenticated()) {
+      console.log('is authenticated');
+      return next();
+    }
+
+    // if not, redirect to homepage
+    res.redirect('/');
+  }
 };
