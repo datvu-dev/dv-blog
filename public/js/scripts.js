@@ -114,6 +114,30 @@ var PopupButtons = React.createClass({
     )
   }
 });
+var Links = React.createClass({
+  render: function() {
+    return (
+      <span>
+        <a className="utility-link" onClick={this.props.onEdit}><small>Edit</small></a>
+        <a className="utility-link" onClick={this.props.onDelete}><small>Remove</small></a>
+      </span>
+    )    
+  }
+});
+
+var UtilityLinks = React.createClass({
+  render: function() {
+    if (localStorage.getItem('user')) {
+      var linkItems = <Links onEdit={this.props.onEdit} onDelete={this.props.onDelete} />
+    }
+
+    return (
+     <p>
+        {linkItems}
+     </p>
+   );
+  }
+});
 // public/js/components/year-dropdown.js
 
 var YearsSelect = React.createClass({
@@ -719,10 +743,7 @@ var Project = React.createClass({
     return (
       <div>
         <h1>{title}</h1>
-        <p>
-          <a className="utility-link" onClick={this.editProject}><small>Edit</small></a>
-          <a className="utility-link" onClick={this.deleteProject}><small>Delete</small></a>
-        </p>
+        <UtilityLinks onEdit={this.editProject} onDelete={this.deleteProject} />
         <p><img src={picSrc} /></p>
         <p>{tagItems}</p>
         <p>{description}</p>
@@ -828,10 +849,7 @@ var ProjectItem = React.createClass({
         <div className="box-content">
           <h4 className="box-title"><Link to={'/project/' + this.props.id}>{this.props.title}</Link></h4>
           <p className="box-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-          <p>
-            <a className="utility-link" onClick={this.editProject}><small>Edit</small></a>
-            <a className="utility-link" onClick={this.deleteProject}><small>Delete</small></a>
-          </p>
+          <UtilityLinks onEdit={this.editProject} onDelete={this.deleteProject} />
         </div>
       </div>
     )
@@ -1003,7 +1021,7 @@ var TodoForm = React.createClass({
   }
 });
 // public/js/app-wrapper.js
-
+"use strict";
 var App = React.createClass({
   componentWillReceiveProps(nextProps) {
     // if we changed routes...
@@ -1013,6 +1031,25 @@ var App = React.createClass({
       // save the old children (just like animation)
       this.previousChildren = this.props.children
     }
+  },
+  componentDidMount: function() {
+    $.ajax({
+      url: '/api/checkauthentication',
+      dataType: 'json',
+      cache: false,
+      success: function(authenticated) {
+        if (authenticated) {
+          localStorage.setItem('user', 'datvu');
+        }
+        else {
+          localStorage.removeItem('user');
+        }
+
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(status, err.toString());
+      }.bind(this)
+    });
   },
   render: function() {
     var {location} = this.props;

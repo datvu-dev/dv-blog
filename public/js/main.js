@@ -38449,6 +38449,30 @@ var PopupButtons = React.createClass({displayName: "PopupButtons",
     )
   }
 });
+var Links = React.createClass({displayName: "Links",
+  render: function() {
+    return (
+      React.createElement("span", null, 
+        React.createElement("a", {className: "utility-link", onClick: this.props.onEdit}, React.createElement("small", null, "Edit")), 
+        React.createElement("a", {className: "utility-link", onClick: this.props.onDelete}, React.createElement("small", null, "Remove"))
+      )
+    )    
+  }
+});
+
+var UtilityLinks = React.createClass({displayName: "UtilityLinks",
+  render: function() {
+    if (localStorage.getItem('user')) {
+      var linkItems = React.createElement(Links, {onEdit: this.props.onEdit, onDelete: this.props.onDelete})
+    }
+
+    return (
+     React.createElement("p", null, 
+        linkItems
+     )
+   );
+  }
+});
 // public/js/components/year-dropdown.js
 
 var YearsSelect = React.createClass({displayName: "YearsSelect",
@@ -39054,10 +39078,7 @@ var Project = React.createClass({displayName: "Project",
     return (
       React.createElement("div", null, 
         React.createElement("h1", null, title), 
-        React.createElement("p", null, 
-          React.createElement("a", {className: "utility-link", onClick: this.editProject}, React.createElement("small", null, "Edit")), 
-          React.createElement("a", {className: "utility-link", onClick: this.deleteProject}, React.createElement("small", null, "Delete"))
-        ), 
+        React.createElement(UtilityLinks, {onEdit: this.editProject, onDelete: this.deleteProject}), 
         React.createElement("p", null, React.createElement("img", {src: picSrc})), 
         React.createElement("p", null, tagItems), 
         React.createElement("p", null, description)
@@ -39163,10 +39184,7 @@ var ProjectItem = React.createClass({displayName: "ProjectItem",
         React.createElement("div", {className: "box-content"}, 
           React.createElement("h4", {className: "box-title"}, React.createElement(Link, {to: '/project/' + this.props.id}, this.props.title)), 
           React.createElement("p", {className: "box-text"}, "This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer."), 
-          React.createElement("p", null, 
-            React.createElement("a", {className: "utility-link", onClick: this.editProject}, React.createElement("small", null, "Edit")), 
-            React.createElement("a", {className: "utility-link", onClick: this.deleteProject}, React.createElement("small", null, "Delete"))
-          )
+          React.createElement(UtilityLinks, {onEdit: this.editProject, onDelete: this.deleteProject})
         )
       )
     )
@@ -39338,7 +39356,7 @@ var TodoForm = React.createClass({displayName: "TodoForm",
   }
 });
 // public/js/app-wrapper.js
-
+"use strict";
 var App = React.createClass({displayName: "App",
   componentWillReceiveProps(nextProps) {
     // if we changed routes...
@@ -39348,6 +39366,25 @@ var App = React.createClass({displayName: "App",
       // save the old children (just like animation)
       this.previousChildren = this.props.children
     }
+  },
+  componentDidMount: function() {
+    $.ajax({
+      url: '/api/checkauthentication',
+      dataType: 'json',
+      cache: false,
+      success: function(authenticated) {
+        if (authenticated) {
+          localStorage.setItem('user', 'datvu');
+        }
+        else {
+          localStorage.removeItem('user');
+        }
+
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(status, err.toString());
+      }.bind(this)
+    });
   },
   render: function() {
     var {location} = this.props;
