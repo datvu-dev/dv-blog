@@ -87,10 +87,7 @@ var Project = React.createClass({
     return (
       <div>
         <h1>{title}</h1>
-        <p>
-          <a className="utility-link" onClick={this.editProject}><small>Edit</small></a>
-          <a className="utility-link" onClick={this.deleteProject}><small>Delete</small></a>
-        </p>
+        <UtilityLinks onEdit={this.editProject} onDelete={this.deleteProject} />
         <p><img src={picSrc} /></p>
         <p>{tagItems}</p>
         <p>{description}</p>

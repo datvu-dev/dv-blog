@@ -96,10 +96,7 @@ var ProjectItem = React.createClass({
         <div className="box-content">
           <h4 className="box-title"><Link to={'/project/' + this.props.id}>{this.props.title}</Link></h4>
           <p className="box-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-          <p>
-            <a className="utility-link" onClick={this.editProject}><small>Edit</small></a>
-            <a className="utility-link" onClick={this.deleteProject}><small>Delete</small></a>
-          </p>
+          <UtilityLinks onEdit={this.editProject} onDelete={this.deleteProject} />
         </div>
       </div>
     )
