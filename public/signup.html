@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- META -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- PAGE TITLE -->
+  <title>Signup</title>
+
+  <!-- STYLES -->
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+
+  <!-- LIBRARIES -->
+  <script src="/libraries/libraries.js"></script>
+</head>
+<body>
+  <!-- MAIN CONTAINER -->
+  <div id="main" class="container">
+    <div class="col-sm-6 col-sm-offset-3">
+      <h1><span class="fa fa-sign-in"></span>Signup</h1>
+
+      <!-- LOGIN FORM -->
+      <form action="/signup" method="post">
+        <div class="form-group">
+            <label>Email</label>
+            <input type="text" class="form-control" name="email">
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" class="form-control" name="password">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Signup</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
