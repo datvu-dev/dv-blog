@@ -15,9 +15,6 @@ var ProjectsPage = React.createClass({
       }.bind(this)
     });
   },
-  goToProjectEdit: function(id) {
-    this.context.router.push('/project/' + id + '/edit');
-  },
   handleProjectDelete: function(id) {
     $.ajax({
       url: this.props.route.url + id,
@@ -42,7 +39,7 @@ var ProjectsPage = React.createClass({
     return (
       <div>
         <Link to="/project/new" className="btn btn-primary">New Project</Link>
-        <ProjectsList data={this.state.data} onProjectEdit={this.goToProjectEdit} onProjectDelete={this.handleProjectDelete} />
+        <ProjectsList data={this.state.data} onProjectDelete={this.handleProjectDelete} />
       </div>
     );
   }
@@ -58,7 +55,7 @@ var ProjectsList = React.createClass({
 
     var projectItems = this.props.data.map(function(item) {
       return (
-        <ProjectItem title={item.title} img={item.picture} id={item._id} key={item._id} onProjectEdit={_this.props.onProjectEdit} onProjectDelete={_this.props.onProjectDelete} />
+        <ProjectItem title={item.title} img={item.picture} id={item._id} key={item._id} onProjectDelete={_this.props.onProjectDelete} />
       );
     });
 
@@ -73,9 +70,6 @@ var ProjectsList = React.createClass({
 });
 
 var ProjectItem = React.createClass({
-  editProject: function() {
-    this.props.onProjectEdit(this.props.id);
-  },
   deleteProject: function() {
     var propsObj = this.props;
 
@@ -96,7 +90,7 @@ var ProjectItem = React.createClass({
         <div className="box-content">
           <h4 className="box-title"><Link to={'/project/' + this.props.id}>{this.props.title}</Link></h4>
           <p className="box-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-          <UtilityLinks onEdit={this.editProject} onDelete={this.deleteProject} />
+          <UtilityLinks path={'/project/' + this.props.id + '/edit'} isModal={false} onDelete={this.deleteProject} />
         </div>
       </div>
     )

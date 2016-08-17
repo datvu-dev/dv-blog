@@ -17,9 +17,6 @@ var ProjectViewPage = React.createClass({
       }.bind(this)
     });
   },
-  goToProjectEdit: function(id) {
-    this.context.router.push('/project/' + id + '/edit');
-  },
   handleProjectDelete: function(id) {
     $.ajax({
       url: this.props.route.url + id,
@@ -43,7 +40,7 @@ var ProjectViewPage = React.createClass({
   render: function() {
     return (
       <div>
-        <Project data={this.state.data} onProjectEdit={this.goToProjectEdit} onProjectDelete={this.handleProjectDelete} />
+        <Project data={this.state.data} onProjectDelete={this.handleProjectDelete} />
       </div>
     );
   }
@@ -54,9 +51,6 @@ ProjectViewPage.contextTypes = {
 }
 
 var Project = React.createClass({
-  editProject: function() {
-    this.props.onProjectEdit(this.props.data[0]._id);
-  },
   deleteProject: function() {
     var propsObj = this.props;
 
@@ -87,7 +81,8 @@ var Project = React.createClass({
     return (
       <div>
         <h1>{title}</h1>
-        <UtilityLinks onEdit={this.editProject} onDelete={this.deleteProject} />
+        <UtilityLinks path={'/project/' + this.props.data[0]._id + '/edit'}
+          isModal={false} onDelete={this.deleteProject} />
         <p><img src={picSrc} /></p>
         <p>{tagItems}</p>
         <p>{description}</p>

@@ -85,15 +85,12 @@ var QualificationItem = React.createClass({
   },
   render: function() {
     return (
-      <p>
+      <div>
         <span>{this.props.school}</span>
         <span>{this.props.course}</span>
-        <Link to={{
-          pathname: '/resume/qualification/edit/' + this.props.id,
-          state: {modal: true, returnTo: '/resume'}
-        }}>Edit</Link>
-        <a onClick={this.deleteItem}>Delete</a>
-      </p>
+        <UtilityLinks path={'/resume/qualification/edit/' + this.props.id}
+          isModal={true} onDelete={this.deleteItem} />
+      </div>
     );
   }
 });
