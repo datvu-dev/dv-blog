@@ -118,17 +118,21 @@ var Links = React.createClass({
   render: function() {
     return (
       <span>
-        <a className="utility-link" onClick={this.props.onEdit}><small>Edit</small></a>
+        <Link className="utility-link" to={{
+          pathname: this.props.path,
+          state: {modal: this.props.isModal}
+        }}><small>Edit</small></Link>
         <a className="utility-link" onClick={this.props.onDelete}><small>Remove</small></a>
       </span>
-    )    
+    )
   }
 });
 
 var UtilityLinks = React.createClass({
   render: function() {
     if (localStorage.getItem('user')) {
-      var linkItems = <Links onEdit={this.props.onEdit} onDelete={this.props.onDelete} />
+      var linkItems = <Links path={this.props.path} onDelete={this.props.onDelete}
+        isModal={this.props.isModal} />
     }
 
     return (
@@ -374,15 +378,12 @@ var QualificationItem = React.createClass({
   },
   render: function() {
     return (
-      <p>
+      <div>
         <span>{this.props.school}</span>
         <span>{this.props.course}</span>
-        <Link to={{
-          pathname: '/resume/qualification/edit/' + this.props.id,
-          state: {modal: true, returnTo: '/resume'}
-        }}>Edit</Link>
-        <a onClick={this.deleteItem}>Delete</a>
-      </p>
+        <UtilityLinks path={'/resume/qualification/edit/' + this.props.id}
+          isModal={true} onDelete={this.deleteItem} />
+      </div>
     );
   }
 });
@@ -673,9 +674,6 @@ var ProjectViewPage = React.createClass({
       }.bind(this)
     });
   },
-  goToProjectEdit: function(id) {
-    this.context.router.push('/project/' + id + '/edit');
-  },
   handleProjectDelete: function(id) {
     $.ajax({
       url: this.props.route.url + id,
@@ -699,7 +697,7 @@ var ProjectViewPage = React.createClass({
   render: function() {
     return (
       <div>
-        <Project data={this.state.data} onProjectEdit={this.goToProjectEdit} onProjectDelete={this.handleProjectDelete} />
+        <Project data={this.state.data} onProjectDelete={this.handleProjectDelete} />
       </div>
     );
   }
@@ -710,9 +708,6 @@ ProjectViewPage.contextTypes = {
 }
 
 var Project = React.createClass({
-  editProject: function() {
-    this.props.onProjectEdit(this.props.data[0]._id);
-  },
   deleteProject: function() {
     var propsObj = this.props;
 
@@ -743,7 +738,8 @@ var Project = React.createClass({
     return (
       <div>
         <h1>{title}</h1>
-        <UtilityLinks onEdit={this.editProject} onDelete={this.deleteProject} />
+        <UtilityLinks path={'/project/' + this.props.data[0]._id + '/edit'}
+          isModal={false} onDelete={this.deleteProject} />
         <p><img src={picSrc} /></p>
         <p>{tagItems}</p>
         <p>{description}</p>
@@ -767,9 +763,6 @@ var ProjectsPage = React.createClass({
         console.error(this.props.route.url, status, err.toString());
       }.bind(this)
     });
-  },
-  goToProjectEdit: function(id) {
-    this.context.router.push('/project/' + id + '/edit');
   },
   handleProjectDelete: function(id) {
     $.ajax({
@@ -795,7 +788,7 @@ var ProjectsPage = React.createClass({
     return (
       <div>
         <Link to="/project/new" className="btn btn-primary">New Project</Link>
-        <ProjectsList data={this.state.data} onProjectEdit={this.goToProjectEdit} onProjectDelete={this.handleProjectDelete} />
+        <ProjectsList data={this.state.data} onProjectDelete={this.handleProjectDelete} />
       </div>
     );
   }
@@ -811,7 +804,7 @@ var ProjectsList = React.createClass({
 
     var projectItems = this.props.data.map(function(item) {
       return (
-        <ProjectItem title={item.title} img={item.picture} id={item._id} key={item._id} onProjectEdit={_this.props.onProjectEdit} onProjectDelete={_this.props.onProjectDelete} />
+        <ProjectItem title={item.title} img={item.picture} id={item._id} key={item._id} onProjectDelete={_this.props.onProjectDelete} />
       );
     });
 
@@ -826,9 +819,6 @@ var ProjectsList = React.createClass({
 });
 
 var ProjectItem = React.createClass({
-  editProject: function() {
-    this.props.onProjectEdit(this.props.id);
-  },
   deleteProject: function() {
     var propsObj = this.props;
 
@@ -849,7 +839,7 @@ var ProjectItem = React.createClass({
         <div className="box-content">
           <h4 className="box-title"><Link to={'/project/' + this.props.id}>{this.props.title}</Link></h4>
           <p className="box-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-          <UtilityLinks onEdit={this.editProject} onDelete={this.deleteProject} />
+          <UtilityLinks path={'/project/' + this.props.id + '/edit'} isModal={false} onDelete={this.deleteProject} />
         </div>
       </div>
     )
