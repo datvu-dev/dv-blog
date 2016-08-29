@@ -1,4 +1,4 @@
-// app/models/resume.js
+// app/models/qualification.js
 var mongoose = require('mongoose');
 
 module.exports = mongoose.model('Qualification', {
