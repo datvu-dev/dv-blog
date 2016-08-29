@@ -1,5 +1,5 @@
 var Qualifications = React.createClass({
-  loadQualificationList: function() {
+  loadQualifications: function() {
     $.ajax({
       url: '/api/resume/qualification',
       dataType: 'json',
@@ -12,7 +12,7 @@ var Qualifications = React.createClass({
       }.bind(this)
     });
   },
-  handleQualificationDelete: function(id) {
+  handleDelete: function(id) {
     $.ajax({
       url: '/api/resume/qualification/' + id,
       dataType: 'json',
@@ -30,23 +30,20 @@ var Qualifications = React.createClass({
     return {data: []};
   },
   componentDidMount: function() {
-    this.loadQualificationList();
+    this.loadQualifications();
   },
   componentWillReceiveProps: function() {
-    this.loadQualificationList();
+    this.loadQualifications();
   },
   render: function() {
     return (
       <div>
         <div className="section-header">
           <h2>Qualifications</h2>
-          <Link to={{
-            pathname: '/resume/qualification/add',
-            state: {modal: true, returnTo: '/resume'}
-          }}>Add</Link>
+          <AddLink path={'/resume/qualification/add'}
+            isModal={true} />
         </div>
-        <QualificationList data={this.state.data}
-        onQualificationDelete={this.handleQualificationDelete} />
+        <QualificationList data={this.state.data} onDelete={this.handleDelete} />
       </div>
     );
   }
@@ -59,7 +56,7 @@ var QualificationList = React.createClass({
     var qualificationItems = this.props.data.map(function(item) {
       return (
         <QualificationItem school={item.school} course={item.course}
-        id={item._id} key={item._id} onItemDelete={_this.props.onQualificationDelete} />
+        id={item._id} key={item._id} onDelete={_this.props.onDelete} />
       );
     });
 
@@ -80,7 +77,7 @@ var QualificationItem = React.createClass({
       confirmLabel: 'Delete',
       abortLabel: 'Cancel'
     }).then(function() {
-      _this.props.onItemDelete(_this.props.id);
+      _this.props.onDelete(_this.props.id);
     });
   },
   render: function() {
@@ -88,8 +85,11 @@ var QualificationItem = React.createClass({
       <div>
         <span>{this.props.school}</span>
         <span>{this.props.course}</span>
-        <UtilityLinks path={'/resume/qualification/edit/' + this.props.id}
-          isModal={true} onDelete={this.deleteItem} />
+        <p>
+          <EditLink path={'/resume/qualification/edit/' + this.props.id}
+            isModal={true} />
+          <DeleteLink onDelete={this.deleteItem} />
+        </p>
       </div>
     );
   }

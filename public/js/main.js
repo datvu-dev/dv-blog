@@ -38345,6 +38345,22 @@ var IndexRoute = require('react-router').IndexRoute;
 var IndexLink = require('react-router').IndexLink;
 var browserHistory = require('react-router').browserHistory;
 var ReactTags = require('react-tag-input').WithContext;
+var AddLink = React.createClass({displayName: "AddLink",
+  render: function() {
+    if (localStorage.getItem('user')) {
+      var linkItem = React.createElement(Link, {to: {
+          pathname: this.props.path,
+          state: {modal: this.props.isModal}
+        }}, "Add")
+    }
+
+    return (
+     React.createElement("span", null, 
+        linkItem
+     )
+   );
+  }
+});
 // public/js/components/confirm-dialog.js
 
 var Promise = $.Deferred;
@@ -38402,6 +38418,36 @@ var confirmAction = function(message, options) {
 
   return component.promise.always(cleanup).promise();
 }
+var DeleteLink = React.createClass({displayName: "DeleteLink",
+  render: function() {
+    if (localStorage.getItem('user')) {
+      var linkItem = React.createElement("a", {className: "utility-link", 
+        onClick: this.props.onDelete}, React.createElement("small", null, "Remove"))
+    }
+
+    return (
+     React.createElement("span", null, 
+        linkItem
+     )
+   );
+  }
+});
+var EditLink = React.createClass({displayName: "EditLink",
+  render: function() {
+    if (localStorage.getItem('user')) {
+      var linkItem = React.createElement(Link, {className: "utility-link", to: {
+        pathname: this.props.path,
+        state: {modal: this.props.isModal}
+      }}, React.createElement("small", null, "Edit"))
+    }
+
+    return (
+     React.createElement("span", null, 
+        linkItem
+     )
+   );
+  }
+});
 // public/js/components/modal.js
 
 var Modal = React.createClass({
@@ -38447,34 +38493,6 @@ var PopupButtons = React.createClass({displayName: "PopupButtons",
         React.createElement("button", {type: "submit", className: "btn btn-primary", onClick: this.submit}, "Save")
       )
     )
-  }
-});
-var Links = React.createClass({displayName: "Links",
-  render: function() {
-    return (
-      React.createElement("span", null, 
-        React.createElement(Link, {className: "utility-link", to: {
-          pathname: this.props.path,
-          state: {modal: this.props.isModal}
-        }}, React.createElement("small", null, "Edit")), 
-        React.createElement("a", {className: "utility-link", onClick: this.props.onDelete}, React.createElement("small", null, "Remove"))
-      )
-    )
-  }
-});
-
-var UtilityLinks = React.createClass({displayName: "UtilityLinks",
-  render: function() {
-    if (localStorage.getItem('user')) {
-      var linkItems = React.createElement(Links, {path: this.props.path, onDelete: this.props.onDelete, 
-        isModal: this.props.isModal})
-    }
-
-    return (
-     React.createElement("p", null, 
-        linkItems
-     )
-   );
   }
 });
 // public/js/components/year-dropdown.js
@@ -38627,7 +38645,7 @@ QualificationForm.contextTypes = {
   router: React.PropTypes.object.isRequired
 }
 var Qualifications = React.createClass({displayName: "Qualifications",
-  loadQualificationList: function() {
+  loadQualifications: function() {
     $.ajax({
       url: '/api/resume/qualification',
       dataType: 'json',
@@ -38640,7 +38658,7 @@ var Qualifications = React.createClass({displayName: "Qualifications",
       }.bind(this)
     });
   },
-  handleQualificationDelete: function(id) {
+  handleDelete: function(id) {
     $.ajax({
       url: '/api/resume/qualification/' + id,
       dataType: 'json',
@@ -38658,23 +38676,20 @@ var Qualifications = React.createClass({displayName: "Qualifications",
     return {data: []};
   },
   componentDidMount: function() {
-    this.loadQualificationList();
+    this.loadQualifications();
   },
   componentWillReceiveProps: function() {
-    this.loadQualificationList();
+    this.loadQualifications();
   },
   render: function() {
     return (
       React.createElement("div", null, 
         React.createElement("div", {className: "section-header"}, 
           React.createElement("h2", null, "Qualifications"), 
-          React.createElement(Link, {to: {
-            pathname: '/resume/qualification/add',
-            state: {modal: true, returnTo: '/resume'}
-          }}, "Add")
+          React.createElement(AddLink, {path: '/resume/qualification/add', 
+            isModal: true})
         ), 
-        React.createElement(QualificationList, {data: this.state.data, 
-        onQualificationDelete: this.handleQualificationDelete})
+        React.createElement(QualificationList, {data: this.state.data, onDelete: this.handleDelete})
       )
     );
   }
@@ -38687,7 +38702,7 @@ var QualificationList = React.createClass({displayName: "QualificationList",
     var qualificationItems = this.props.data.map(function(item) {
       return (
         React.createElement(QualificationItem, {school: item.school, course: item.course, 
-        id: item._id, key: item._id, onItemDelete: _this.props.onQualificationDelete})
+        id: item._id, key: item._id, onDelete: _this.props.onDelete})
       );
     });
 
@@ -38708,7 +38723,7 @@ var QualificationItem = React.createClass({displayName: "QualificationItem",
       confirmLabel: 'Delete',
       abortLabel: 'Cancel'
     }).then(function() {
-      _this.props.onItemDelete(_this.props.id);
+      _this.props.onDelete(_this.props.id);
     });
   },
   render: function() {
@@ -38716,8 +38731,11 @@ var QualificationItem = React.createClass({displayName: "QualificationItem",
       React.createElement("div", null, 
         React.createElement("span", null, this.props.school), 
         React.createElement("span", null, this.props.course), 
-        React.createElement(UtilityLinks, {path: '/resume/qualification/edit/' + this.props.id, 
-          isModal: true, onDelete: this.deleteItem})
+        React.createElement("p", null, 
+          React.createElement(EditLink, {path: '/resume/qualification/edit/' + this.props.id, 
+            isModal: true}), 
+          React.createElement(DeleteLink, {onDelete: this.deleteItem})
+        )
       )
     );
   }
