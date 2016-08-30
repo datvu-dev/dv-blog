@@ -9,6 +9,7 @@ var formidable = require('formidable');
 var Todo = require('./models/todo');
 var Project = require('./models/project');
 var Qualification = require('./models/qualification');
+var Skill = require('./models/skill');
 
 // subpath for uploading files
 var uploadSubPath = '';
@@ -270,6 +271,49 @@ module.exports = function(app, passport) {
 
           // get and return all the qualifications
           Qualification.find(function(err, items) {
+              if (err)
+                  res.send(err)
+
+              res.json(items);
+          });
+      });
+  });
+
+  // SKILL
+  // get all skills
+  app.get('/api/resume/skill', function(req, res) {
+      Skill.find(function(err, skills) {
+          if (err)
+              res.send(err)
+
+          res.json(skills);
+      });
+  });
+
+  // add skill
+  app.post('/api/resume/skill', function(req, res) {
+      Skill.create({
+          skill : req.body.skill
+      }, function(err, item) {
+          if (err)
+              res.send(err);
+
+          res.json(item);
+      });
+  });
+
+  // delete a skill
+  app.delete('/api/resume/skill/:id', function(req, res) {
+      var id = req.params.id;
+
+      Skill.remove({
+          _id : id
+      }, function(err, item) {
+          if (err)
+              res.send(err);
+
+          // get and return all the skills
+          Skill.find(function(err, items) {
               if (err)
                   res.send(err)
 
