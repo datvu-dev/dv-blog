@@ -38843,12 +38843,16 @@ var Skills = React.createClass({displayName: "Skills",
     this.loadSkills();
   },
   render: function() {
+    if (localStorage.getItem('user')) {
+      var skillForm = React.createElement(SkillForm, null);
+    }
+
     return (
       React.createElement("div", null, 
         React.createElement("div", {className: "section-header"}, 
           React.createElement("h2", null, "Skills")
         ), 
-        React.createElement(SkillForm, null), 
+        skillForm, 
         React.createElement(SkillList, {data: this.state.data, onDelete: this.handleDelete})
       )
     );

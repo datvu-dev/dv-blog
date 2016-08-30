@@ -36,12 +36,16 @@ var Skills = React.createClass({
     this.loadSkills();
   },
   render: function() {
+    if (localStorage.getItem('user')) {
+      var skillForm = <SkillForm />;
+    }
+
     return (
       <div>
         <div className="section-header">
           <h2>Skills</h2>
         </div>
-        <SkillForm />
+        {skillForm}
         <SkillList data={this.state.data} onDelete={this.handleDelete} />
       </div>
     );
