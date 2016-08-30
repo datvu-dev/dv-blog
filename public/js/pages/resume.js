@@ -5,6 +5,7 @@ var ResumePage = React.createClass({
     return (
       <div>
         <Qualifications />
+        <Skills />
       </div>
     );
   }
