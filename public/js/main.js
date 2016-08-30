@@ -38420,9 +38420,12 @@ var confirmAction = function(message, options) {
 }
 var DeleteLink = React.createClass({displayName: "DeleteLink",
   render: function() {
+    var text = this.props.linkText ? this.props.linkText : 'Remove';
+    var className = this.props.linkClass ? this.props.linkClass : 'utility-link';
+
     if (localStorage.getItem('user')) {
-      var linkItem = React.createElement("a", {className: "utility-link", 
-        onClick: this.props.onDelete}, React.createElement("small", null, "Remove"))
+      var linkItem = React.createElement("a", {className: className, 
+        onClick: this.props.onDelete}, React.createElement("small", null, text))
     }
 
     return (
@@ -38736,6 +38739,158 @@ var QualificationItem = React.createClass({displayName: "QualificationItem",
             isModal: true}), 
           React.createElement(DeleteLink, {onDelete: this.deleteItem})
         )
+      )
+    );
+  }
+});
+var SkillForm = React.createClass({displayName: "SkillForm",
+  getInitialState: function() {
+    return {
+      skill : ''
+    };
+  },
+  handleSkillChange: function(e) {
+    this.setState({skill: e.target.value});
+  },
+  handleValidation: function(e) {
+    e.preventDefault();
+    var skill = this.state.skill.trim();
+
+    $('#form-message').hide();
+    $('.form-control').removeClass('required');
+
+    if (!skill) {
+      $('#skillName').addClass('required');
+      $('#form-message').show();
+
+      this.setState({formMessage: 'Please provide skill.'});
+    } else {
+      $('#skillName').val('');
+      this.setState({skill: ''});
+
+      this.handleSubmit({
+        skill: skill
+      });
+    }
+  },
+  handleSubmit: function(item) {
+    $.ajax({
+      url: '/api/resume/skill',
+      dataType: 'json',
+      type: 'POST',
+      data: item,
+      success: function(items) {
+        this.context.router.push('/resume');
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(status, err.toString());
+      }.bind(this)
+    });
+  },
+  render: function() {
+    return (
+      React.createElement("div", {id: "skill-form", className: ""}, 
+          React.createElement("p", {id: "form-message"}, this.state.formMessage), 
+          React.createElement("form", {encType: "multipart/form-data", onSubmit: this.handleValidation}, 
+            React.createElement("fieldset", {className: "form-group"}, 
+              React.createElement("label", {htmlFor: "skillName"}, "Add skill"), 
+              React.createElement("input", {type: "text", className: "form-control", id: "skillName", value: this.state.skill, onChange: this.handleSkillChange})
+            )
+          )
+      )
+    );
+  }
+});
+
+SkillForm.contextTypes = {
+  router: React.PropTypes.object.isRequired
+}
+var Skills = React.createClass({displayName: "Skills",
+  loadSkills: function() {
+    $.ajax({
+      url: '/api/resume/skill',
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.route.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+  handleDelete: function(id) {
+    $.ajax({
+      url: '/api/resume/skill/' + id,
+      dataType: 'json',
+      type: 'DELETE',
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        // this.setState({data: comments});
+        console.error(this.props.route.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+  getInitialState: function() {
+    return {data: []};
+  },
+  componentDidMount: function() {
+    this.loadSkills();
+  },
+  componentWillReceiveProps: function() {
+    this.loadSkills();
+  },
+  render: function() {
+    return (
+      React.createElement("div", null, 
+        React.createElement("div", {className: "section-header"}, 
+          React.createElement("h2", null, "Skills")
+        ), 
+        React.createElement(SkillForm, null), 
+        React.createElement(SkillList, {data: this.state.data, onDelete: this.handleDelete})
+      )
+    );
+  }
+});
+
+var SkillList = React.createClass({displayName: "SkillList",
+  render: function() {
+    var _this = this;
+
+    var skillItems = this.props.data.map(function(item) {
+      return (
+        React.createElement(SkillItem, {skill: item.skill, id: item._id, key: item._id, 
+          onDelete: _this.props.onDelete})
+      );
+    });
+
+    return (
+      React.createElement("div", null, 
+        skillItems
+      )
+    );
+  }
+});
+
+var SkillItem = React.createClass({displayName: "SkillItem",
+  deleteItem: function() {
+    var _this = this;
+
+    confirmAction('Are you sure?', {
+      description: 'Would you like to delete this skill?',
+      confirmLabel: 'Delete',
+      abortLabel: 'Cancel'
+    }).then(function() {
+      _this.props.onDelete(_this.props.id);
+    });
+  },
+  render: function() {
+    return (
+      React.createElement("span", {className: "tag"}, 
+        this.props.skill, 
+        React.createElement(DeleteLink, {onDelete: this.deleteItem, linkText: "X", linkClass: "tag-remove"})
       )
     );
   }
@@ -39204,7 +39359,8 @@ var ResumePage = React.createClass({displayName: "ResumePage",
   render: function() {
     return (
       React.createElement("div", null, 
-        React.createElement(Qualifications, null)
+        React.createElement(Qualifications, null), 
+        React.createElement(Skills, null)
       )
     );
   }

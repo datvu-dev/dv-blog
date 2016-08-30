@@ -85,9 +85,12 @@ var confirmAction = function(message, options) {
 }
 var DeleteLink = React.createClass({
   render: function() {
+    var text = this.props.linkText ? this.props.linkText : 'Remove';
+    var className = this.props.linkClass ? this.props.linkClass : 'utility-link';
+
     if (localStorage.getItem('user')) {
-      var linkItem = <a className="utility-link"
-        onClick={this.props.onDelete}><small>Remove</small></a>
+      var linkItem = <a className={className}
+        onClick={this.props.onDelete}><small>{text}</small></a>
     }
 
     return (
@@ -402,6 +405,158 @@ var QualificationItem = React.createClass({
           <DeleteLink onDelete={this.deleteItem} />
         </p>
       </div>
+    );
+  }
+});
+var SkillForm = React.createClass({
+  getInitialState: function() {
+    return {
+      skill : ''
+    };
+  },
+  handleSkillChange: function(e) {
+    this.setState({skill: e.target.value});
+  },
+  handleValidation: function(e) {
+    e.preventDefault();
+    var skill = this.state.skill.trim();
+
+    $('#form-message').hide();
+    $('.form-control').removeClass('required');
+
+    if (!skill) {
+      $('#skillName').addClass('required');
+      $('#form-message').show();
+
+      this.setState({formMessage: 'Please provide skill.'});
+    } else {
+      $('#skillName').val('');
+      this.setState({skill: ''});
+
+      this.handleSubmit({
+        skill: skill
+      });
+    }
+  },
+  handleSubmit: function(item) {
+    $.ajax({
+      url: '/api/resume/skill',
+      dataType: 'json',
+      type: 'POST',
+      data: item,
+      success: function(items) {
+        this.context.router.push('/resume');
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(status, err.toString());
+      }.bind(this)
+    });
+  },
+  render: function() {
+    return (
+      <div id="skill-form" className="">
+          <p id="form-message">{this.state.formMessage}</p>
+          <form encType="multipart/form-data" onSubmit={this.handleValidation}>
+            <fieldset className="form-group">
+              <label htmlFor="skillName">Add skill</label>
+              <input type="text" className="form-control" id="skillName" value={this.state.skill} onChange={this.handleSkillChange} />
+            </fieldset>
+          </form>
+      </div>
+    );
+  }
+});
+
+SkillForm.contextTypes = {
+  router: React.PropTypes.object.isRequired
+}
+var Skills = React.createClass({
+  loadSkills: function() {
+    $.ajax({
+      url: '/api/resume/skill',
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.route.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+  handleDelete: function(id) {
+    $.ajax({
+      url: '/api/resume/skill/' + id,
+      dataType: 'json',
+      type: 'DELETE',
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        // this.setState({data: comments});
+        console.error(this.props.route.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+  getInitialState: function() {
+    return {data: []};
+  },
+  componentDidMount: function() {
+    this.loadSkills();
+  },
+  componentWillReceiveProps: function() {
+    this.loadSkills();
+  },
+  render: function() {
+    return (
+      <div>
+        <div className="section-header">
+          <h2>Skills</h2>
+        </div>
+        <SkillForm />
+        <SkillList data={this.state.data} onDelete={this.handleDelete} />
+      </div>
+    );
+  }
+});
+
+var SkillList = React.createClass({
+  render: function() {
+    var _this = this;
+
+    var skillItems = this.props.data.map(function(item) {
+      return (
+        <SkillItem skill={item.skill} id={item._id} key={item._id}
+          onDelete={_this.props.onDelete} />
+      );
+    });
+
+    return (
+      <div>
+        {skillItems}
+      </div>
+    );
+  }
+});
+
+var SkillItem = React.createClass({
+  deleteItem: function() {
+    var _this = this;
+
+    confirmAction('Are you sure?', {
+      description: 'Would you like to delete this skill?',
+      confirmLabel: 'Delete',
+      abortLabel: 'Cancel'
+    }).then(function() {
+      _this.props.onDelete(_this.props.id);
+    });
+  },
+  render: function() {
+    return (
+      <span className="tag">
+        {this.props.skill}
+        <DeleteLink onDelete={this.deleteItem} linkText="X" linkClass="tag-remove" />
+      </span>
     );
   }
 });
@@ -870,6 +1025,7 @@ var ResumePage = React.createClass({
     return (
       <div>
         <Qualifications />
+        <Skills />
       </div>
     );
   }
