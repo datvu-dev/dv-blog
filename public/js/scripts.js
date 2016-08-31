@@ -207,7 +207,7 @@ var QualificationForm = React.createClass({
     };
   },
   componentDidMount() {
-    let id = this.props.params.id ? this.props.params.id : null;
+    let {id} = this.props.params ? this.props.params : null;
 
     if (id) {
       $.ajax({
@@ -224,23 +224,20 @@ var QualificationForm = React.createClass({
     }
   },
   handleSchoolChange(e) {
-    this.setState({school: e.target.value});
+    this.setState({school: e.target.value.trim()});
   },
   handleCourseChange(e) {
-    this.setState({course: e.target.value});
+    this.setState({course: e.target.value.trim()});
   },
   handleYearChange(value) {
     this.setState({year: value});
   },
   handleDescriptionChange(e) {
-    this.setState({description: e.target.value});
+    this.setState({description: e.target.value.trim()});
   },
   handleValidation(e) {
     e.preventDefault();
-    let school = this.state.school.trim();
-    let course = this.state.course.trim();
-    let year = this.state.year;
-    let description = this.state.description.trim();
+    let {school, course, year, description} = this.state;
 
     $('#form-message').hide();
     $('.form-control').removeClass('required');
@@ -271,7 +268,7 @@ var QualificationForm = React.createClass({
     }
   },
   handleSubmit(item) {
-    let id = this.props.params.id ? this.props.params.id : '';
+    let {id} = this.props.params ? this.props.params : '';
 
     $.ajax({
       url: `/api/resume/qualification/${id}`,
@@ -405,7 +402,7 @@ var QualificationItem = React.createClass({
     });
   },
   render() {
-    let id = this.props.id;
+    let {id} = this.props;
 
     return (
       <div>
@@ -427,11 +424,11 @@ var SkillForm = React.createClass({
     };
   },
   handleSkillChange(e) {
-    this.setState({skill: e.target.value});
+    this.setState({skill: e.target.value.trim()});
   },
   handleValidation(e) {
     e.preventDefault();
-    let skill = this.state.skill.trim();
+    let {skill} = this.state;
 
     $('#form-message').hide();
     $('.form-control').removeClass('required');
@@ -590,10 +587,10 @@ var Home = React.createClass({
 
 var ProjectFormPage = React.createClass({
   handleProjectSubmit(item) {
-    let projectID = this.props.params.project_id ? this.props.params.project_id : '';
+    let {id} = this.props.params ? this.props.params : '';
 
     $.ajax({
-      url: this.props.route.url + projectID,
+      url: this.props.route.url + id,
       dataType: 'json',
       type: 'POST',
       data: item,
@@ -642,7 +639,7 @@ var ProjectFormPage = React.createClass({
     return (
       <div>
         <ProjectForm onProjectSubmit={this.handleProjectSubmit}
-          data={this.state.data} projectID={this.props.params.project_id} />
+          data={this.state.data} projectID={this.props.params.id} />
       </div>
     );
   }
@@ -691,7 +688,7 @@ var ProjectForm = React.createClass({
         success: data => {
           // console.log(data);
           this.setState(data[0]);
-          let picName = data[0]['picture'];        
+          let picName = data[0]['picture'];
 
           var imgCtr = $('<img/>').prop('src', `/uploads/projects/${projectID}/${picName}`);
           $('#imgContainer').html(imgCtr);
@@ -710,13 +707,13 @@ var ProjectForm = React.createClass({
     }
   },
   handleTitleChange(e) {
-    this.setState({title: e.target.value});
+    this.setState({title: e.target.value.trim()});
   },
   handleYearChange(value) {
     this.setState({year: value});
   },
   handleDescriptionChange(e) {
-    this.setState({description: e.target.value});
+    this.setState({description: e.target.value.trim()});
   },
   handleTechnologyChange(tags) {
     this.setState({technologies: tags});
@@ -764,11 +761,7 @@ var ProjectForm = React.createClass({
   },
   handleSubmit(e) {
     e.preventDefault();
-    let title = this.state.title.trim();
-    let year = this.state.year;
-    let description = this.state.description.trim();
-    let technologies = this.state.technologies;
-    let pictureName = this.state.picture;
+    let {title, year, description, technologies, picture} = this.state;
     let pictureObj = $('#imgContainer img');
 
     $('#form-message').hide();
@@ -796,7 +789,7 @@ var ProjectForm = React.createClass({
       this.props.onProjectSubmit({
         title: title,
         year: year,
-        picture: pictureName,
+        picture: picture,
         description: description,
         technologies: technologies
       });
@@ -857,10 +850,10 @@ var ProjectForm = React.createClass({
 
 var ProjectViewPage = React.createClass({
   loadProject() {
-    let projectID = this.props.params.project_id;
+    let {id} = this.props.params;
 
     $.ajax({
-      url: this.props.route.url + projectID,
+      url: this.props.route.url + id,
       dataType: 'json',
       cache: false,
       success: data => {
@@ -918,18 +911,13 @@ var Project = React.createClass({
     });
   },
   render() {
-    let data = this.props.data[0];
-    let id = data._id;
-    let title = data.title;
-    let picName = data.picture;
-    let picSrc = `/uploads/projects/${id}/${picName}`;
-    let description = data.description;
-    let tags = data.technologies;
+    let {_id, title, picture, description, technologies} = this.props.data[0];
+    let picSrc = `/uploads/projects/${_id}/${picture}`;
     let tagItems;
 
-    if (tags) {
+    if (technologies) {
       let count = 0;
-      tagItems = tags.map(item => {
+      tagItems = technologies.map(item => {
         return (
           <span key={item._id} className="tag">{item.text}</span>
         );
@@ -939,7 +927,7 @@ var Project = React.createClass({
     return (
       <div>
         <h1>{title}</h1>
-        <EditLink path={`/project/${id}/edit`}
+        <EditLink path={`/project/${_id}/edit`}
           isModal={false} />
         <DeleteLink onDelete={this.deleteProject} />
         <p><img src={picSrc} /></p>
@@ -1034,13 +1022,12 @@ var ProjectItem = React.createClass({
     });
   },
   render() {
-    let id = this.props.id;
-    let image = this.props.img;
+    let {id, img} = this.props;
 
     return (
       <div className="box col-md-6 col-lg-4">
         <div className="box-img">
-          <img src={`/uploads/projects/${id}/${image}`}
+          <img src={`/uploads/projects/${id}/${img}`}
             alt="Card image cap" />
         </div>
         <div className="box-content">
@@ -1295,8 +1282,8 @@ ReactDOM.render(
       <Route path="resume/qualification/edit/:id" url="/api/resume/qualification" component={QualificationForm} />
       <Route path="projects" url="/api/projects/" component={ProjectsPage} />
       <Route path="project/new" url="/api/projects/" component={ProjectFormPage} />
-      <Route path="project/:project_id" url="/api/projects/" component={ProjectViewPage} />
-      <Route path="project/:project_id/edit" url="/api/projects/" component={ProjectFormPage} />
+      <Route path="project/:id" url="/api/projects/" component={ProjectViewPage} />
+      <Route path="project/:id/edit" url="/api/projects/" component={ProjectFormPage} />
     </Route>
   </Router>,
   document.getElementById('main')
