@@ -11,9 +11,11 @@ var IndexLink = require('react-router').IndexLink;
 var browserHistory = require('react-router').browserHistory;
 var ReactTags = require('react-tag-input').WithContext;
 var AddLink = React.createClass({
-  render: function() {
+  render() {
+    let linkItem;
+
     if (localStorage.getItem('user')) {
-      var linkItem = <Link to={{
+      linkItem = <Link to={{
           pathname: this.props.path,
           state: {modal: this.props.isModal}
         }}>Add</Link>
@@ -21,7 +23,7 @@ var AddLink = React.createClass({
 
     return (
      <span>
-        {linkItem} 
+        {linkItem}
      </span>
    );
   }
@@ -32,32 +34,36 @@ var Promise = $.Deferred;
 
 var Confirm = React.createClass({
   displayName: 'Confirm',
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
       confirmLabel: 'OK',
       abortLabel: 'Cancel'
     }
   },
-  abort: function() {
+  abort() {
     return this.promise.reject();
   },
-  confirm: function() {
+  confirm() {
     return this.promise.resolve();
   },
-  componentDidMount: function() {
+  componentDidMount() {
     this.promise = new Promise();
   },
-  render: function() {
+  render() {
     return React.createElement(Modal, null,
       <div>
         <div className="modal-header">
           <h4 className="modal-title">{this.props.message}</h4>
         </div>
-        <div className="modal-body">{this.props.description ? this.props.description : ''}</div>
+        <div className="modal-body">
+          {this.props.description ? this.props.description : ''}
+        </div>
         <div className="modal-footer">
           <div className="text-right">
-            <button role="abort" type="button" className="btn btn-default" onClick={this.abort}>{this.props.abortLabel}</button>
-            <button role="confirm" type="button" className="btn btn-primary" ref="confirm" onClick={this.confirm}>{this.props.confirmLabel}</button>
+            <button role="abort" type="button" className="btn btn-default"
+              onClick={this.abort}>{this.props.abortLabel}</button>
+            <button role="confirm" type="button" className="btn btn-primary"
+              ref="confirm" onClick={this.confirm}>{this.props.confirmLabel}</button>
           </div>
         </div>
       </div>
@@ -65,16 +71,12 @@ var Confirm = React.createClass({
   }
 });
 
-var confirmAction = function(message, options) {
-  if (options == null) {
-    options = {};
-  }
+confirmAction = (message, options = {}) => {
+  let props = $.extend({message: message}, options);
+  let wrapper = document.body.appendChild(document.createElement('div'));
+  let component = ReactDOM.render(React.createElement(Confirm, props), wrapper);
 
-  var props = $.extend({message: message}, options);
-  var wrapper = document.body.appendChild(document.createElement('div'));
-  var component = ReactDOM.render(React.createElement(Confirm, props), wrapper);
-
-  var cleanup = function() {
+  cleanup = () => {
     ReactDOM.unmountComponentAtNode(wrapper);
     setTimeout(function() {
       wrapper.remove();
@@ -84,12 +86,13 @@ var confirmAction = function(message, options) {
   return component.promise.always(cleanup).promise();
 }
 var DeleteLink = React.createClass({
-  render: function() {
-    var text = this.props.linkText ? this.props.linkText : 'Remove';
-    var className = this.props.linkClass ? this.props.linkClass : 'utility-link';
+  render() {
+    let linkItem;
+    let text = this.props.linkText ? this.props.linkText : 'Remove';
+    let className = this.props.linkClass ? this.props.linkClass : 'utility-link';
 
     if (localStorage.getItem('user')) {
-      var linkItem = <a className={className}
+      linkItem = <a className={className}
         onClick={this.props.onDelete}><small>{text}</small></a>
     }
 
@@ -101,9 +104,11 @@ var DeleteLink = React.createClass({
   }
 });
 var EditLink = React.createClass({
-  render: function() {
+  render() {
+    let linkItem;
+
     if (localStorage.getItem('user')) {
-      var linkItem = <Link className="utility-link" to={{
+      linkItem = <Link className="utility-link" to={{
         pathname: this.props.path,
         state: {modal: this.props.isModal}
       }}><small>Edit</small></Link>
@@ -111,7 +116,7 @@ var EditLink = React.createClass({
 
     return (
      <span>
-        {linkItem} 
+        {linkItem}
      </span>
    );
   }
@@ -120,7 +125,7 @@ var EditLink = React.createClass({
 
 var Modal = React.createClass({
   displayName: 'Modal',
-  render: function() {
+  render() {
     return (
       <div id="modal">
         <div className="modal-backdrop in"></div>
@@ -138,7 +143,7 @@ var Modal = React.createClass({
 // public/js/components/popup-form.js
 
 var PopupForm = React.createClass({
-  render: function() {
+  render() {
     return React.createElement(Modal, null,
       <div>
         <div className="modal-header">
@@ -151,10 +156,10 @@ var PopupForm = React.createClass({
 });
 
 var PopupButtons = React.createClass({
-  cancel: function() {
+  cancel() {
     window.history.back();;
   },
-  render: function() {
+  render() {
     return (
       <div className="text-right">
         <button type="button" className="btn btn-default" onClick={this.cancel}>Cancel</button>
@@ -166,19 +171,19 @@ var PopupButtons = React.createClass({
 // public/js/components/year-dropdown.js
 
 var YearsSelect = React.createClass({
-  onSelectChange: function(e) {
+  onSelectChange(e) {
     this.props.onSelectChange(e.target.value);
   },
-  render: function() {
-    var currentYear = new Date().getFullYear();
-    var years = [];
-    var startYear = 2010;
+  render() {
+    let currentYear = new Date().getFullYear();
+    let years = [];
+    let startYear = 2010;
 
     while (startYear <= currentYear) {
       years.push(startYear++);
     }
 
-    var yearItems = years.map(function(item) {
+    let yearItems = years.map(item => {
       return (
         <option key={item} value={item}>{item}</option>
       );
@@ -193,7 +198,7 @@ var YearsSelect = React.createClass({
   }
 });
 var QualificationForm = React.createClass({
-  getInitialState: function() {
+  getInitialState() {
     return {
       school : '',
       course: '',
@@ -201,41 +206,41 @@ var QualificationForm = React.createClass({
       description: ''
     };
   },
-  componentDidMount: function() {
-    var id = this.props.params.id ? this.props.params.id : null;
+  componentDidMount() {
+    let id = this.props.params.id ? this.props.params.id : null;
 
     if (id) {
       $.ajax({
-        url: '/api/resume/qualification/' + id,
+        url: `/api/resume/qualification/${id}`,
         dataType: 'json',
         cache: false,
-        success: function(data) {
+        success: data => {
           this.setState(data[0]);
-        }.bind(this),
-        error: function(xhr, status, err) {
+        },
+        error: (xhr, status, err) => {
           console.error(this.props.route.url, status, err.toString());
-        }.bind(this)
+        }
       });
     }
   },
-  handleSchoolChange: function(e) {
+  handleSchoolChange(e) {
     this.setState({school: e.target.value});
   },
-  handleCourseChange: function(e) {
+  handleCourseChange(e) {
     this.setState({course: e.target.value});
   },
-  handleYearChange: function(value) {
+  handleYearChange(value) {
     this.setState({year: value});
   },
-  handleDescriptionChange: function(e) {
+  handleDescriptionChange(e) {
     this.setState({description: e.target.value});
   },
-  handleValidation: function(e) {
+  handleValidation(e) {
     e.preventDefault();
-    var school = this.state.school.trim();
-    var course = this.state.course.trim();
-    var year = this.state.year;
-    var description = this.state.description.trim();
+    let school = this.state.school.trim();
+    let course = this.state.course.trim();
+    let year = this.state.year;
+    let description = this.state.description.trim();
 
     $('#form-message').hide();
     $('.form-control').removeClass('required');
@@ -265,42 +270,47 @@ var QualificationForm = React.createClass({
       });
     }
   },
-  handleSubmit: function(item) {
-    var id = this.props.params.id ? this.props.params.id : '';
+  handleSubmit(item) {
+    let id = this.props.params.id ? this.props.params.id : '';
 
     $.ajax({
-      url: '/api/resume/qualification/' + id,
+      url: `/api/resume/qualification/${id}`,
       dataType: 'json',
       type: 'POST',
       data: item,
-      success: function(items) {
+      success: items => {
         this.context.router.push('/resume');
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         console.error(status, err.toString());
-      }.bind(this)
+      }
     });
   },
-  render: function() {
+  render() {
     return (
       <div id="qualification-form" className="">
           <p id="form-message">{this.state.formMessage}</p>
           <form encType="multipart/form-data" onSubmit={this.handleValidation}>
             <fieldset className="form-group">
               <label htmlFor="qualSchool">School</label>
-              <input type="text" className="form-control" id="qualSchool" value={this.state.school} onChange={this.handleSchoolChange} />
+              <input type="text" className="form-control" id="qualSchool"
+                value={this.state.school} onChange={this.handleSchoolChange} />
             </fieldset>
             <fieldset className="form-group">
               <label htmlFor="qualCourse">Course</label>
-              <input type="text" className="form-control" id="qualCourse" value={this.state.course} onChange={this.handleCourseChange} />
+              <input type="text" className="form-control" id="qualCourse"
+                value={this.state.course} onChange={this.handleCourseChange} />
             </fieldset>
             <fieldset className="form-group">
               <label htmlFor="qualYear">Year of completion</label>
-              <YearsSelect value={this.state.year} onSelectChange={this.handleYearChange} />
+              <YearsSelect value={this.state.year}
+                onSelectChange={this.handleYearChange} />
             </fieldset>
             <fieldset className="form-group">
               <label htmlFor="qualDescription">Description</label>
-              <textarea className="form-control" id="qualDescription" rows="4" value={this.state.description} onChange={this.handleDescriptionChange} ></textarea>
+              <textarea className="form-control" id="qualDescription" rows="4"
+                value={this.state.description}
+                onChange={this.handleDescriptionChange} ></textarea>
             </fieldset>
             <PopupButtons />
           </form>
@@ -313,43 +323,43 @@ QualificationForm.contextTypes = {
   router: React.PropTypes.object.isRequired
 }
 var Qualifications = React.createClass({
-  loadQualifications: function() {
+  loadQualifications() {
     $.ajax({
       url: '/api/resume/qualification',
       dataType: 'json',
       cache: false,
-      success: function(data) {
+      success: data => {
         this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         console.error(this.props.route.url, status, err.toString());
-      }.bind(this)
+      }
     });
   },
-  handleDelete: function(id) {
+  handleDelete(id) {
     $.ajax({
-      url: '/api/resume/qualification/' + id,
+      url: `/api/resume/qualification/${id}`,
       dataType: 'json',
       type: 'DELETE',
-      success: function(data) {
+      success: data => {
         this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         // this.setState({data: comments});
         console.error(this.props.route.url, status, err.toString());
-      }.bind(this)
+      }
     });
   },
-  getInitialState: function() {
+  getInitialState() {
     return {data: []};
   },
-  componentDidMount: function() {
+  componentDidMount() {
     this.loadQualifications();
   },
-  componentWillReceiveProps: function() {
+  componentWillReceiveProps() {
     this.loadQualifications();
   },
-  render: function() {
+  render() {
     return (
       <div>
         <div className="section-header">
@@ -364,10 +374,10 @@ var Qualifications = React.createClass({
 });
 
 var QualificationList = React.createClass({
-  render: function() {
-    var _this = this;
+  render() {
+    let _this = this;
 
-    var qualificationItems = this.props.data.map(function(item) {
+    let qualificationItems = this.props.data.map(item => {
       return (
         <QualificationItem school={item.school} course={item.course}
         id={item._id} key={item._id} onDelete={_this.props.onDelete} />
@@ -383,24 +393,26 @@ var QualificationList = React.createClass({
 });
 
 var QualificationItem = React.createClass({
-  deleteItem: function() {
-    var _this = this;
+  deleteItem() {
+    let _this = this;
 
     confirmAction('Are you sure?', {
       description: 'Would you like to delete this qualification?',
       confirmLabel: 'Delete',
       abortLabel: 'Cancel'
-    }).then(function() {
+    }).then(() => {
       _this.props.onDelete(_this.props.id);
     });
   },
-  render: function() {
+  render() {
+    let id = this.props.id;
+
     return (
       <div>
         <span>{this.props.school}</span>
         <span>{this.props.course}</span>
         <p>
-          <EditLink path={'/resume/qualification/edit/' + this.props.id}
+          <EditLink path={`/resume/qualification/edit/${id}`}
             isModal={true} />
           <DeleteLink onDelete={this.deleteItem} />
         </p>
@@ -409,17 +421,17 @@ var QualificationItem = React.createClass({
   }
 });
 var SkillForm = React.createClass({
-  getInitialState: function() {
+  getInitialState() {
     return {
       skill : ''
     };
   },
-  handleSkillChange: function(e) {
+  handleSkillChange(e) {
     this.setState({skill: e.target.value});
   },
-  handleValidation: function(e) {
+  handleValidation(e) {
     e.preventDefault();
-    var skill = this.state.skill.trim();
+    let skill = this.state.skill.trim();
 
     $('#form-message').hide();
     $('.form-control').removeClass('required');
@@ -438,28 +450,29 @@ var SkillForm = React.createClass({
       });
     }
   },
-  handleSubmit: function(item) {
+  handleSubmit(item) {
     $.ajax({
       url: '/api/resume/skill',
       dataType: 'json',
       type: 'POST',
       data: item,
-      success: function(items) {
+      success: items => {
         this.context.router.push('/resume');
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         console.error(status, err.toString());
-      }.bind(this)
+      }
     });
   },
-  render: function() {
+  render() {
     return (
       <div id="skill-form" className="">
           <p id="form-message">{this.state.formMessage}</p>
           <form encType="multipart/form-data" onSubmit={this.handleValidation}>
             <fieldset className="form-group">
               <label htmlFor="skillName">Add skill</label>
-              <input type="text" className="form-control" id="skillName" value={this.state.skill} onChange={this.handleSkillChange} />
+              <input type="text" className="form-control" id="skillName"
+                value={this.state.skill} onChange={this.handleSkillChange} />
             </fieldset>
           </form>
       </div>
@@ -471,45 +484,47 @@ SkillForm.contextTypes = {
   router: React.PropTypes.object.isRequired
 }
 var Skills = React.createClass({
-  loadSkills: function() {
+  loadSkills() {
     $.ajax({
       url: '/api/resume/skill',
       dataType: 'json',
       cache: false,
-      success: function(data) {
+      success: data => {
         this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         console.error(this.props.route.url, status, err.toString());
-      }.bind(this)
+      }
     });
   },
-  handleDelete: function(id) {
+  handleDelete(id) {
     $.ajax({
-      url: '/api/resume/skill/' + id,
+      url: `/api/resume/skill/${id}`,
       dataType: 'json',
       type: 'DELETE',
-      success: function(data) {
+      success: data => {
         this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         // this.setState({data: comments});
         console.error(this.props.route.url, status, err.toString());
-      }.bind(this)
+      }
     });
   },
-  getInitialState: function() {
+  getInitialState() {
     return {data: []};
   },
-  componentDidMount: function() {
+  componentDidMount() {
     this.loadSkills();
   },
-  componentWillReceiveProps: function() {
+  componentWillReceiveProps() {
     this.loadSkills();
   },
-  render: function() {
+  render() {
+    let skillForm;
+
     if (localStorage.getItem('user')) {
-      var skillForm = <SkillForm />;
+      skillForm = <SkillForm />;
     }
 
     return (
@@ -525,10 +540,10 @@ var Skills = React.createClass({
 });
 
 var SkillList = React.createClass({
-  render: function() {
-    var _this = this;
+  render() {
+    let _this = this;
 
-    var skillItems = this.props.data.map(function(item) {
+    let skillItems = this.props.data.map(item => {
       return (
         <SkillItem skill={item.skill} id={item._id} key={item._id}
           onDelete={_this.props.onDelete} />
@@ -544,18 +559,18 @@ var SkillList = React.createClass({
 });
 
 var SkillItem = React.createClass({
-  deleteItem: function() {
-    var _this = this;
+  deleteItem() {
+    let _this = this;
 
     confirmAction('Are you sure?', {
       description: 'Would you like to delete this skill?',
       confirmLabel: 'Delete',
       abortLabel: 'Cancel'
-    }).then(function() {
+    }).then(() => {
       _this.props.onDelete(_this.props.id);
     });
   },
-  render: function() {
+  render() {
     return (
       <span className="tag">
         {this.props.skill}
@@ -567,36 +582,36 @@ var SkillItem = React.createClass({
 // public/js/pages/home.js
 
 var Home = React.createClass({
-  render: function() {
+  render() {
     return (<h1>Welcome to the Home Page</h1>);
   }
 });
 // public/js/pages/project-form.js
 
 var ProjectFormPage = React.createClass({
-  handleProjectSubmit: function(item) {
-    var projectID = this.props.params.project_id ? this.props.params.project_id : '';
+  handleProjectSubmit(item) {
+    let projectID = this.props.params.project_id ? this.props.params.project_id : '';
 
     $.ajax({
       url: this.props.route.url + projectID,
       dataType: 'json',
       type: 'POST',
       data: item,
-      success: function(data) {
+      success: data => {
         if ($('#projectPicture')[0].files[0]) {
           this.handleUpload();
         }
 
         this.context.router.push('/projects');
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         console.error(this.props.route.url, status, err.toString());
-      }.bind(this)
+      }
     });
   },
-  handleUpload: function() {
-    var formData = new FormData();
-    var fileObj = $('#projectPicture')[0].files[0];
+  handleUpload() {
+    let formData = new FormData();
+    let fileObj = $('#projectPicture')[0].files[0];
     formData.append('uploads[]', fileObj , fileObj.name);
 
     $.ajax({
@@ -605,15 +620,15 @@ var ProjectFormPage = React.createClass({
       data: formData,
       processData: false,
       contentType: false,
-      success: function(data) {
+      success: data => {
 
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         console.error(this.props.route.url, status, err.toString());
-      }.bind(this)
+      }
     })
   },
-  getInitialState: function() {
+  getInitialState() {
     return {data: {
       title : '',
       year : '',
@@ -623,10 +638,11 @@ var ProjectFormPage = React.createClass({
       suggestions: []
     }};
   },
-  render: function() {
+  render() {
     return (
       <div>
-        <ProjectForm onProjectSubmit={this.handleProjectSubmit} data={this.state.data} projectID={this.props.params.project_id} />
+        <ProjectForm onProjectSubmit={this.handleProjectSubmit}
+          data={this.state.data} projectID={this.props.params.project_id} />
       </div>
     );
   }
@@ -637,88 +653,89 @@ ProjectFormPage.contextTypes = {
 }
 
 var ProjectForm = React.createClass({
-  getInitialState: function() {
+  getInitialState() {
     return this.props.data;
   },
-  getTagSuggestions: function() {
-    var skillsUrl = 'http://trendyskills.com/service?q=keywords&key=77MGlB3wzQbD9KfZ';
+  getTagSuggestions() {
+    let skillsUrl = 'http://trendyskills.com/service?q=keywords&key=77MGlB3wzQbD9KfZ';
 
     $.ajax({
       url: skillsUrl,
       method: 'GET',
       dataType: 'jsonp',
-      success: function(res) {
-        var suggestionsArr = [];
+      success: res => {
+        let suggestionsArr = [];
 
-        res.keywords.map(function(item) {
+        res.keywords.map(item => {
           suggestionsArr.push(item.keyName);
         });
 
         this.setState({suggestions: suggestionsArr});
 
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         console.error(status, err.toString());
       }
     });
   },
-  componentDidMount: function() {
+  componentDidMount() {
     $('.tag-input input').addClass('form-control').attr('id', 'projectTechnologies').blur();
 
     if (this.props.projectID) {
-      var projectID = this.props.projectID;
+      let projectID = this.props.projectID;
 
       this.serverRequest = $.ajax({
-        url: '/api/projects/' + projectID,
+        url: `/api/projects/${projectID}`,
         dataType: 'json',
         cache: false,
-        success: function(data) {
+        success: data => {
           // console.log(data);
           this.setState(data[0]);
+          let picName = data[0]['picture'];        
 
-          var imgCtr = $('<img/>').prop('src', '/uploads/projects/' + projectID + '/' +  data[0]['picture']);
+          var imgCtr = $('<img/>').prop('src', `/uploads/projects/${projectID}/${picName}`);
           $('#imgContainer').html(imgCtr);
-        }.bind(this),
-        error: function(xhr, status, err) {
+        },
+        error: (xhr, status, err) => {
           console.error(this.props.route.url, status, err.toString());
-        }.bind(this)
+        }
       });
     }
 
     this.getTagSuggestions();
   },
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     if (this.serverRequest) {
       this.serverRequest.abort();
     }
   },
-  handleTitleChange: function(e) {
+  handleTitleChange(e) {
     this.setState({title: e.target.value});
   },
-  handleYearChange: function(value) {
+  handleYearChange(value) {
     this.setState({year: value});
   },
-  handleDescriptionChange: function(e) {
+  handleDescriptionChange(e) {
     this.setState({description: e.target.value});
   },
-  handleTechnologyChange: function(tags) {
+  handleTechnologyChange(tags) {
     this.setState({technologies: tags});
   },
-  handleDelete: function(i) {
-      var tags = this.state.technologies;
+  handleDelete(i) {
+      let tags = this.state.technologies;
       tags.splice(i, 1);
       this.handleTechnologyChange(tags);
   },
-  handleAddition: function(tag) {
-      var tags = this.state.technologies;
+  handleAddition(tag) {
+      let tags = this.state.technologies;
       tags.push({
           _id: tags.length + 1,
           text: tag
       });
       this.handleTechnologyChange(tags);
   },
-  handleDrag: function(tag, currPos, newPos) {
-      var tags = this.state.technologies;
+  handleDrag(tag, currPos, newPos) {
+      let tags = this.state.technologies;
 
       // mutate array
       tags.splice(currPos, 1);
@@ -727,17 +744,17 @@ var ProjectForm = React.createClass({
       // re-render
       this.handleTechnologyChange(tags);
   },
-  handlePictureChange: function(e) {
+  handlePictureChange(e) {
     // console.log(e.target);
     localStorage.removeItem("imgData")
-    var reader = new FileReader();
+    let reader = new FileReader();
     reader.onload = function () {
-        var thisImage = reader.result;
+        let thisImage = reader.result;
         localStorage.setItem("imgData", thisImage);
     };
     reader.readAsDataURL(e.target.files[0]);
 
-    setTimeout(function() {
+    setTimeout(() => {
       var dataImage = localStorage.getItem('imgData');
       var imgCtr = $('<img/>').prop('src', dataImage);
       $('#imgContainer').html(imgCtr);
@@ -745,14 +762,14 @@ var ProjectForm = React.createClass({
 
     this.setState({picture: e.target.files[0].name});
   },
-  handleSubmit: function(e) {
+  handleSubmit(e) {
     e.preventDefault();
-    var title = this.state.title.trim();
-    var year = this.state.year;
-    var description = this.state.description.trim();
-    var technologies = this.state.technologies;
-    var pictureName = this.state.picture;
-    var pictureObj = $('#imgContainer img');
+    let title = this.state.title.trim();
+    let year = this.state.year;
+    let description = this.state.description.trim();
+    let technologies = this.state.technologies;
+    let pictureName = this.state.picture;
+    let pictureObj = $('#imgContainer img');
 
     $('#form-message').hide();
     $('.form-control').removeClass('required');
@@ -786,7 +803,7 @@ var ProjectForm = React.createClass({
     }
 
   },
-  render: function() {
+  render() {
     return (
       <div id="project-form" className="row">
           <div className="col-sm-8 col-sm-offset-2">
@@ -794,7 +811,8 @@ var ProjectForm = React.createClass({
             <form encType="multipart/form-data" onSubmit={this.handleSubmit}>
               <fieldset className="form-group">
                 <label htmlFor="projectTitle">Title</label>
-                <input type="text" className="form-control" id="projectTitle" value={this.state.title} onChange={this.handleTitleChange} />
+                <input type="text" className="form-control" id="projectTitle"
+                  value={this.state.title} onChange={this.handleTitleChange} />
               </fieldset>
               <fieldset className="form-group">
                 <label htmlFor="projectYear">Year of completion</label>
@@ -802,7 +820,9 @@ var ProjectForm = React.createClass({
               </fieldset>
               <fieldset className="form-group">
                 <label htmlFor="projectDescription">Description</label>
-                <textarea className="form-control" id="projectDescription" rows="4"  value={this.state.description} onChange={this.handleDescriptionChange}></textarea>
+                <textarea className="form-control" id="projectDescription" rows="4"
+                  value={this.state.description}
+                  onChange={this.handleDescriptionChange}></textarea>
               </fieldset>
               <fieldset className="form-group">
                 <label htmlFor="projectTechnologies">Technologies</label>
@@ -822,7 +842,8 @@ var ProjectForm = React.createClass({
               </fieldset>
               <fieldset className="form-group">
                 <label htmlFor="projectPicture">Screenshot</label>
-                <input type="file" className="form-control-file" id="projectPicture"  onChange={this.handlePictureChange} />
+                <input type="file" className="form-control-file" id="projectPicture"
+                  onChange={this.handlePictureChange} />
                 <div id="imgContainer"></div>
               </fieldset>
               <button type="submit" className="btn btn-primary">Save Project</button>
@@ -835,43 +856,43 @@ var ProjectForm = React.createClass({
 // public/js/pages/project-view.js
 
 var ProjectViewPage = React.createClass({
-  loadProject: function() {
-    var projectID = this.props.params.project_id;
+  loadProject() {
+    let projectID = this.props.params.project_id;
 
     $.ajax({
       url: this.props.route.url + projectID,
       dataType: 'json',
       cache: false,
-      success: function(data) {
+      success: data => {
         // console.log(data);
         this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         console.error(this.props.route.url, status, err.toString());
-      }.bind(this)
+      }
     });
   },
-  handleProjectDelete: function(id) {
+  handleProjectDelete(id) {
     $.ajax({
       url: this.props.route.url + id,
       dataType: 'json',
       type: 'DELETE',
-      success: function(data) {
+      success: data => {
         this.context.router.push('/projects');
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         // this.setState({data: comments});
         console.error(this.props.route.url, status, err.toString());
-      }.bind(this)
+      }
     });
   },
-  getInitialState: function() {
+  getInitialState() {
     return {data: '[]'};
   },
-  componentDidMount: function() {
+  componentDidMount() {
     this.loadProject();
   },
-  render: function() {
+  render() {
     return (
       <div>
         <Project data={this.state.data} onProjectDelete={this.handleProjectDelete} />
@@ -885,27 +906,30 @@ ProjectViewPage.contextTypes = {
 }
 
 var Project = React.createClass({
-  deleteProject: function() {
-    var propsObj = this.props;
+  deleteProject() {
+    let _this = this;
 
     confirmAction('Are you sure?', {
       description: 'Would you like to delete this project?',
       confirmLabel: 'Delete',
       abortLabel: 'Cancel'
-    }).then(function() {
-      propsObj.onProjectDelete(propsObj.data[0]._id);
+    }).then(() => {
+      _this.props.onProjectDelete(_this.props.data[0]._id);
     });
   },
-  render: function() {
-    var id = this.props.data[0]._id;
-    var title = this.props.data[0].title;
-    var picSrc = '/uploads/projects/' + id + '/' + this.props.data[0].picture;
-    var description = this.props.data[0].description;
-    var tags = this.props.data[0].technologies;
+  render() {
+    let data = this.props.data[0];
+    let id = data._id;
+    let title = data.title;
+    let picName = data.picture;
+    let picSrc = `/uploads/projects/${id}/${picName}`;
+    let description = data.description;
+    let tags = data.technologies;
+    let tagItems;
 
     if (tags) {
-      var count = 0;
-      var tagItems = tags.map(function(item) {
+      let count = 0;
+      tagItems = tags.map(item => {
         return (
           <span key={item._id} className="tag">{item.text}</span>
         );
@@ -915,8 +939,9 @@ var Project = React.createClass({
     return (
       <div>
         <h1>{title}</h1>
-        <UtilityLinks path={'/project/' + this.props.data[0]._id + '/edit'}
-          isModal={false} onDelete={this.deleteProject} />
+        <EditLink path={`/project/${id}/edit`}
+          isModal={false} />
+        <DeleteLink onDelete={this.deleteProject} />
         <p><img src={picSrc} /></p>
         <p>{tagItems}</p>
         <p>{description}</p>
@@ -927,41 +952,41 @@ var Project = React.createClass({
 // public/js/pages/projects-list.js
 
 var ProjectsPage = React.createClass({
-  loadProjectsList: function() {
+  loadProjectsList() {
     $.ajax({
       url: this.props.route.url,
       dataType: 'json',
       cache: false,
-      success: function(data) {
+      success: data => {
         // console.log(data);
         this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         console.error(this.props.route.url, status, err.toString());
-      }.bind(this)
+      }
     });
   },
-  handleProjectDelete: function(id) {
+  handleProjectDelete(id) {
     $.ajax({
       url: this.props.route.url + id,
       dataType: 'json',
       type: 'DELETE',
-      success: function(data) {
+      success: data => {
         this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         // this.setState({data: comments});
         console.error(this.props.route.url, status, err.toString());
-      }.bind(this)
+      }
     });
   },
-  getInitialState: function() {
+  getInitialState() {
     return {data: []};
   },
-  componentDidMount: function() {
+  componentDidMount() {
     this.loadProjectsList();
   },
-  render: function() {
+  render() {
     return (
       <div>
         <Link to="/project/new" className="btn btn-primary">New Project</Link>
@@ -976,12 +1001,13 @@ ProjectsPage.contextTypes = {
 }
 
 var ProjectsList = React.createClass({
-  render: function() {
-    var _this =  this;
+  render() {
+    let _this =  this;
 
-    var projectItems = this.props.data.map(function(item) {
+    let projectItems = this.props.data.map(item => {
       return (
-        <ProjectItem title={item.title} img={item.picture} id={item._id} key={item._id} onProjectDelete={_this.props.onProjectDelete} />
+        <ProjectItem title={item.title} img={item.picture} id={item._id}
+          key={item._id} onProjectDelete={_this.props.onProjectDelete} />
       );
     });
 
@@ -996,27 +1022,37 @@ var ProjectsList = React.createClass({
 });
 
 var ProjectItem = React.createClass({
-  deleteProject: function() {
-    var propsObj = this.props;
+  deleteProject() {
+    let _this = this;
 
     confirmAction('Are you sure?', {
       description: 'Would you like to delete this project?',
       confirmLabel: 'Delete',
       abortLabel: 'Cancel'
-    }).then(function() {
-      propsObj.onProjectDelete(propsObj.id);
+    }).then(() => {
+      _this.props.onProjectDelete(_this.props.id);
     });
   },
-  render: function() {
+  render() {
+    let id = this.props.id;
+    let image = this.props.img;
+
     return (
       <div className="box col-md-6 col-lg-4">
         <div className="box-img">
-          <img src={'/uploads/projects/' + this.props.id + '/' + this.props.img} alt="Card image cap" />
+          <img src={`/uploads/projects/${id}/${image}`}
+            alt="Card image cap" />
         </div>
         <div className="box-content">
-          <h4 className="box-title"><Link to={'/project/' + this.props.id}>{this.props.title}</Link></h4>
-          <p className="box-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-          <UtilityLinks path={'/project/' + this.props.id + '/edit'} isModal={false} onDelete={this.deleteProject} />
+          <h4 className="box-title"><Link to={`/project/${id}`}>
+            {this.props.title}</Link>
+          </h4>
+          <p className="box-text">This is a longer card with supporting text
+            below as a natural lead-in to additional content. This content is a
+            little bit longer.</p>
+          <EditLink path={`/project/${id}/edit`}
+            isModal={false} />
+          <DeleteLink onDelete={this.deleteProject} />
         </div>
       </div>
     )
@@ -1025,7 +1061,7 @@ var ProjectItem = React.createClass({
 // public/js/pages/resume.js
 
 var ResumePage = React.createClass({
-  render: function() {
+  render() {
     return (
       <div>
         <Qualifications />
