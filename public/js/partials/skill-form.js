@@ -1,15 +1,15 @@
 var SkillForm = React.createClass({
-  getInitialState: function() {
+  getInitialState() {
     return {
       skill : ''
     };
   },
-  handleSkillChange: function(e) {
+  handleSkillChange(e) {
     this.setState({skill: e.target.value});
   },
-  handleValidation: function(e) {
+  handleValidation(e) {
     e.preventDefault();
-    var skill = this.state.skill.trim();
+    let skill = this.state.skill.trim();
 
     $('#form-message').hide();
     $('.form-control').removeClass('required');
@@ -28,21 +28,21 @@ var SkillForm = React.createClass({
       });
     }
   },
-  handleSubmit: function(item) {
+  handleSubmit(item) {
     $.ajax({
       url: '/api/resume/skill',
       dataType: 'json',
       type: 'POST',
       data: item,
-      success: function(items) {
+      success: items => {
         this.context.router.push('/resume');
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         console.error(status, err.toString());
-      }.bind(this)
+      }
     });
   },
-  render: function() {
+  render() {
     return (
       <div id="skill-form" className="">
           <p id="form-message">{this.state.formMessage}</p>

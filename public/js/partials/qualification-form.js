@@ -1,5 +1,5 @@
 var QualificationForm = React.createClass({
-  getInitialState: function() {
+  getInitialState() {
     return {
       school : '',
       course: '',
@@ -7,41 +7,41 @@ var QualificationForm = React.createClass({
       description: ''
     };
   },
-  componentDidMount: function() {
-    var id = this.props.params.id ? this.props.params.id : null;
+  componentDidMount() {
+    let id = this.props.params.id ? this.props.params.id : null;
 
     if (id) {
       $.ajax({
         url: '/api/resume/qualification/' + id,
         dataType: 'json',
         cache: false,
-        success: function(data) {
+        success: data => {
           this.setState(data[0]);
-        }.bind(this),
-        error: function(xhr, status, err) {
+        },
+        error: (xhr, status, err) => {
           console.error(this.props.route.url, status, err.toString());
-        }.bind(this)
+        }
       });
     }
   },
-  handleSchoolChange: function(e) {
+  handleSchoolChange(e) {
     this.setState({school: e.target.value});
   },
-  handleCourseChange: function(e) {
+  handleCourseChange(e) {
     this.setState({course: e.target.value});
   },
-  handleYearChange: function(value) {
+  handleYearChange(value) {
     this.setState({year: value});
   },
-  handleDescriptionChange: function(e) {
+  handleDescriptionChange(e) {
     this.setState({description: e.target.value});
   },
-  handleValidation: function(e) {
+  handleValidation(e) {
     e.preventDefault();
-    var school = this.state.school.trim();
-    var course = this.state.course.trim();
-    var year = this.state.year;
-    var description = this.state.description.trim();
+    let school = this.state.school.trim();
+    let course = this.state.course.trim();
+    let year = this.state.year;
+    let description = this.state.description.trim();
 
     $('#form-message').hide();
     $('.form-control').removeClass('required');
@@ -71,23 +71,23 @@ var QualificationForm = React.createClass({
       });
     }
   },
-  handleSubmit: function(item) {
-    var id = this.props.params.id ? this.props.params.id : '';
+  handleSubmit(item) {
+    let id = this.props.params.id ? this.props.params.id : '';
 
     $.ajax({
       url: '/api/resume/qualification/' + id,
       dataType: 'json',
       type: 'POST',
       data: item,
-      success: function(items) {
+      success: items => {
         this.context.router.push('/resume');
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         console.error(status, err.toString());
-      }.bind(this)
+      }
     });
   },
-  render: function() {
+  render() {
     return (
       <div id="qualification-form" className="">
           <p id="form-message">{this.state.formMessage}</p>

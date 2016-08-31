@@ -1,43 +1,45 @@
 var Skills = React.createClass({
-  loadSkills: function() {
+  loadSkills() {
     $.ajax({
       url: '/api/resume/skill',
       dataType: 'json',
       cache: false,
-      success: function(data) {
+      success: data => {      
         this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         console.error(this.props.route.url, status, err.toString());
-      }.bind(this)
+      }
     });
   },
-  handleDelete: function(id) {
+  handleDelete(id) {
     $.ajax({
       url: '/api/resume/skill/' + id,
       dataType: 'json',
       type: 'DELETE',
-      success: function(data) {
+      success: data => {
         this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         // this.setState({data: comments});
         console.error(this.props.route.url, status, err.toString());
-      }.bind(this)
+      }
     });
   },
-  getInitialState: function() {
+  getInitialState() {
     return {data: []};
   },
-  componentDidMount: function() {
+  componentDidMount() {
     this.loadSkills();
   },
-  componentWillReceiveProps: function() {
+  componentWillReceiveProps() {
     this.loadSkills();
   },
-  render: function() {
+  render() {
+    let skillForm;
+
     if (localStorage.getItem('user')) {
-      var skillForm = <SkillForm />;
+      skillForm = <SkillForm />;
     }
 
     return (
@@ -53,10 +55,10 @@ var Skills = React.createClass({
 });
 
 var SkillList = React.createClass({
-  render: function() {
-    var _this = this;
+  render() {
+    let _this = this;
 
-    var skillItems = this.props.data.map(function(item) {
+    let skillItems = this.props.data.map(item => {
       return (
         <SkillItem skill={item.skill} id={item._id} key={item._id}
           onDelete={_this.props.onDelete} />
@@ -72,18 +74,18 @@ var SkillList = React.createClass({
 });
 
 var SkillItem = React.createClass({
-  deleteItem: function() {
-    var _this = this;
+  deleteItem() {
+    let _this = this;
 
     confirmAction('Are you sure?', {
       description: 'Would you like to delete this skill?',
       confirmLabel: 'Delete',
       abortLabel: 'Cancel'
-    }).then(function() {
+    }).then(() => {
       _this.props.onDelete(_this.props.id);
     });
   },
-  render: function() {
+  render() {
     return (
       <span className="tag">
         {this.props.skill}
