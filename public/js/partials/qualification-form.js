@@ -25,16 +25,16 @@ var QualificationForm = React.createClass({
     }
   },
   handleSchoolChange(e) {
-    this.setState({school: e.target.value.trim()});
+    this.setState({school: e.target.value});
   },
   handleCourseChange(e) {
-    this.setState({course: e.target.value.trim()});
+    this.setState({course: e.target.value});
   },
   handleYearChange(value) {
     this.setState({year: value});
   },
   handleDescriptionChange(e) {
-    this.setState({description: e.target.value.trim()});
+    this.setState({description: e.target.value});
   },
   handleValidation(e) {
     e.preventDefault();
@@ -43,20 +43,20 @@ var QualificationForm = React.createClass({
     $('#form-message').hide();
     $('.form-control').removeClass('required');
 
-    if (!school || !course || !year || !description) {
+    if (!school.trim() || !course.trim() || !year || !description.trim()) {
       $('#form-message').show();
     }
 
-    if (!school) {
+    if (!school.trim()) {
       $('#qualSchool').addClass('required');
       this.setState({formMessage: 'Please provide school.'});
-    } else if (!course) {
+    } else if (!course.trim()) {
       $('#qualCourse').addClass('required');
       this.setState({formMessage: 'Please provide course.'});
     } else if (!year) {
       $('#qualYear').addClass('required');
       this.setState({formMessage: 'Please provide year.'});
-    } else if (!description) {
+    } else if (!description.trim()) {
       $('#qualDescription').addClass('required');
       this.setState({formMessage: 'Please provide description.'});
     } else {
@@ -69,7 +69,7 @@ var QualificationForm = React.createClass({
     }
   },
   handleSubmit(item) {
-    let {id} = this.props.params ? this.props.params : '';
+    let id = this.props.params.id ? this.props.params.id : '';
 
     $.ajax({
       url: `/api/resume/qualification/${id}`,

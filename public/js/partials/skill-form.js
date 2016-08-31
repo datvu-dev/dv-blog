@@ -5,7 +5,7 @@ var SkillForm = React.createClass({
     };
   },
   handleSkillChange(e) {
-    this.setState({skill: e.target.value.trim()});
+    this.setState({skill: e.target.value});
   },
   handleValidation(e) {
     e.preventDefault();
@@ -14,7 +14,7 @@ var SkillForm = React.createClass({
     $('#form-message').hide();
     $('.form-control').removeClass('required');
 
-    if (!skill) {
+    if (!skill.trim()) {
       $('#skillName').addClass('required');
       $('#form-message').show();
 

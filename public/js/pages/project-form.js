@@ -2,7 +2,7 @@
 
 var ProjectFormPage = React.createClass({
   handleProjectSubmit(item) {
-    let {id} = this.props.params ? this.props.params : '';
+    let id = this.props.params.id ? this.props.params.id : '';
 
     $.ajax({
       url: this.props.route.url + id,
@@ -122,13 +122,13 @@ var ProjectForm = React.createClass({
     }
   },
   handleTitleChange(e) {
-    this.setState({title: e.target.value.trim()});
+    this.setState({title: e.target.value});
   },
   handleYearChange(value) {
     this.setState({year: value});
   },
   handleDescriptionChange(e) {
-    this.setState({description: e.target.value.trim()});
+    this.setState({description: e.target.value});
   },
   handleTechnologyChange(tags) {
     this.setState({technologies: tags});
@@ -182,17 +182,18 @@ var ProjectForm = React.createClass({
     $('#form-message').hide();
     $('.form-control').removeClass('required');
 
-    if (!title || !year || !description || technologies.length == 0 || pictureObj.length == 0) {
+    if (!title.trim() || !year || !description.trim() || technologies.length == 0
+      || pictureObj.length == 0) {
       $('#form-message').show();
     }
 
-    if (!title) {
+    if (!title.trim()) {
       $('#projectTitle').addClass('required');
       this.setState({formMessage: 'Please put in title.'});
     } else if (!year) {
       $('#projectYear').addClass('required');
       this.setState({formMessage: 'Please put in year.'});
-    } else if (!description) {
+    } else if (!description.trim()) {
       $('#projectDescription').addClass('required');
       this.setState({formMessage: 'Please put in description.'});
     } else if (technologies.length == 0) {
