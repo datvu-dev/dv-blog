@@ -51,12 +51,10 @@ var Qualifications = React.createClass({
 
 var QualificationList = React.createClass({
   render() {
-    let _this = this;
-
     let qualificationItems = this.props.data.map(item => {
       return (
         <QualificationItem school={item.school} course={item.course}
-        id={item._id} key={item._id} onDelete={_this.props.onDelete} />
+        id={item._id} key={item._id} onDelete={this.props.onDelete} />
       );
     });
 
@@ -70,14 +68,12 @@ var QualificationList = React.createClass({
 
 var QualificationItem = React.createClass({
   deleteItem() {
-    let _this = this;
-
     confirmAction('Are you sure?', {
       description: 'Would you like to delete this qualification?',
       confirmLabel: 'Delete',
       abortLabel: 'Cancel'
     }).then(() => {
-      _this.props.onDelete(_this.props.id);
+      this.props.onDelete(this.props.id);
     });
   },
   render() {

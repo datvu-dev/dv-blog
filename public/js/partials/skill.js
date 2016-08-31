@@ -56,12 +56,10 @@ var Skills = React.createClass({
 
 var SkillList = React.createClass({
   render() {
-    let _this = this;
-
     let skillItems = this.props.data.map(item => {
       return (
         <SkillItem skill={item.skill} id={item._id} key={item._id}
-          onDelete={_this.props.onDelete} />
+          onDelete={this.props.onDelete} />
       );
     });
 
@@ -75,14 +73,12 @@ var SkillList = React.createClass({
 
 var SkillItem = React.createClass({
   deleteItem() {
-    let _this = this;
-
     confirmAction('Are you sure?', {
       description: 'Would you like to delete this skill?',
       confirmLabel: 'Delete',
       abortLabel: 'Cancel'
     }).then(() => {
-      _this.props.onDelete(_this.props.id);
+      this.props.onDelete(this.props.id);
     });
   },
   render() {

@@ -51,12 +51,10 @@ ProjectsPage.contextTypes = {
 
 var ProjectsList = React.createClass({
   render() {
-    let _this =  this;
-
     let projectItems = this.props.data.map(item => {
       return (
         <ProjectItem title={item.title} img={item.picture} id={item._id}
-          key={item._id} onProjectDelete={_this.props.onProjectDelete} />
+          key={item._id} onProjectDelete={this.props.onProjectDelete} />
       );
     });
 
@@ -72,14 +70,12 @@ var ProjectsList = React.createClass({
 
 var ProjectItem = React.createClass({
   deleteProject() {
-    let _this = this;
-
     confirmAction('Are you sure?', {
       description: 'Would you like to delete this project?',
       confirmLabel: 'Delete',
       abortLabel: 'Cancel'
     }).then(() => {
-      _this.props.onProjectDelete(_this.props.id);
+      this.props.onProjectDelete(this.props.id);
     });
   },
   render() {

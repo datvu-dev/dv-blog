@@ -52,14 +52,12 @@ ProjectViewPage.contextTypes = {
 
 var Project = React.createClass({
   deleteProject() {
-    let _this = this;
-
     confirmAction('Are you sure?', {
       description: 'Would you like to delete this project?',
       confirmLabel: 'Delete',
       abortLabel: 'Cancel'
     }).then(() => {
-      _this.props.onProjectDelete(_this.props.data[0]._id);
+      this.props.onProjectDelete(this.props.data[0]._id);
     });
   },
   render() {
