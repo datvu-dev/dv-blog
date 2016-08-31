@@ -81,7 +81,7 @@ var QualificationItem = React.createClass({
     });
   },
   render() {
-    let id = this.props.id;
+    let {id} = this.props;
 
     return (
       <div>

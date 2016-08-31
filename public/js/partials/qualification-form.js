@@ -8,7 +8,7 @@ var QualificationForm = React.createClass({
     };
   },
   componentDidMount() {
-    let id = this.props.params.id ? this.props.params.id : null;
+    let {id} = this.props.params ? this.props.params : null;
 
     if (id) {
       $.ajax({
@@ -25,23 +25,20 @@ var QualificationForm = React.createClass({
     }
   },
   handleSchoolChange(e) {
-    this.setState({school: e.target.value});
+    this.setState({school: e.target.value.trim()});
   },
   handleCourseChange(e) {
-    this.setState({course: e.target.value});
+    this.setState({course: e.target.value.trim()});
   },
   handleYearChange(value) {
     this.setState({year: value});
   },
   handleDescriptionChange(e) {
-    this.setState({description: e.target.value});
+    this.setState({description: e.target.value.trim()});
   },
   handleValidation(e) {
     e.preventDefault();
-    let school = this.state.school.trim();
-    let course = this.state.course.trim();
-    let year = this.state.year;
-    let description = this.state.description.trim();
+    let {school, course, year, description} = this.state;
 
     $('#form-message').hide();
     $('.form-control').removeClass('required');
@@ -72,7 +69,7 @@ var QualificationForm = React.createClass({
     }
   },
   handleSubmit(item) {
-    let id = this.props.params.id ? this.props.params.id : '';
+    let {id} = this.props.params ? this.props.params : '';
 
     $.ajax({
       url: `/api/resume/qualification/${id}`,
