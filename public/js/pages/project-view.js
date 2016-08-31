@@ -52,22 +52,24 @@ ProjectViewPage.contextTypes = {
 
 var Project = React.createClass({
   deleteProject() {
-    let propsObj = this.props;
+    let _this = this;
 
     confirmAction('Are you sure?', {
       description: 'Would you like to delete this project?',
       confirmLabel: 'Delete',
       abortLabel: 'Cancel'
     }).then(() => {
-      propsObj.onProjectDelete(propsObj.data[0]._id);
+      _this.props.onProjectDelete(_this.props.data[0]._id);
     });
   },
   render() {
-    let id = this.props.data[0]._id;
-    let title = this.props.data[0].title;
-    let picSrc = '/uploads/projects/' + id + '/' + this.props.data[0].picture;
-    let description = this.props.data[0].description;
-    let tags = this.props.data[0].technologies;
+    let data = this.props.data[0];
+    let id = data._id;
+    let title = data.title;
+    let picName = data.picture;
+    let picSrc = `/uploads/projects/${id}/${picName}`;
+    let description = data.description;
+    let tags = data.technologies;
     let tagItems;
 
     if (tags) {
@@ -81,8 +83,8 @@ var Project = React.createClass({
 
     return (
       <div>
-        <h1>{title}</h1>    
-        <EditLink path={'/project/' + this.props.data[0]._id + '/edit'}
+        <h1>{title}</h1>
+        <EditLink path={`/project/${id}/edit`}
           isModal={false} />
         <DeleteLink onDelete={this.deleteProject} />
         <p><img src={picSrc} /></p>

@@ -72,31 +72,34 @@ var ProjectsList = React.createClass({
 
 var ProjectItem = React.createClass({
   deleteProject() {
-    let propsObj = this.props;
+    let _this = this;
 
     confirmAction('Are you sure?', {
       description: 'Would you like to delete this project?',
       confirmLabel: 'Delete',
       abortLabel: 'Cancel'
     }).then(() => {
-      propsObj.onProjectDelete(propsObj.id);
+      _this.props.onProjectDelete(_this.props.id);
     });
   },
   render() {
+    let id = this.props.id;
+    let image = this.props.img;
+
     return (
       <div className="box col-md-6 col-lg-4">
         <div className="box-img">
-          <img src={'/uploads/projects/' + this.props.id + '/' + this.props.img}
+          <img src={`/uploads/projects/${id}/${image}`}
             alt="Card image cap" />
         </div>
         <div className="box-content">
-          <h4 className="box-title"><Link to={'/project/' + this.props.id}>
+          <h4 className="box-title"><Link to={`/project/${id}`}>
             {this.props.title}</Link>
           </h4>
           <p className="box-text">This is a longer card with supporting text
             below as a natural lead-in to additional content. This content is a
             little bit longer.</p>
-          <EditLink path={'/project/' + this.props.id + '/edit'}
+          <EditLink path={`/project/${id}/edit`}
             isModal={false} />
           <DeleteLink onDelete={this.deleteProject} />
         </div>

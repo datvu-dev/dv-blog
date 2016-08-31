@@ -97,14 +97,15 @@ var ProjectForm = React.createClass({
       let projectID = this.props.projectID;
 
       this.serverRequest = $.ajax({
-        url: '/api/projects/' + projectID,
+        url: `/api/projects/${projectID}`,
         dataType: 'json',
         cache: false,
         success: data => {
           // console.log(data);
           this.setState(data[0]);
+          let picName = data[0]['picture'];        
 
-          var imgCtr = $('<img/>').prop('src', '/uploads/projects/' + projectID + '/' +  data[0]['picture']);
+          var imgCtr = $('<img/>').prop('src', `/uploads/projects/${projectID}/${picName}`);
           $('#imgContainer').html(imgCtr);
         },
         error: (xhr, status, err) => {
@@ -222,7 +223,8 @@ var ProjectForm = React.createClass({
             <form encType="multipart/form-data" onSubmit={this.handleSubmit}>
               <fieldset className="form-group">
                 <label htmlFor="projectTitle">Title</label>
-                <input type="text" className="form-control" id="projectTitle" value={this.state.title} onChange={this.handleTitleChange} />
+                <input type="text" className="form-control" id="projectTitle"
+                  value={this.state.title} onChange={this.handleTitleChange} />
               </fieldset>
               <fieldset className="form-group">
                 <label htmlFor="projectYear">Year of completion</label>
@@ -230,7 +232,9 @@ var ProjectForm = React.createClass({
               </fieldset>
               <fieldset className="form-group">
                 <label htmlFor="projectDescription">Description</label>
-                <textarea className="form-control" id="projectDescription" rows="4"  value={this.state.description} onChange={this.handleDescriptionChange}></textarea>
+                <textarea className="form-control" id="projectDescription" rows="4"
+                  value={this.state.description}
+                  onChange={this.handleDescriptionChange}></textarea>
               </fieldset>
               <fieldset className="form-group">
                 <label htmlFor="projectTechnologies">Technologies</label>
@@ -250,7 +254,8 @@ var ProjectForm = React.createClass({
               </fieldset>
               <fieldset className="form-group">
                 <label htmlFor="projectPicture">Screenshot</label>
-                <input type="file" className="form-control-file" id="projectPicture"  onChange={this.handlePictureChange} />
+                <input type="file" className="form-control-file" id="projectPicture"
+                  onChange={this.handlePictureChange} />
                 <div id="imgContainer"></div>
               </fieldset>
               <button type="submit" className="btn btn-primary">Save Project</button>
