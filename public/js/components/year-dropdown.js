@@ -1,19 +1,19 @@
 // public/js/components/year-dropdown.js
 
 var YearsSelect = React.createClass({
-  onSelectChange: function(e) {
+  onSelectChange(e) {
     this.props.onSelectChange(e.target.value);
   },
-  render: function() {
-    var currentYear = new Date().getFullYear();
-    var years = [];
-    var startYear = 2010;
+  render() {
+    let currentYear = new Date().getFullYear();
+    let years = [];
+    let startYear = 2010;
 
     while (startYear <= currentYear) {
       years.push(startYear++);
     }
 
-    var yearItems = years.map(function(item) {
+    let yearItems = years.map(item => {
       return (
         <option key={item} value={item}>{item}</option>
       );

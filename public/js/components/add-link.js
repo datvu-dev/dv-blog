@@ -1,7 +1,9 @@
 var AddLink = React.createClass({
-  render: function() {
+  render() {
+    let linkItem;
+
     if (localStorage.getItem('user')) {
-      var linkItem = <Link to={{
+      linkItem = <Link to={{
           pathname: this.props.path,
           state: {modal: this.props.isModal}
         }}>Add</Link>
@@ -9,7 +11,7 @@ var AddLink = React.createClass({
 
     return (
      <span>
-        {linkItem} 
+        {linkItem}
      </span>
    );
   }

@@ -2,7 +2,7 @@
 
 var Modal = React.createClass({
   displayName: 'Modal',
-  render: function() {
+  render() {
     return (
       <div id="modal">
         <div className="modal-backdrop in"></div>

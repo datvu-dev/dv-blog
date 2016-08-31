@@ -4,32 +4,36 @@ var Promise = $.Deferred;
 
 var Confirm = React.createClass({
   displayName: 'Confirm',
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
       confirmLabel: 'OK',
       abortLabel: 'Cancel'
     }
   },
-  abort: function() {
+  abort() {
     return this.promise.reject();
   },
-  confirm: function() {
+  confirm() {
     return this.promise.resolve();
   },
-  componentDidMount: function() {
+  componentDidMount() {
     this.promise = new Promise();
   },
-  render: function() {
+  render() {
     return React.createElement(Modal, null,
       <div>
         <div className="modal-header">
           <h4 className="modal-title">{this.props.message}</h4>
         </div>
-        <div className="modal-body">{this.props.description ? this.props.description : ''}</div>
+        <div className="modal-body">
+          {this.props.description ? this.props.description : ''}
+        </div>
         <div className="modal-footer">
           <div className="text-right">
-            <button role="abort" type="button" className="btn btn-default" onClick={this.abort}>{this.props.abortLabel}</button>
-            <button role="confirm" type="button" className="btn btn-primary" ref="confirm" onClick={this.confirm}>{this.props.confirmLabel}</button>
+            <button role="abort" type="button" className="btn btn-default"
+              onClick={this.abort}>{this.props.abortLabel}</button>
+            <button role="confirm" type="button" className="btn btn-primary"
+              ref="confirm" onClick={this.confirm}>{this.props.confirmLabel}</button>
           </div>
         </div>
       </div>
@@ -37,7 +41,7 @@ var Confirm = React.createClass({
   }
 });
 
-var confirmAction = function(message, options) {
+confirmAction = (message, options) => {
   if (options == null) {
     options = {};
   }
@@ -46,7 +50,7 @@ var confirmAction = function(message, options) {
   var wrapper = document.body.appendChild(document.createElement('div'));
   var component = ReactDOM.render(React.createElement(Confirm, props), wrapper);
 
-  var cleanup = function() {
+  cleanup = () => {
     ReactDOM.unmountComponentAtNode(wrapper);
     setTimeout(function() {
       wrapper.remove();

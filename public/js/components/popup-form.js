@@ -1,7 +1,7 @@
 // public/js/components/popup-form.js
 
 var PopupForm = React.createClass({
-  render: function() {
+  render() {
     return React.createElement(Modal, null,
       <div>
         <div className="modal-header">
@@ -14,10 +14,10 @@ var PopupForm = React.createClass({
 });
 
 var PopupButtons = React.createClass({
-  cancel: function() {
+  cancel() {
     window.history.back();;
   },
-  render: function() {
+  render() {
     return (
       <div className="text-right">
         <button type="button" className="btn btn-default" onClick={this.cancel}>Cancel</button>

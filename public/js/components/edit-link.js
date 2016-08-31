@@ -1,7 +1,9 @@
 var EditLink = React.createClass({
-  render: function() {
+  render() {
+    let linkItem;
+
     if (localStorage.getItem('user')) {
-      var linkItem = <Link className="utility-link" to={{
+      linkItem = <Link className="utility-link" to={{
         pathname: this.props.path,
         state: {modal: this.props.isModal}
       }}><small>Edit</small></Link>
@@ -9,7 +11,7 @@ var EditLink = React.createClass({
 
     return (
      <span>
-        {linkItem} 
+        {linkItem}
      </span>
    );
   }
