@@ -2,10 +2,10 @@
 
 var ProjectViewPage = React.createClass({
   loadProject() {
-    let projectID = this.props.params.project_id;
+    let {id} = this.props.params;
 
     $.ajax({
-      url: this.props.route.url + projectID,
+      url: this.props.route.url + id,
       dataType: 'json',
       cache: false,
       success: data => {
@@ -63,18 +63,13 @@ var Project = React.createClass({
     });
   },
   render() {
-    let data = this.props.data[0];
-    let id = data._id;
-    let title = data.title;
-    let picName = data.picture;
-    let picSrc = `/uploads/projects/${id}/${picName}`;
-    let description = data.description;
-    let tags = data.technologies;
+    let {_id, title, picture, description, technologies} = this.props.data[0];
+    let picSrc = `/uploads/projects/${_id}/${picture}`;
     let tagItems;
 
-    if (tags) {
+    if (technologies) {
       let count = 0;
-      tagItems = tags.map(item => {
+      tagItems = technologies.map(item => {
         return (
           <span key={item._id} className="tag">{item.text}</span>
         );
@@ -84,7 +79,7 @@ var Project = React.createClass({
     return (
       <div>
         <h1>{title}</h1>
-        <EditLink path={`/project/${id}/edit`}
+        <EditLink path={`/project/${_id}/edit`}
           isModal={false} />
         <DeleteLink onDelete={this.deleteProject} />
         <p><img src={picSrc} /></p>

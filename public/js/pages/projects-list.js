@@ -83,13 +83,12 @@ var ProjectItem = React.createClass({
     });
   },
   render() {
-    let id = this.props.id;
-    let image = this.props.img;
+    let {id, img} = this.props;
 
     return (
       <div className="box col-md-6 col-lg-4">
         <div className="box-img">
-          <img src={`/uploads/projects/${id}/${image}`}
+          <img src={`/uploads/projects/${id}/${img}`}
             alt="Card image cap" />
         </div>
         <div className="box-content">

@@ -2,10 +2,10 @@
 
 var ProjectFormPage = React.createClass({
   handleProjectSubmit(item) {
-    let projectID = this.props.params.project_id ? this.props.params.project_id : '';
+    let {id} = this.props.params ? this.props.params : '';
 
     $.ajax({
-      url: this.props.route.url + projectID,
+      url: this.props.route.url + id,
       dataType: 'json',
       type: 'POST',
       data: item,
@@ -54,7 +54,7 @@ var ProjectFormPage = React.createClass({
     return (
       <div>
         <ProjectForm onProjectSubmit={this.handleProjectSubmit}
-          data={this.state.data} projectID={this.props.params.project_id} />
+          data={this.state.data} projectID={this.props.params.id} />
       </div>
     );
   }
@@ -103,7 +103,7 @@ var ProjectForm = React.createClass({
         success: data => {
           // console.log(data);
           this.setState(data[0]);
-          let picName = data[0]['picture'];        
+          let picName = data[0]['picture'];
 
           var imgCtr = $('<img/>').prop('src', `/uploads/projects/${projectID}/${picName}`);
           $('#imgContainer').html(imgCtr);
@@ -122,13 +122,13 @@ var ProjectForm = React.createClass({
     }
   },
   handleTitleChange(e) {
-    this.setState({title: e.target.value});
+    this.setState({title: e.target.value.trim()});
   },
   handleYearChange(value) {
     this.setState({year: value});
   },
   handleDescriptionChange(e) {
-    this.setState({description: e.target.value});
+    this.setState({description: e.target.value.trim()});
   },
   handleTechnologyChange(tags) {
     this.setState({technologies: tags});
@@ -176,11 +176,7 @@ var ProjectForm = React.createClass({
   },
   handleSubmit(e) {
     e.preventDefault();
-    let title = this.state.title.trim();
-    let year = this.state.year;
-    let description = this.state.description.trim();
-    let technologies = this.state.technologies;
-    let pictureName = this.state.picture;
+    let {title, year, description, technologies, picture} = this.state;
     let pictureObj = $('#imgContainer img');
 
     $('#form-message').hide();
@@ -208,7 +204,7 @@ var ProjectForm = React.createClass({
       this.props.onProjectSubmit({
         title: title,
         year: year,
-        picture: pictureName,
+        picture: picture,
         description: description,
         technologies: technologies
       });
