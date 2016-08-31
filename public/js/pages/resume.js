@@ -1,7 +1,7 @@
 // public/js/pages/resume.js
 
 var ResumePage = React.createClass({
-  render: function() {
+  render() {
     return (
       <div>
         <Qualifications />

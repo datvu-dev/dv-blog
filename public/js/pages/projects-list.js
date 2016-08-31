@@ -1,41 +1,41 @@
 // public/js/pages/projects-list.js
 
 var ProjectsPage = React.createClass({
-  loadProjectsList: function() {
+  loadProjectsList() {
     $.ajax({
       url: this.props.route.url,
       dataType: 'json',
       cache: false,
-      success: function(data) {
+      success: data => {
         // console.log(data);
         this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         console.error(this.props.route.url, status, err.toString());
-      }.bind(this)
+      }
     });
   },
-  handleProjectDelete: function(id) {
+  handleProjectDelete(id) {
     $.ajax({
       url: this.props.route.url + id,
       dataType: 'json',
       type: 'DELETE',
-      success: function(data) {
+      success: data => {
         this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         // this.setState({data: comments});
         console.error(this.props.route.url, status, err.toString());
-      }.bind(this)
+      }
     });
   },
-  getInitialState: function() {
+  getInitialState() {
     return {data: []};
   },
-  componentDidMount: function() {
+  componentDidMount() {
     this.loadProjectsList();
   },
-  render: function() {
+  render() {
     return (
       <div>
         <Link to="/project/new" className="btn btn-primary">New Project</Link>
@@ -50,12 +50,13 @@ ProjectsPage.contextTypes = {
 }
 
 var ProjectsList = React.createClass({
-  render: function() {
-    var _this =  this;
+  render() {
+    let _this =  this;
 
-    var projectItems = this.props.data.map(function(item) {
+    let projectItems = this.props.data.map(item => {
       return (
-        <ProjectItem title={item.title} img={item.picture} id={item._id} key={item._id} onProjectDelete={_this.props.onProjectDelete} />
+        <ProjectItem title={item.title} img={item.picture} id={item._id}
+          key={item._id} onProjectDelete={_this.props.onProjectDelete} />
       );
     });
 
@@ -70,27 +71,34 @@ var ProjectsList = React.createClass({
 });
 
 var ProjectItem = React.createClass({
-  deleteProject: function() {
-    var propsObj = this.props;
+  deleteProject() {
+    let propsObj = this.props;
 
     confirmAction('Are you sure?', {
       description: 'Would you like to delete this project?',
       confirmLabel: 'Delete',
       abortLabel: 'Cancel'
-    }).then(function() {
+    }).then(() => {
       propsObj.onProjectDelete(propsObj.id);
     });
   },
-  render: function() {
+  render() {
     return (
       <div className="box col-md-6 col-lg-4">
         <div className="box-img">
-          <img src={'/uploads/projects/' + this.props.id + '/' + this.props.img} alt="Card image cap" />
+          <img src={'/uploads/projects/' + this.props.id + '/' + this.props.img}
+            alt="Card image cap" />
         </div>
         <div className="box-content">
-          <h4 className="box-title"><Link to={'/project/' + this.props.id}>{this.props.title}</Link></h4>
-          <p className="box-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-          <UtilityLinks path={'/project/' + this.props.id + '/edit'} isModal={false} onDelete={this.deleteProject} />
+          <h4 className="box-title"><Link to={'/project/' + this.props.id}>
+            {this.props.title}</Link>
+          </h4>
+          <p className="box-text">This is a longer card with supporting text
+            below as a natural lead-in to additional content. This content is a
+            little bit longer.</p>
+          <EditLink path={'/project/' + this.props.id + '/edit'}
+            isModal={false} />
+          <DeleteLink onDelete={this.deleteProject} />
         </div>
       </div>
     )

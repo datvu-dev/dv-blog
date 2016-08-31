@@ -1,29 +1,29 @@
 // public/js/pages/project-form.js
 
 var ProjectFormPage = React.createClass({
-  handleProjectSubmit: function(item) {
-    var projectID = this.props.params.project_id ? this.props.params.project_id : '';
+  handleProjectSubmit(item) {
+    let projectID = this.props.params.project_id ? this.props.params.project_id : '';
 
     $.ajax({
       url: this.props.route.url + projectID,
       dataType: 'json',
       type: 'POST',
       data: item,
-      success: function(data) {
+      success: data => {
         if ($('#projectPicture')[0].files[0]) {
           this.handleUpload();
         }
 
         this.context.router.push('/projects');
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         console.error(this.props.route.url, status, err.toString());
-      }.bind(this)
+      }
     });
   },
-  handleUpload: function() {
-    var formData = new FormData();
-    var fileObj = $('#projectPicture')[0].files[0];
+  handleUpload() {
+    let formData = new FormData();
+    let fileObj = $('#projectPicture')[0].files[0];
     formData.append('uploads[]', fileObj , fileObj.name);
 
     $.ajax({
@@ -32,15 +32,15 @@ var ProjectFormPage = React.createClass({
       data: formData,
       processData: false,
       contentType: false,
-      success: function(data) {
+      success: data => {
 
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         console.error(this.props.route.url, status, err.toString());
-      }.bind(this)
+      }
     })
   },
-  getInitialState: function() {
+  getInitialState() {
     return {data: {
       title : '',
       year : '',
@@ -50,10 +50,11 @@ var ProjectFormPage = React.createClass({
       suggestions: []
     }};
   },
-  render: function() {
+  render() {
     return (
       <div>
-        <ProjectForm onProjectSubmit={this.handleProjectSubmit} data={this.state.data} projectID={this.props.params.project_id} />
+        <ProjectForm onProjectSubmit={this.handleProjectSubmit}
+          data={this.state.data} projectID={this.props.params.project_id} />
       </div>
     );
   }
@@ -64,88 +65,88 @@ ProjectFormPage.contextTypes = {
 }
 
 var ProjectForm = React.createClass({
-  getInitialState: function() {
+  getInitialState() {
     return this.props.data;
   },
-  getTagSuggestions: function() {
-    var skillsUrl = 'http://trendyskills.com/service?q=keywords&key=77MGlB3wzQbD9KfZ';
+  getTagSuggestions() {
+    let skillsUrl = 'http://trendyskills.com/service?q=keywords&key=77MGlB3wzQbD9KfZ';
 
     $.ajax({
       url: skillsUrl,
       method: 'GET',
       dataType: 'jsonp',
-      success: function(res) {
-        var suggestionsArr = [];
+      success: res => {
+        let suggestionsArr = [];
 
-        res.keywords.map(function(item) {
+        res.keywords.map(item => {
           suggestionsArr.push(item.keyName);
         });
 
         this.setState({suggestions: suggestionsArr});
 
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         console.error(status, err.toString());
       }
     });
   },
-  componentDidMount: function() {
+  componentDidMount() {
     $('.tag-input input').addClass('form-control').attr('id', 'projectTechnologies').blur();
 
     if (this.props.projectID) {
-      var projectID = this.props.projectID;
+      let projectID = this.props.projectID;
 
       this.serverRequest = $.ajax({
         url: '/api/projects/' + projectID,
         dataType: 'json',
         cache: false,
-        success: function(data) {
+        success: data => {
           // console.log(data);
           this.setState(data[0]);
 
           var imgCtr = $('<img/>').prop('src', '/uploads/projects/' + projectID + '/' +  data[0]['picture']);
           $('#imgContainer').html(imgCtr);
-        }.bind(this),
-        error: function(xhr, status, err) {
+        },
+        error: (xhr, status, err) => {
           console.error(this.props.route.url, status, err.toString());
-        }.bind(this)
+        }
       });
     }
 
     this.getTagSuggestions();
   },
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     if (this.serverRequest) {
       this.serverRequest.abort();
     }
   },
-  handleTitleChange: function(e) {
+  handleTitleChange(e) {
     this.setState({title: e.target.value});
   },
-  handleYearChange: function(value) {
+  handleYearChange(value) {
     this.setState({year: value});
   },
-  handleDescriptionChange: function(e) {
+  handleDescriptionChange(e) {
     this.setState({description: e.target.value});
   },
-  handleTechnologyChange: function(tags) {
+  handleTechnologyChange(tags) {
     this.setState({technologies: tags});
   },
-  handleDelete: function(i) {
-      var tags = this.state.technologies;
+  handleDelete(i) {
+      let tags = this.state.technologies;
       tags.splice(i, 1);
       this.handleTechnologyChange(tags);
   },
-  handleAddition: function(tag) {
-      var tags = this.state.technologies;
+  handleAddition(tag) {
+      let tags = this.state.technologies;
       tags.push({
           _id: tags.length + 1,
           text: tag
       });
       this.handleTechnologyChange(tags);
   },
-  handleDrag: function(tag, currPos, newPos) {
-      var tags = this.state.technologies;
+  handleDrag(tag, currPos, newPos) {
+      let tags = this.state.technologies;
 
       // mutate array
       tags.splice(currPos, 1);
@@ -154,17 +155,17 @@ var ProjectForm = React.createClass({
       // re-render
       this.handleTechnologyChange(tags);
   },
-  handlePictureChange: function(e) {
+  handlePictureChange(e) {
     // console.log(e.target);
     localStorage.removeItem("imgData")
-    var reader = new FileReader();
+    let reader = new FileReader();
     reader.onload = function () {
-        var thisImage = reader.result;
+        let thisImage = reader.result;
         localStorage.setItem("imgData", thisImage);
     };
     reader.readAsDataURL(e.target.files[0]);
 
-    setTimeout(function() {
+    setTimeout(() => {
       var dataImage = localStorage.getItem('imgData');
       var imgCtr = $('<img/>').prop('src', dataImage);
       $('#imgContainer').html(imgCtr);
@@ -172,14 +173,14 @@ var ProjectForm = React.createClass({
 
     this.setState({picture: e.target.files[0].name});
   },
-  handleSubmit: function(e) {
+  handleSubmit(e) {
     e.preventDefault();
-    var title = this.state.title.trim();
-    var year = this.state.year;
-    var description = this.state.description.trim();
-    var technologies = this.state.technologies;
-    var pictureName = this.state.picture;
-    var pictureObj = $('#imgContainer img');
+    let title = this.state.title.trim();
+    let year = this.state.year;
+    let description = this.state.description.trim();
+    let technologies = this.state.technologies;
+    let pictureName = this.state.picture;
+    let pictureObj = $('#imgContainer img');
 
     $('#form-message').hide();
     $('.form-control').removeClass('required');
@@ -213,7 +214,7 @@ var ProjectForm = React.createClass({
     }
 
   },
-  render: function() {
+  render() {
     return (
       <div id="project-form" className="row">
           <div className="col-sm-8 col-sm-offset-2">
