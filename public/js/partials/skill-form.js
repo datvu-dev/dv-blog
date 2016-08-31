@@ -49,7 +49,8 @@ var SkillForm = React.createClass({
           <form encType="multipart/form-data" onSubmit={this.handleValidation}>
             <fieldset className="form-group">
               <label htmlFor="skillName">Add skill</label>
-              <input type="text" className="form-control" id="skillName" value={this.state.skill} onChange={this.handleSkillChange} />
+              <input type="text" className="form-control" id="skillName"
+                value={this.state.skill} onChange={this.handleSkillChange} />
             </fieldset>
           </form>
       </div>

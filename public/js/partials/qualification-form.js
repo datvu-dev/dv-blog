@@ -12,7 +12,7 @@ var QualificationForm = React.createClass({
 
     if (id) {
       $.ajax({
-        url: '/api/resume/qualification/' + id,
+        url: `/api/resume/qualification/${id}`,
         dataType: 'json',
         cache: false,
         success: data => {
@@ -75,7 +75,7 @@ var QualificationForm = React.createClass({
     let id = this.props.params.id ? this.props.params.id : '';
 
     $.ajax({
-      url: '/api/resume/qualification/' + id,
+      url: `/api/resume/qualification/${id}`,
       dataType: 'json',
       type: 'POST',
       data: item,
@@ -94,19 +94,24 @@ var QualificationForm = React.createClass({
           <form encType="multipart/form-data" onSubmit={this.handleValidation}>
             <fieldset className="form-group">
               <label htmlFor="qualSchool">School</label>
-              <input type="text" className="form-control" id="qualSchool" value={this.state.school} onChange={this.handleSchoolChange} />
+              <input type="text" className="form-control" id="qualSchool"
+                value={this.state.school} onChange={this.handleSchoolChange} />
             </fieldset>
             <fieldset className="form-group">
               <label htmlFor="qualCourse">Course</label>
-              <input type="text" className="form-control" id="qualCourse" value={this.state.course} onChange={this.handleCourseChange} />
+              <input type="text" className="form-control" id="qualCourse"
+                value={this.state.course} onChange={this.handleCourseChange} />
             </fieldset>
             <fieldset className="form-group">
               <label htmlFor="qualYear">Year of completion</label>
-              <YearsSelect value={this.state.year} onSelectChange={this.handleYearChange} />
+              <YearsSelect value={this.state.year}
+                onSelectChange={this.handleYearChange} />
             </fieldset>
             <fieldset className="form-group">
               <label htmlFor="qualDescription">Description</label>
-              <textarea className="form-control" id="qualDescription" rows="4" value={this.state.description} onChange={this.handleDescriptionChange} ></textarea>
+              <textarea className="form-control" id="qualDescription" rows="4"
+                value={this.state.description}
+                onChange={this.handleDescriptionChange} ></textarea>
             </fieldset>
             <PopupButtons />
           </form>

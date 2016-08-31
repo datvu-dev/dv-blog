@@ -4,7 +4,7 @@ var Skills = React.createClass({
       url: '/api/resume/skill',
       dataType: 'json',
       cache: false,
-      success: data => {      
+      success: data => {
         this.setState({data: data});
       },
       error: (xhr, status, err) => {
@@ -14,7 +14,7 @@ var Skills = React.createClass({
   },
   handleDelete(id) {
     $.ajax({
-      url: '/api/resume/skill/' + id,
+      url: `/api/resume/skill/${id}`,
       dataType: 'json',
       type: 'DELETE',
       success: data => {

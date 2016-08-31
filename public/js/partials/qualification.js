@@ -14,7 +14,7 @@ var Qualifications = React.createClass({
   },
   handleDelete(id) {
     $.ajax({
-      url: '/api/resume/qualification/' + id,
+      url: `/api/resume/qualification/${id}`,
       dataType: 'json',
       type: 'DELETE',
       success: data => {
@@ -81,12 +81,14 @@ var QualificationItem = React.createClass({
     });
   },
   render() {
+    let id = this.props.id;
+
     return (
       <div>
         <span>{this.props.school}</span>
         <span>{this.props.course}</span>
         <p>
-          <EditLink path={'/resume/qualification/edit/' + this.props.id}
+          <EditLink path={`/resume/qualification/edit/${id}`}
             isModal={true} />
           <DeleteLink onDelete={this.deleteItem} />
         </p>
