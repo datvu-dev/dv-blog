@@ -29,7 +29,7 @@ module.exports = function(grunt) {
           separator: ''
         },
         src: [
-          'public/js/require.js','public/js/components/*.js', 'public/js/partials/*.js', 'public/js/pages/*.js', 'public/js/app-wrapper.js'
+          'public/js/import.js','public/js/components/*.js', 'public/js/partials/*.js', 'public/js/pages/*.js', 'public/js/app-wrapper.js'
         ],
         dest: 'public/js/scripts.js'
       },
@@ -52,13 +52,17 @@ module.exports = function(grunt) {
           'public/js/main.js': ['public/js/scripts.js']
         },
         options: {
-          transform: [ require('grunt-react').browserify ]
+          transform: [
+            [
+              'babelify', { 'presets': ['es2015'] }
+            ]
+          ]
         },
       }
     },
     watch: {
       js: {
-        files: ['public/js/require.js', 'public/js/components/*.js', 'public/js/partials/*.js', 'public/js/pages/*.js', 'public/js/app-wrapper.js'],
+        files: ['public/js/import.js', 'public/js/components/*.js', 'public/js/partials/*.js', 'public/js/pages/*.js', 'public/js/app-wrapper.js'],
         tasks: ['concat:scripts', 'browserify'],
         options: {
           livereload: true,
@@ -77,6 +81,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-react');
   grunt.loadNpmTasks('grunt-browserify');
 };
