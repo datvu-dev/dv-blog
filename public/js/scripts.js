@@ -1,15 +1,3 @@
-// public/js/require.js
-
-var React = require('react');
-var ReactDOM = require('react-dom');
-// var {Router, Route, IndexRoute, IndexLink, Link} = require('react-router');
-var Router = require('react-router').Router;
-var Route = require('react-router').Route;
-var Link = require('react-router').Link;
-var IndexRoute = require('react-router').IndexRoute;
-var IndexLink = require('react-router').IndexLink;
-var browserHistory = require('react-router').browserHistory;
-var ReactTags = require('react-tag-input').WithContext;
 var AddLink = React.createClass({
   render() {
     let linkItem;
@@ -71,12 +59,12 @@ var Confirm = React.createClass({
   }
 });
 
-confirmAction = (message, options = {}) => {
+var confirmAction = (message, options = {}) => {
   let props = $.extend({message: message}, options);
   let wrapper = document.body.appendChild(document.createElement('div'));
   let component = ReactDOM.render(React.createElement(Confirm, props), wrapper);
 
-  cleanup = () => {
+  var cleanup = () => {
     ReactDOM.unmountComponentAtNode(wrapper);
     setTimeout(function() {
       wrapper.remove();
@@ -224,16 +212,16 @@ var QualificationForm = React.createClass({
     }
   },
   handleSchoolChange(e) {
-    this.setState({school: e.target.value.trim()});
+    this.setState({school: e.target.value});
   },
   handleCourseChange(e) {
-    this.setState({course: e.target.value.trim()});
+    this.setState({course: e.target.value});
   },
   handleYearChange(value) {
     this.setState({year: value});
   },
   handleDescriptionChange(e) {
-    this.setState({description: e.target.value.trim()});
+    this.setState({description: e.target.value});
   },
   handleValidation(e) {
     e.preventDefault();
@@ -242,20 +230,20 @@ var QualificationForm = React.createClass({
     $('#form-message').hide();
     $('.form-control').removeClass('required');
 
-    if (!school || !course || !year || !description) {
+    if (!school.trim() || !course.trim() || !year || !description.trim()) {
       $('#form-message').show();
     }
 
-    if (!school) {
+    if (!school.trim()) {
       $('#qualSchool').addClass('required');
       this.setState({formMessage: 'Please provide school.'});
-    } else if (!course) {
+    } else if (!course.trim()) {
       $('#qualCourse').addClass('required');
       this.setState({formMessage: 'Please provide course.'});
     } else if (!year) {
       $('#qualYear').addClass('required');
       this.setState({formMessage: 'Please provide year.'});
-    } else if (!description) {
+    } else if (!description.trim()) {
       $('#qualDescription').addClass('required');
       this.setState({formMessage: 'Please provide description.'});
     } else {
@@ -268,7 +256,7 @@ var QualificationForm = React.createClass({
     }
   },
   handleSubmit(item) {
-    let {id} = this.props.params ? this.props.params : '';
+    let id = this.props.params.id ? this.props.params.id : '';
 
     $.ajax({
       url: `/api/resume/qualification/${id}`,
@@ -372,12 +360,10 @@ var Qualifications = React.createClass({
 
 var QualificationList = React.createClass({
   render() {
-    let _this = this;
-
     let qualificationItems = this.props.data.map(item => {
       return (
         <QualificationItem school={item.school} course={item.course}
-        id={item._id} key={item._id} onDelete={_this.props.onDelete} />
+        id={item._id} key={item._id} onDelete={this.props.onDelete} />
       );
     });
 
@@ -391,14 +377,12 @@ var QualificationList = React.createClass({
 
 var QualificationItem = React.createClass({
   deleteItem() {
-    let _this = this;
-
     confirmAction('Are you sure?', {
       description: 'Would you like to delete this qualification?',
       confirmLabel: 'Delete',
       abortLabel: 'Cancel'
     }).then(() => {
-      _this.props.onDelete(_this.props.id);
+      this.props.onDelete(this.props.id);
     });
   },
   render() {
@@ -424,7 +408,7 @@ var SkillForm = React.createClass({
     };
   },
   handleSkillChange(e) {
-    this.setState({skill: e.target.value.trim()});
+    this.setState({skill: e.target.value});
   },
   handleValidation(e) {
     e.preventDefault();
@@ -433,7 +417,7 @@ var SkillForm = React.createClass({
     $('#form-message').hide();
     $('.form-control').removeClass('required');
 
-    if (!skill) {
+    if (!skill.trim()) {
       $('#skillName').addClass('required');
       $('#form-message').show();
 
@@ -538,12 +522,10 @@ var Skills = React.createClass({
 
 var SkillList = React.createClass({
   render() {
-    let _this = this;
-
     let skillItems = this.props.data.map(item => {
       return (
         <SkillItem skill={item.skill} id={item._id} key={item._id}
-          onDelete={_this.props.onDelete} />
+          onDelete={this.props.onDelete} />
       );
     });
 
@@ -557,14 +539,12 @@ var SkillList = React.createClass({
 
 var SkillItem = React.createClass({
   deleteItem() {
-    let _this = this;
-
     confirmAction('Are you sure?', {
       description: 'Would you like to delete this skill?',
       confirmLabel: 'Delete',
       abortLabel: 'Cancel'
     }).then(() => {
-      _this.props.onDelete(_this.props.id);
+      this.props.onDelete(this.props.id);
     });
   },
   render() {
@@ -587,7 +567,7 @@ var Home = React.createClass({
 
 var ProjectFormPage = React.createClass({
   handleProjectSubmit(item) {
-    let {id} = this.props.params ? this.props.params : '';
+    let id = this.props.params.id ? this.props.params.id : '';
 
     $.ajax({
       url: this.props.route.url + id,
@@ -707,13 +687,13 @@ var ProjectForm = React.createClass({
     }
   },
   handleTitleChange(e) {
-    this.setState({title: e.target.value.trim()});
+    this.setState({title: e.target.value});
   },
   handleYearChange(value) {
     this.setState({year: value});
   },
   handleDescriptionChange(e) {
-    this.setState({description: e.target.value.trim()});
+    this.setState({description: e.target.value});
   },
   handleTechnologyChange(tags) {
     this.setState({technologies: tags});
@@ -767,17 +747,18 @@ var ProjectForm = React.createClass({
     $('#form-message').hide();
     $('.form-control').removeClass('required');
 
-    if (!title || !year || !description || technologies.length == 0 || pictureObj.length == 0) {
+    if (!title.trim() || !year || !description.trim() || technologies.length == 0
+      || pictureObj.length == 0) {
       $('#form-message').show();
     }
 
-    if (!title) {
+    if (!title.trim()) {
       $('#projectTitle').addClass('required');
       this.setState({formMessage: 'Please put in title.'});
     } else if (!year) {
       $('#projectYear').addClass('required');
       this.setState({formMessage: 'Please put in year.'});
-    } else if (!description) {
+    } else if (!description.trim()) {
       $('#projectDescription').addClass('required');
       this.setState({formMessage: 'Please put in description.'});
     } else if (technologies.length == 0) {
@@ -900,14 +881,12 @@ ProjectViewPage.contextTypes = {
 
 var Project = React.createClass({
   deleteProject() {
-    let _this = this;
-
     confirmAction('Are you sure?', {
       description: 'Would you like to delete this project?',
       confirmLabel: 'Delete',
       abortLabel: 'Cancel'
     }).then(() => {
-      _this.props.onProjectDelete(_this.props.data[0]._id);
+      this.props.onProjectDelete(this.props.data[0]._id);
     });
   },
   render() {
@@ -990,12 +969,10 @@ ProjectsPage.contextTypes = {
 
 var ProjectsList = React.createClass({
   render() {
-    let _this =  this;
-
     let projectItems = this.props.data.map(item => {
       return (
         <ProjectItem title={item.title} img={item.picture} id={item._id}
-          key={item._id} onProjectDelete={_this.props.onProjectDelete} />
+          key={item._id} onProjectDelete={this.props.onProjectDelete} />
       );
     });
 
@@ -1011,14 +988,12 @@ var ProjectsList = React.createClass({
 
 var ProjectItem = React.createClass({
   deleteProject() {
-    let _this = this;
-
     confirmAction('Are you sure?', {
       description: 'Would you like to delete this project?',
       confirmLabel: 'Delete',
       abortLabel: 'Cancel'
     }).then(() => {
-      _this.props.onProjectDelete(_this.props.id);
+      this.props.onProjectDelete(this.props.id);
     });
   },
   render() {
@@ -1223,12 +1198,12 @@ var App = React.createClass({
       this.previousChildren = this.props.children
     }
   },
-  componentDidMount: function() {
+  componentDidMount() {
     $.ajax({
       url: '/api/checkauthentication',
       dataType: 'json',
       cache: false,
-      success: function(authenticated) {
+      success: authenticated => {
         if (authenticated) {
           localStorage.setItem('user', 'datvu');
         }
@@ -1236,15 +1211,15 @@ var App = React.createClass({
           localStorage.removeItem('user');
         }
 
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         console.error(status, err.toString());
-      }.bind(this)
+      }
     });
   },
-  render: function() {
-    var {location} = this.props;
-    var isModal = (location.state && location.state.modal &&
+  render() {
+    let {location} = this.props;
+    let isModal = (location.state && location.state.modal &&
       this.previousChildren);
 
     return (
