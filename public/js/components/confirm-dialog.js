@@ -41,12 +41,12 @@ var Confirm = React.createClass({
   }
 });
 
-confirmAction = (message, options = {}) => {
+var confirmAction = (message, options = {}) => {
   let props = $.extend({message: message}, options);
   let wrapper = document.body.appendChild(document.createElement('div'));
   let component = ReactDOM.render(React.createElement(Confirm, props), wrapper);
 
-  cleanup = () => {
+  var cleanup = () => {
     ReactDOM.unmountComponentAtNode(wrapper);
     setTimeout(function() {
       wrapper.remove();
