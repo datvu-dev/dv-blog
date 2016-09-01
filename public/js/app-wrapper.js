@@ -10,12 +10,12 @@ var App = React.createClass({
       this.previousChildren = this.props.children
     }
   },
-  componentDidMount: function() {
+  componentDidMount() {
     $.ajax({
       url: '/api/checkauthentication',
       dataType: 'json',
       cache: false,
-      success: function(authenticated) {
+      success: authenticated => {
         if (authenticated) {
           localStorage.setItem('user', 'datvu');
         }
@@ -23,15 +23,15 @@ var App = React.createClass({
           localStorage.removeItem('user');
         }
 
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         console.error(status, err.toString());
-      }.bind(this)
+      }
     });
   },
-  render: function() {
-    var {location} = this.props;
-    var isModal = (location.state && location.state.modal &&
+  render() {
+    let {location} = this.props;
+    let isModal = (location.state && location.state.modal &&
       this.previousChildren);
 
     return (
@@ -69,8 +69,8 @@ ReactDOM.render(
       <Route path="resume/qualification/edit/:id" url="/api/resume/qualification" component={QualificationForm} />
       <Route path="projects" url="/api/projects/" component={ProjectsPage} />
       <Route path="project/new" url="/api/projects/" component={ProjectFormPage} />
-      <Route path="project/:project_id" url="/api/projects/" component={ProjectViewPage} />
-      <Route path="project/:project_id/edit" url="/api/projects/" component={ProjectFormPage} />
+      <Route path="project/:id" url="/api/projects/" component={ProjectViewPage} />
+      <Route path="project/:id/edit" url="/api/projects/" component={ProjectFormPage} />
     </Route>
   </Router>,
   document.getElementById('main')
