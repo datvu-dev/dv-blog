@@ -1,3 +1,9 @@
+// public/js/import.js
+
+import React from 'react';
+import ReactDOM from 'react-dom';
+import {Router, Route, IndexRoute, IndexLink, Link, browserHistory} from 'react-router';
+import { WithContext as ReactTags } from 'react-tag-input';
 var AddLink = React.createClass({
   render() {
     let linkItem;
@@ -247,12 +253,7 @@ var QualificationForm = React.createClass({
       $('#qualDescription').addClass('required');
       this.setState({formMessage: 'Please provide description.'});
     } else {
-      this.handleSubmit({
-        school: school,
-        course: course,
-        year: year,
-        description: description,
-      });
+      this.handleSubmit({school, course, year, description});
     }
   },
   handleSubmit(item) {
@@ -426,9 +427,7 @@ var SkillForm = React.createClass({
       $('#skillName').val('');
       this.setState({skill: ''});
 
-      this.handleSubmit({
-        skill: skill
-      });
+      this.handleSubmit({skill});
     }
   },
   handleSubmit(item) {
@@ -767,13 +766,7 @@ var ProjectForm = React.createClass({
     } else if (pictureObj.length == 0) {
       this.setState({formMessage: 'Please upload a screenshot.'});
     } else {
-      this.props.onProjectSubmit({
-        title: title,
-        year: year,
-        picture: picture,
-        description: description,
-        technologies: technologies
-      });
+      this.props.onProjectSubmit({title, year, picture, description, technologies});
     }
 
   },
