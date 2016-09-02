@@ -60,12 +60,7 @@ var QualificationForm = React.createClass({
       $('#qualDescription').addClass('required');
       this.setState({formMessage: 'Please provide description.'});
     } else {
-      this.handleSubmit({
-        school: school,
-        course: course,
-        year: year,
-        description: description,
-      });
+      this.handleSubmit({school, course, year, description});
     }
   },
   handleSubmit(item) {

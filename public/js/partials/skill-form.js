@@ -23,9 +23,7 @@ var SkillForm = React.createClass({
       $('#skillName').val('');
       this.setState({skill: ''});
 
-      this.handleSubmit({
-        skill: skill
-      });
+      this.handleSubmit({skill});
     }
   },
   handleSubmit(item) {

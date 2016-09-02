@@ -202,13 +202,7 @@ var ProjectForm = React.createClass({
     } else if (pictureObj.length == 0) {
       this.setState({formMessage: 'Please upload a screenshot.'});
     } else {
-      this.props.onProjectSubmit({
-        title: title,
-        year: year,
-        picture: picture,
-        description: description,
-        technologies: technologies
-      });
+      this.props.onProjectSubmit({title, year, picture, description, technologies});
     }
 
   },
