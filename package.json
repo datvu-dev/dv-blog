@@ -7,6 +7,9 @@
   "engines": {
     "node": "5.1.1"
   },
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
     "babel-preset-react": "^6.11.1",
     "bcrypt-nodejs": "0.0.3",
