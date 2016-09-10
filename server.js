@@ -4,7 +4,7 @@
 var express  = require('express');
 var app      = express();                               // create our app w/ express
 var mongoose = require('mongoose');                     // mongoose for mongodb
-var port     = process.env.PORT || 8080;                // set the port
+var port     = process.env.PORT || 5000;                // set the port
 
 var passport = require('passport');
 var flash = require('connect-flash');
