@@ -559,7 +559,7 @@ var SkillItem = React.createClass({
 
 var Home = React.createClass({
   render() {
-    return (<h1>Welcome to the Home Page</h1>);
+    return (<h1>Welcome to Dat Vu Page</h1>);
   }
 });
 // public/js/pages/project-form.js
