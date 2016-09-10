@@ -4,6 +4,9 @@
   "description": "Dat Vu's Personal Blog App",
   "main": "server.js",
   "author": "Dat Vu",
+  "engines": {
+    "node": "5.1.1"
+  },
   "dependencies": {
     "babel-preset-react": "^6.11.1",
     "bcrypt-nodejs": "0.0.3",
