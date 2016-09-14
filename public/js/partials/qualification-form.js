@@ -44,20 +44,20 @@ var QualificationForm = React.createClass({
     $('.form-control').removeClass('required');
 
     if (!school.trim() || !course.trim() || !year || !description.trim()) {
-      $('#form-message').show();
+      $('#qualification-form #form-message').show();
     }
 
     if (!school.trim()) {
-      $('#qualSchool').addClass('required');
+      $('#qualSchool').addClass('required').focus();
       this.setState({formMessage: 'Please provide school.'});
     } else if (!course.trim()) {
-      $('#qualCourse').addClass('required');
+      $('#qualCourse').addClass('required').focus();
       this.setState({formMessage: 'Please provide course.'});
     } else if (!year) {
-      $('#qualYear').addClass('required');
+      $('#qualYear').addClass('required').focus();
       this.setState({formMessage: 'Please provide year.'});
     } else if (!description.trim()) {
-      $('#qualDescription').addClass('required');
+      $('#qualDescription').addClass('required').focus();
       this.setState({formMessage: 'Please provide description.'});
     } else {
       this.handleSubmit({school, course, year, description});
