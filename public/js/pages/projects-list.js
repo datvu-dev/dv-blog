@@ -37,8 +37,9 @@ var ProjectsPage = React.createClass({
   },
   render() {
     return (
-      <div>
-        <Link to="/project/new" className="btn btn-primary">New Project</Link>
+      <div>        
+        <AddLink path={'/project/new'}
+          isModal={false} />
         <ProjectsList data={this.state.data} onProjectDelete={this.handleProjectDelete} />
       </div>
     );

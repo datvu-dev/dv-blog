@@ -40414,11 +40414,8 @@ var ProjectsPage = _react2.default.createClass({
     return _react2.default.createElement(
       'div',
       null,
-      _react2.default.createElement(
-        _reactRouter.Link,
-        { to: '/project/new', className: 'btn btn-primary' },
-        'New Project'
-      ),
+      _react2.default.createElement(AddLink, { path: '/project/new',
+        isModal: false }),
       _react2.default.createElement(ProjectsList, { data: this.state.data, onProjectDelete: this.handleProjectDelete })
     );
   }
