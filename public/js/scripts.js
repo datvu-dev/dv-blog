@@ -236,20 +236,20 @@ var QualificationForm = React.createClass({
     $('.form-control').removeClass('required');
 
     if (!school.trim() || !course.trim() || !year || !description.trim()) {
-      $('#form-message').show();
+      $('#qualification-form #form-message').show();
     }
 
     if (!school.trim()) {
-      $('#qualSchool').addClass('required');
+      $('#qualSchool').addClass('required').focus();
       this.setState({formMessage: 'Please provide school.'});
     } else if (!course.trim()) {
-      $('#qualCourse').addClass('required');
+      $('#qualCourse').addClass('required').focus();
       this.setState({formMessage: 'Please provide course.'});
     } else if (!year) {
-      $('#qualYear').addClass('required');
+      $('#qualYear').addClass('required').focus();
       this.setState({formMessage: 'Please provide year.'});
     } else if (!description.trim()) {
-      $('#qualDescription').addClass('required');
+      $('#qualDescription').addClass('required').focus();
       this.setState({formMessage: 'Please provide description.'});
     } else {
       this.handleSubmit({school, course, year, description});
@@ -418,7 +418,7 @@ var SkillForm = React.createClass({
     $('.form-control').removeClass('required');
 
     if (!skill.trim()) {
-      $('#skillName').addClass('required');
+      $('#skillName').addClass('required').focus();
       $('#form-message').show();
 
       this.setState({formMessage: 'Please provide skill.'});
@@ -751,16 +751,16 @@ var ProjectForm = React.createClass({
     }
 
     if (!title.trim()) {
-      $('#projectTitle').addClass('required');
+      $('#projectTitle').addClass('required').focus();
       this.setState({formMessage: 'Please put in title.'});
     } else if (!year) {
-      $('#projectYear').addClass('required');
+      $('#projectYear').addClass('required').focus();
       this.setState({formMessage: 'Please put in year.'});
     } else if (!description.trim()) {
-      $('#projectDescription').addClass('required');
+      $('#projectDescription').addClass('required').focus();
       this.setState({formMessage: 'Please put in description.'});
     } else if (technologies.length == 0) {
-      $('#projectTechnologies').addClass('required');
+      $('#projectTechnologies').addClass('required').focus();
       this.setState({formMessage: 'Please put in at least one technology.'});
     } else if (pictureObj.length == 0) {
       this.setState({formMessage: 'Please upload a screenshot.'});
