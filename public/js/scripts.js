@@ -115,6 +115,19 @@ var EditLink = React.createClass({
    );
   }
 });
+var FormButtons = React.createClass({
+  cancel() {
+    window.history.back();;
+  },
+  render() {
+    return (
+      <div className="text-right">
+        <button type="button" className="btn btn-default" onClick={this.cancel}>Cancel</button>
+        <button type="submit" className="btn btn-main" onClick={this.submit}>Save</button>
+      </div>
+    )
+  }
+});
 // public/js/components/modal.js
 
 var Modal = React.createClass({
@@ -144,20 +157,6 @@ var PopupForm = React.createClass({
           <h4 className="modal-title">Add New Thing</h4>
         </div>
         <div className="modal-body">{this.props.children}</div>
-      </div>
-    )
-  }
-});
-
-var PopupButtons = React.createClass({
-  cancel() {
-    window.history.back();;
-  },
-  render() {
-    return (
-      <div className="text-right">
-        <button type="button" className="btn btn-default" onClick={this.cancel}>Cancel</button>
-        <button type="submit" className="btn btn-main" onClick={this.submit}>Save</button>
       </div>
     )
   }
@@ -298,7 +297,7 @@ var QualificationForm = React.createClass({
                 value={this.state.description}
                 onChange={this.handleDescriptionChange} ></textarea>
             </fieldset>
-            <PopupButtons />
+            <FormButtons />
           </form>
       </div>
     );
@@ -813,7 +812,7 @@ var ProjectForm = React.createClass({
                   onChange={this.handlePictureChange} />
                 <div id="imgContainer"></div>
               </fieldset>
-              <button type="submit" className="btn btn-main">Save Project</button>
+              <FormButtons />
             </form>
           </div>
       </div>

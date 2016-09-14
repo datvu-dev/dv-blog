@@ -39348,6 +39348,28 @@ var EditLink = _react2.default.createClass({
     );
   }
 });
+var FormButtons = _react2.default.createClass({
+  displayName: 'FormButtons',
+  cancel: function cancel() {
+    window.history.back();;
+  },
+  render: function render() {
+    return _react2.default.createElement(
+      'div',
+      { className: 'text-right' },
+      _react2.default.createElement(
+        'button',
+        { type: 'button', className: 'btn btn-default', onClick: this.cancel },
+        'Cancel'
+      ),
+      _react2.default.createElement(
+        'button',
+        { type: 'submit', className: 'btn btn-main', onClick: this.submit },
+        'Save'
+      )
+    );
+  }
+});
 // public/js/components/modal.js
 
 var Modal = _react2.default.createClass({
@@ -39396,29 +39418,6 @@ var PopupForm = _react2.default.createClass({
         this.props.children
       )
     ));
-  }
-});
-
-var PopupButtons = _react2.default.createClass({
-  displayName: 'PopupButtons',
-  cancel: function cancel() {
-    window.history.back();;
-  },
-  render: function render() {
-    return _react2.default.createElement(
-      'div',
-      { className: 'text-right' },
-      _react2.default.createElement(
-        'button',
-        { type: 'button', className: 'btn btn-default', onClick: this.cancel },
-        'Cancel'
-      ),
-      _react2.default.createElement(
-        'button',
-        { type: 'submit', className: 'btn btn-main', onClick: this.submit },
-        'Save'
-      )
-    );
   }
 });
 // public/js/components/year-dropdown.js
@@ -39608,7 +39607,7 @@ var QualificationForm = _react2.default.createClass({
             value: this.state.description,
             onChange: this.handleDescriptionChange })
         ),
-        _react2.default.createElement(PopupButtons, null)
+        _react2.default.createElement(FormButtons, null)
       )
     );
   }
@@ -40236,11 +40235,7 @@ var ProjectForm = _react2.default.createClass({
               onChange: this.handlePictureChange }),
             _react2.default.createElement('div', { id: 'imgContainer' })
           ),
-          _react2.default.createElement(
-            'button',
-            { type: 'submit', className: 'btn btn-main' },
-            'Save Project'
-          )
+          _react2.default.createElement(FormButtons, null)
         )
       )
     );
