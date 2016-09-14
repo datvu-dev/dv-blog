@@ -39268,7 +39268,7 @@ var Confirm = _react2.default.createClass({
           ),
           _react2.default.createElement(
             'button',
-            { role: 'confirm', type: 'button', className: 'btn btn-primary',
+            { role: 'confirm', type: 'button', className: 'btn btn-main',
               ref: 'confirm', onClick: this.confirm },
             this.props.confirmLabel
           )
@@ -39415,7 +39415,7 @@ var PopupButtons = _react2.default.createClass({
       ),
       _react2.default.createElement(
         'button',
-        { type: 'submit', className: 'btn btn-primary', onClick: this.submit },
+        { type: 'submit', className: 'btn btn-main', onClick: this.submit },
         'Save'
       )
     );
@@ -40238,7 +40238,7 @@ var ProjectForm = _react2.default.createClass({
           ),
           _react2.default.createElement(
             'button',
-            { type: 'submit', className: 'btn btn-primary' },
+            { type: 'submit', className: 'btn btn-main' },
             'Save Project'
           )
         )

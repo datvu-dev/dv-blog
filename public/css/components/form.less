@@ -24,3 +24,15 @@
   border: none;
   padding: 5px 8px;
 }
+
+// Buttons
+.btn-main {
+  color: @white;
+  background-color: @theme;
+
+  &:hover, &:focus {
+    color: @white;
+    background-color: darken(@theme, 5%);
+    border-color: darken(@theme, 5%);
+  }
+}

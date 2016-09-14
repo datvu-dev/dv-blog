@@ -32,7 +32,7 @@ var Confirm = React.createClass({
           <div className="text-right">
             <button role="abort" type="button" className="btn btn-default"
               onClick={this.abort}>{this.props.abortLabel}</button>
-            <button role="confirm" type="button" className="btn btn-primary"
+            <button role="confirm" type="button" className="btn btn-main"
               ref="confirm" onClick={this.confirm}>{this.props.confirmLabel}</button>
           </div>
         </div>

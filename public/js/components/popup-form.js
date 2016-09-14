@@ -21,7 +21,7 @@ var PopupButtons = React.createClass({
     return (
       <div className="text-right">
         <button type="button" className="btn btn-default" onClick={this.cancel}>Cancel</button>
-        <button type="submit" className="btn btn-primary" onClick={this.submit}>Save</button>
+        <button type="submit" className="btn btn-main" onClick={this.submit}>Save</button>
       </div>
     )
   }
