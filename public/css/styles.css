@@ -6825,6 +6825,9 @@ a {
   background-color: #4dac46;
   border-color: #4dac46;
 }
+.btn + .btn-main {
+  margin-left: 5px;
+}
 .box {
   position: relative;
   display: block;
