@@ -6792,7 +6792,7 @@ a {
   box-shadow: none;
 }
 .required {
-  border: 1px solid #d9534f;
+  border-bottom: 1px solid #d9534f;
 }
 #form-message {
   display: none;
