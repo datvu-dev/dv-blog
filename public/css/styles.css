@@ -6795,6 +6795,16 @@ a {
   border: none;
   padding: 5px 8px;
 }
+.btn-main {
+  color: #fff;
+  background-color: #5AB953;
+}
+.btn-main:hover,
+.btn-main:focus {
+  color: #fff;
+  background-color: #4dac46;
+  border-color: #4dac46;
+}
 .box {
   position: relative;
   display: block;
