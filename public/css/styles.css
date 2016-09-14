@@ -6771,6 +6771,26 @@ a {
 #imgContainer img {
   max-width: 300px;
 }
+.form-group {
+  margin-bottom: 20px;
+}
+.form-control {
+  border: none;
+  border-bottom: 1px solid #c6c6c6;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  border-radius: 0;
+}
+.form-control:focus {
+  border: none;
+  border-bottom: 1px solid #5AB953;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
 .required {
   border: 1px solid #d9534f;
 }
