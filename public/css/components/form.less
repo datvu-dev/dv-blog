@@ -1,3 +1,22 @@
+// Form Groups
+.form-group {
+  margin-bottom: 20px;
+}
+
+// Form Fields
+.form-control {
+  border: none;
+  border-bottom: 1px solid lighten(@grey, 5%);
+  .no-box-shadow();
+  .border-radius(0);
+
+  &:focus {
+    border: none;
+    border-bottom: 1px solid @theme;
+    .no-box-shadow();
+  }
+}
+
 // Required Field
 .required {
   border: 1px solid @required;
