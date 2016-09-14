@@ -37,7 +37,7 @@ var ProjectsPage = React.createClass({
   },
   render() {
     return (
-      <div>        
+      <div>
         <AddLink path={'/project/new'}
           isModal={false} />
         <ProjectsList data={this.state.data} onProjectDelete={this.handleProjectDelete} />
@@ -60,7 +60,7 @@ var ProjectsList = React.createClass({
     });
 
     return (
-      <div id="projects-list" className="container">
+      <div id="projects-list">
         <div className="row">
           {projectItems}
         </div>
