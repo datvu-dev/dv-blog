@@ -105,7 +105,7 @@ var QualificationForm = React.createClass({
                 value={this.state.description}
                 onChange={this.handleDescriptionChange} ></textarea>
             </fieldset>
-            <PopupButtons />
+            <FormButtons />
           </form>
       </div>
     );

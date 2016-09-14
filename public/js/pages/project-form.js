@@ -249,7 +249,7 @@ var ProjectForm = React.createClass({
                   onChange={this.handlePictureChange} />
                 <div id="imgContainer"></div>
               </fieldset>
-              <button type="submit" className="btn btn-main">Save Project</button>
+              <FormButtons />
             </form>
           </div>
       </div>
