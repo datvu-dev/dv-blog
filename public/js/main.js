@@ -40437,7 +40437,7 @@ var ProjectsList = _react2.default.createClass({
 
     return _react2.default.createElement(
       'div',
-      { id: 'projects-list', className: 'container' },
+      { id: 'projects-list' },
       _react2.default.createElement(
         'div',
         { className: 'row' },
