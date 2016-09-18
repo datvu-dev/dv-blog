@@ -910,7 +910,7 @@ var Project = React.createClass({
     )
   }
 });
-// public/js/pages/projects-list.js
+// public/js/pages/projects.js
 
 var ProjectItem = React.createClass({
   deleteItem() {

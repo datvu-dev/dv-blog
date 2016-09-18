@@ -40367,7 +40367,7 @@ var Project = _react2.default.createClass({
     );
   }
 });
-// public/js/pages/projects-list.js
+// public/js/pages/projects.js
 
 var ProjectItem = _react2.default.createClass({
   displayName: 'ProjectItem',
