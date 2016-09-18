@@ -40247,82 +40247,26 @@ var ProjectForm = _react2.default.createClass({
 });
 // public/js/pages/project-view.js
 
-var ProjectViewPage = _react2.default.createClass({
-  displayName: 'ProjectViewPage',
-  loadProject: function loadProject() {
-    var _this16 = this;
-
-    var id = this.props.params.id;
-
-
-    $.ajax({
-      url: this.props.route.url + id,
-      dataType: 'json',
-      cache: false,
-      success: function success(data) {
-        // console.log(data);
-        _this16.setState({ data: data });
-      },
-      error: function error(xhr, status, err) {
-        console.error(_this16.props.route.url, status, err.toString());
-      }
-    });
-  },
-  handleProjectDelete: function handleProjectDelete(id) {
-    var _this17 = this;
-
-    $.ajax({
-      url: this.props.route.url + id,
-      dataType: 'json',
-      type: 'DELETE',
-      success: function success(data) {
-        _this17.context.router.push('/projects');
-      },
-      error: function error(xhr, status, err) {
-        // this.setState({data: comments});
-        console.error(_this17.props.route.url, status, err.toString());
-      }
-    });
-  },
-  getInitialState: function getInitialState() {
-    return { data: '[]' };
-  },
-  componentDidMount: function componentDidMount() {
-    this.loadProject();
-  },
-  render: function render() {
-    return _react2.default.createElement(
-      'div',
-      null,
-      _react2.default.createElement(Project, { data: this.state.data, onProjectDelete: this.handleProjectDelete })
-    );
-  }
-});
-
-ProjectViewPage.contextTypes = {
-  router: _react2.default.PropTypes.object.isRequired
-};
-
 var Project = _react2.default.createClass({
   displayName: 'Project',
   deleteProject: function deleteProject() {
-    var _this18 = this;
+    var _this16 = this;
 
     confirmAction('Are you sure?', {
       description: 'Would you like to delete this project?',
       confirmLabel: 'Delete',
       abortLabel: 'Cancel'
     }).then(function () {
-      _this18.props.onProjectDelete(_this18.props.data[0]._id);
+      _this16.props.onDelete(_this16.props.data._id);
     });
   },
   render: function render() {
-    var _props$data$ = this.props.data[0];
-    var _id = _props$data$._id;
-    var title = _props$data$.title;
-    var picture = _props$data$.picture;
-    var description = _props$data$.description;
-    var technologies = _props$data$.technologies;
+    var _props$data = this.props.data;
+    var _id = _props$data._id;
+    var title = _props$data.title;
+    var picture = _props$data.picture;
+    var description = _props$data.description;
+    var technologies = _props$data.technologies;
 
     var picSrc = '/uploads/projects/' + _id + '/' + picture;
     var tagItems = void 0;
@@ -40346,8 +40290,7 @@ var Project = _react2.default.createClass({
         null,
         title
       ),
-      _react2.default.createElement(EditLink, { path: '/project/' + _id + '/edit',
-        isModal: false }),
+      _react2.default.createElement(EditLink, { path: '/project/' + _id + '/edit', isModal: false }),
       _react2.default.createElement(DeleteLink, { onDelete: this.deleteProject }),
       _react2.default.createElement(
         'p',
@@ -40367,6 +40310,60 @@ var Project = _react2.default.createClass({
     );
   }
 });
+
+var ProjectViewPage = _react2.default.createClass({
+  displayName: 'ProjectViewPage',
+  loadProject: function loadProject() {
+    var _this17 = this;
+
+    var id = this.props.params.id;
+
+
+    $.ajax({
+      url: this.props.route.url + id,
+      dataType: 'json',
+      cache: false,
+      success: function success(data) {
+        _this17.setState({ data: data[0] });
+      },
+      error: function error(xhr, status, err) {
+        console.error(_this17.props.route.url, status, err.toString());
+      }
+    });
+  },
+  handleDelete: function handleDelete(id) {
+    var _this18 = this;
+
+    $.ajax({
+      url: this.props.route.url + id,
+      dataType: 'json',
+      type: 'DELETE',
+      success: function success(data) {
+        _this18.context.router.push('/projects');
+      },
+      error: function error(xhr, status, err) {
+        console.error(_this18.props.route.url, status, err.toString());
+      }
+    });
+  },
+  getInitialState: function getInitialState() {
+    return { data: {} };
+  },
+  componentWillMount: function componentWillMount() {
+    this.loadProject();
+  },
+  render: function render() {
+    return _react2.default.createElement(
+      'div',
+      null,
+      _react2.default.createElement(Project, { data: this.state.data, onDelete: this.handleDelete })
+    );
+  }
+});
+
+ProjectViewPage.contextTypes = {
+  router: _react2.default.PropTypes.object.isRequired
+};
 // public/js/pages/projects.js
 
 var ProjectItem = _react2.default.createClass({
