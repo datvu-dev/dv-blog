@@ -39938,80 +39938,13 @@ var Home = _react2.default.createClass({
 });
 // public/js/pages/project-form.js
 
-var ProjectFormPage = _react2.default.createClass({
-  displayName: 'ProjectFormPage',
-  handleProjectSubmit: function handleProjectSubmit(item) {
-    var _this12 = this;
-
-    var id = this.props.params.id ? this.props.params.id : '';
-
-    $.ajax({
-      url: this.props.route.url + id,
-      dataType: 'json',
-      type: 'POST',
-      data: item,
-      success: function success(data) {
-        if ($('#projectPicture')[0].files[0]) {
-          _this12.handleUpload();
-        }
-
-        _this12.context.router.push('/projects');
-      },
-      error: function error(xhr, status, err) {
-        console.error(_this12.props.route.url, status, err.toString());
-      }
-    });
-  },
-  handleUpload: function handleUpload() {
-    var _this13 = this;
-
-    var formData = new FormData();
-    var fileObj = $('#projectPicture')[0].files[0];
-    formData.append('uploads[]', fileObj, fileObj.name);
-
-    $.ajax({
-      url: '/api/upload',
-      type: 'POST',
-      data: formData,
-      processData: false,
-      contentType: false,
-      success: function success(data) {},
-      error: function error(xhr, status, err) {
-        console.error(_this13.props.route.url, status, err.toString());
-      }
-    });
-  },
-  getInitialState: function getInitialState() {
-    return { data: {
-        title: '',
-        year: '',
-        picture: '',
-        description: '',
-        technologies: [],
-        suggestions: []
-      } };
-  },
-  render: function render() {
-    return _react2.default.createElement(
-      'div',
-      null,
-      _react2.default.createElement(ProjectForm, { onProjectSubmit: this.handleProjectSubmit,
-        data: this.state.data, projectID: this.props.params.id })
-    );
-  }
-});
-
-ProjectFormPage.contextTypes = {
-  router: _react2.default.PropTypes.object.isRequired
-};
-
 var ProjectForm = _react2.default.createClass({
   displayName: 'ProjectForm',
   getInitialState: function getInitialState() {
     return this.props.data;
   },
   getTagSuggestions: function getTagSuggestions() {
-    var _this14 = this;
+    var _this12 = this;
 
     var skillsUrl = 'http://trendyskills.com/service?q=keywords&key=77MGlB3wzQbD9KfZ';
 
@@ -40026,7 +39959,7 @@ var ProjectForm = _react2.default.createClass({
           suggestionsArr.push(item.keyName);
         });
 
-        _this14.setState({ suggestions: suggestionsArr });
+        _this12.setState({ suggestions: suggestionsArr });
       },
       error: function error(xhr, status, err) {
         console.error(status, err.toString());
@@ -40034,28 +39967,28 @@ var ProjectForm = _react2.default.createClass({
     });
   },
   componentDidMount: function componentDidMount() {
-    var _this15 = this;
+    var _this13 = this;
 
     $('.tag-input input').addClass('form-control').attr('id', 'projectTechnologies').blur();
 
     if (this.props.projectID) {
       (function () {
-        var projectID = _this15.props.projectID;
+        var projectID = _this13.props.projectID;
 
-        _this15.serverRequest = $.ajax({
+        _this13.serverRequest = $.ajax({
           url: '/api/projects/' + projectID,
           dataType: 'json',
           cache: false,
           success: function success(data) {
             // console.log(data);
-            _this15.setState(data[0]);
+            _this13.setState(data[0]);
             var picName = data[0]['picture'];
 
             var imgCtr = $('<img/>').prop('src', '/uploads/projects/' + projectID + '/' + picName);
             $('#imgContainer').html(imgCtr);
           },
           error: function error(xhr, status, err) {
-            console.error(_this15.props.route.url, status, err.toString());
+            console.error(_this13.props.route.url, status, err.toString());
           }
         });
       })();
@@ -40245,6 +40178,73 @@ var ProjectForm = _react2.default.createClass({
     );
   }
 });
+
+var ProjectFormPage = _react2.default.createClass({
+  displayName: 'ProjectFormPage',
+  handleProjectSubmit: function handleProjectSubmit(item) {
+    var _this14 = this;
+
+    var id = this.props.params.id ? this.props.params.id : '';
+
+    $.ajax({
+      url: this.props.route.url + id,
+      dataType: 'json',
+      type: 'POST',
+      data: item,
+      success: function success(data) {
+        if ($('#projectPicture')[0].files[0]) {
+          _this14.handleUpload();
+        }
+
+        _this14.context.router.push('/projects');
+      },
+      error: function error(xhr, status, err) {
+        console.error(_this14.props.route.url, status, err.toString());
+      }
+    });
+  },
+  handleUpload: function handleUpload() {
+    var _this15 = this;
+
+    var formData = new FormData();
+    var fileObj = $('#projectPicture')[0].files[0];
+    formData.append('uploads[]', fileObj, fileObj.name);
+
+    $.ajax({
+      url: '/api/upload',
+      type: 'POST',
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function success(data) {},
+      error: function error(xhr, status, err) {
+        console.error(_this15.props.route.url, status, err.toString());
+      }
+    });
+  },
+  getInitialState: function getInitialState() {
+    return { data: {
+        title: '',
+        year: '',
+        picture: '',
+        description: '',
+        technologies: [],
+        suggestions: []
+      } };
+  },
+  render: function render() {
+    return _react2.default.createElement(
+      'div',
+      null,
+      _react2.default.createElement(ProjectForm, { onProjectSubmit: this.handleProjectSubmit,
+        data: this.state.data, projectID: this.props.params.id })
+    );
+  }
+});
+
+ProjectFormPage.contextTypes = {
+  router: _react2.default.PropTypes.object.isRequired
+};
 // public/js/pages/project-view.js
 
 var Project = _react2.default.createClass({
