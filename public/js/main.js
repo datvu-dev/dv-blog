@@ -39268,7 +39268,7 @@ var Confirm = _react2.default.createClass({
           ),
           _react2.default.createElement(
             'button',
-            { role: 'confirm', type: 'button', className: 'btn btn-primary',
+            { role: 'confirm', type: 'button', className: 'btn btn-main',
               ref: 'confirm', onClick: this.confirm },
             this.props.confirmLabel
           )
@@ -39348,6 +39348,28 @@ var EditLink = _react2.default.createClass({
     );
   }
 });
+var FormButtons = _react2.default.createClass({
+  displayName: 'FormButtons',
+  cancel: function cancel() {
+    window.history.back();;
+  },
+  render: function render() {
+    return _react2.default.createElement(
+      'div',
+      { className: 'text-right' },
+      _react2.default.createElement(
+        'button',
+        { type: 'button', className: 'btn btn-default', onClick: this.cancel },
+        'Cancel'
+      ),
+      _react2.default.createElement(
+        'button',
+        { type: 'submit', className: 'btn btn-main', onClick: this.submit },
+        'Save'
+      )
+    );
+  }
+});
 // public/js/components/modal.js
 
 var Modal = _react2.default.createClass({
@@ -39378,7 +39400,7 @@ var Modal = _react2.default.createClass({
 var PopupForm = _react2.default.createClass({
   displayName: 'PopupForm',
   render: function render() {
-    return _react2.default.createElement(Modal, null, _react2.default.createElement(
+    return _react2.default.createElement(
       'div',
       null,
       _react2.default.createElement(
@@ -39394,29 +39416,6 @@ var PopupForm = _react2.default.createClass({
         'div',
         { className: 'modal-body' },
         this.props.children
-      )
-    ));
-  }
-});
-
-var PopupButtons = _react2.default.createClass({
-  displayName: 'PopupButtons',
-  cancel: function cancel() {
-    window.history.back();;
-  },
-  render: function render() {
-    return _react2.default.createElement(
-      'div',
-      { className: 'text-right' },
-      _react2.default.createElement(
-        'button',
-        { type: 'button', className: 'btn btn-default', onClick: this.cancel },
-        'Cancel'
-      ),
-      _react2.default.createElement(
-        'button',
-        { type: 'submit', className: 'btn btn-primary', onClick: this.submit },
-        'Save'
       )
     );
   }
@@ -39514,20 +39513,20 @@ var QualificationForm = _react2.default.createClass({
     $('.form-control').removeClass('required');
 
     if (!school.trim() || !course.trim() || !year || !description.trim()) {
-      $('#form-message').show();
+      $('#qualification-form #form-message').show();
     }
 
     if (!school.trim()) {
-      $('#qualSchool').addClass('required');
+      $('#qualSchool').addClass('required').focus();
       this.setState({ formMessage: 'Please provide school.' });
     } else if (!course.trim()) {
-      $('#qualCourse').addClass('required');
+      $('#qualCourse').addClass('required').focus();
       this.setState({ formMessage: 'Please provide course.' });
     } else if (!year) {
-      $('#qualYear').addClass('required');
+      $('#qualYear').addClass('required').focus();
       this.setState({ formMessage: 'Please provide year.' });
     } else if (!description.trim()) {
-      $('#qualDescription').addClass('required');
+      $('#qualDescription').addClass('required').focus();
       this.setState({ formMessage: 'Please provide description.' });
     } else {
       this.handleSubmit({ school: school, course: course, year: year, description: description });
@@ -39553,62 +39552,66 @@ var QualificationForm = _react2.default.createClass({
   },
   render: function render() {
     return _react2.default.createElement(
-      'div',
-      { id: 'qualification-form', className: '' },
+      PopupForm,
+      null,
       _react2.default.createElement(
-        'p',
-        { id: 'form-message' },
-        this.state.formMessage
-      ),
-      _react2.default.createElement(
-        'form',
-        { encType: 'multipart/form-data', onSubmit: this.handleValidation },
+        'div',
+        { id: 'qualification-form', className: '' },
         _react2.default.createElement(
-          'fieldset',
-          { className: 'form-group' },
-          _react2.default.createElement(
-            'label',
-            { htmlFor: 'qualSchool' },
-            'School'
-          ),
-          _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'qualSchool',
-            value: this.state.school, onChange: this.handleSchoolChange })
+          'p',
+          { id: 'form-message' },
+          this.state.formMessage
         ),
         _react2.default.createElement(
-          'fieldset',
-          { className: 'form-group' },
+          'form',
+          { encType: 'multipart/form-data', onSubmit: this.handleValidation },
           _react2.default.createElement(
-            'label',
-            { htmlFor: 'qualCourse' },
-            'Course'
+            'fieldset',
+            { className: 'form-group' },
+            _react2.default.createElement(
+              'label',
+              { htmlFor: 'qualSchool' },
+              'School'
+            ),
+            _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'qualSchool',
+              value: this.state.school, onChange: this.handleSchoolChange })
           ),
-          _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'qualCourse',
-            value: this.state.course, onChange: this.handleCourseChange })
-        ),
-        _react2.default.createElement(
-          'fieldset',
-          { className: 'form-group' },
           _react2.default.createElement(
-            'label',
-            { htmlFor: 'qualYear' },
-            'Year of completion'
+            'fieldset',
+            { className: 'form-group' },
+            _react2.default.createElement(
+              'label',
+              { htmlFor: 'qualCourse' },
+              'Course'
+            ),
+            _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'qualCourse',
+              value: this.state.course, onChange: this.handleCourseChange })
           ),
-          _react2.default.createElement(YearsSelect, { value: this.state.year,
-            onSelectChange: this.handleYearChange })
-        ),
-        _react2.default.createElement(
-          'fieldset',
-          { className: 'form-group' },
           _react2.default.createElement(
-            'label',
-            { htmlFor: 'qualDescription' },
-            'Description'
+            'fieldset',
+            { className: 'form-group' },
+            _react2.default.createElement(
+              'label',
+              { htmlFor: 'qualYear' },
+              'Year of completion'
+            ),
+            _react2.default.createElement(YearsSelect, { value: this.state.year,
+              onSelectChange: this.handleYearChange })
           ),
-          _react2.default.createElement('textarea', { className: 'form-control', id: 'qualDescription', rows: '4',
-            value: this.state.description,
-            onChange: this.handleDescriptionChange })
-        ),
-        _react2.default.createElement(PopupButtons, null)
+          _react2.default.createElement(
+            'fieldset',
+            { className: 'form-group' },
+            _react2.default.createElement(
+              'label',
+              { htmlFor: 'qualDescription' },
+              'Description'
+            ),
+            _react2.default.createElement('textarea', { className: 'form-control', id: 'qualDescription', rows: '4',
+              value: this.state.description,
+              onChange: this.handleDescriptionChange })
+          ),
+          _react2.default.createElement(FormButtons, null)
+        )
       )
     );
   }
@@ -39756,7 +39759,7 @@ var SkillForm = _react2.default.createClass({
     $('.form-control').removeClass('required');
 
     if (!skill.trim()) {
-      $('#skillName').addClass('required');
+      $('#skillName').addClass('required').focus();
       $('#form-message').show();
 
       this.setState({ formMessage: 'Please provide skill.' });
@@ -40137,16 +40140,16 @@ var ProjectForm = _react2.default.createClass({
     }
 
     if (!title.trim()) {
-      $('#projectTitle').addClass('required');
+      $('#projectTitle').addClass('required').focus();
       this.setState({ formMessage: 'Please put in title.' });
     } else if (!year) {
-      $('#projectYear').addClass('required');
+      $('#projectYear').addClass('required').focus();
       this.setState({ formMessage: 'Please put in year.' });
     } else if (!description.trim()) {
-      $('#projectDescription').addClass('required');
+      $('#projectDescription').addClass('required').focus();
       this.setState({ formMessage: 'Please put in description.' });
     } else if (technologies.length == 0) {
-      $('#projectTechnologies').addClass('required');
+      $('#projectTechnologies').addClass('required').focus();
       this.setState({ formMessage: 'Please put in at least one technology.' });
     } else if (pictureObj.length == 0) {
       this.setState({ formMessage: 'Please upload a screenshot.' });
@@ -40236,11 +40239,7 @@ var ProjectForm = _react2.default.createClass({
               onChange: this.handlePictureChange }),
             _react2.default.createElement('div', { id: 'imgContainer' })
           ),
-          _react2.default.createElement(
-            'button',
-            { type: 'submit', className: 'btn btn-primary' },
-            'Save Project'
-          )
+          _react2.default.createElement(FormButtons, null)
         )
       )
     );
@@ -40414,11 +40413,8 @@ var ProjectsPage = _react2.default.createClass({
     return _react2.default.createElement(
       'div',
       null,
-      _react2.default.createElement(
-        _reactRouter.Link,
-        { to: '/project/new', className: 'btn btn-primary' },
-        'New Project'
-      ),
+      _react2.default.createElement(AddLink, { path: '/project/new',
+        isModal: false }),
       _react2.default.createElement(ProjectsList, { data: this.state.data, onProjectDelete: this.handleProjectDelete })
     );
   }
@@ -40440,7 +40436,7 @@ var ProjectsList = _react2.default.createClass({
 
     return _react2.default.createElement(
       'div',
-      { id: 'projects-list', className: 'container' },
+      { id: 'projects-list' },
       _react2.default.createElement(
         'div',
         { className: 'row' },

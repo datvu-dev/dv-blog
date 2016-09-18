@@ -56,7 +56,7 @@ var Confirm = React.createClass({
           <div className="text-right">
             <button role="abort" type="button" className="btn btn-default"
               onClick={this.abort}>{this.props.abortLabel}</button>
-            <button role="confirm" type="button" className="btn btn-primary"
+            <button role="confirm" type="button" className="btn btn-main"
               ref="confirm" onClick={this.confirm}>{this.props.confirmLabel}</button>
           </div>
         </div>
@@ -115,6 +115,19 @@ var EditLink = React.createClass({
    );
   }
 });
+var FormButtons = React.createClass({
+  cancel() {
+    window.history.back();;
+  },
+  render() {
+    return (
+      <div className="text-right">
+        <button type="button" className="btn btn-default" onClick={this.cancel}>Cancel</button>
+        <button type="submit" className="btn btn-main" onClick={this.submit}>Save</button>
+      </div>
+    )
+  }
+});
 // public/js/components/modal.js
 
 var Modal = React.createClass({
@@ -138,26 +151,12 @@ var Modal = React.createClass({
 
 var PopupForm = React.createClass({
   render() {
-    return React.createElement(Modal, null,
+    return (
       <div>
         <div className="modal-header">
           <h4 className="modal-title">Add New Thing</h4>
         </div>
-        <div className="modal-body">{this.props.children}</div>
-      </div>
-    )
-  }
-});
-
-var PopupButtons = React.createClass({
-  cancel() {
-    window.history.back();;
-  },
-  render() {
-    return (
-      <div className="text-right">
-        <button type="button" className="btn btn-default" onClick={this.cancel}>Cancel</button>
-        <button type="submit" className="btn btn-primary" onClick={this.submit}>Save</button>
+        <div className="modal-body">{this.props.children}</div>      
       </div>
     )
   }
@@ -237,20 +236,20 @@ var QualificationForm = React.createClass({
     $('.form-control').removeClass('required');
 
     if (!school.trim() || !course.trim() || !year || !description.trim()) {
-      $('#form-message').show();
+      $('#qualification-form #form-message').show();
     }
 
     if (!school.trim()) {
-      $('#qualSchool').addClass('required');
+      $('#qualSchool').addClass('required').focus();
       this.setState({formMessage: 'Please provide school.'});
     } else if (!course.trim()) {
-      $('#qualCourse').addClass('required');
+      $('#qualCourse').addClass('required').focus();
       this.setState({formMessage: 'Please provide course.'});
     } else if (!year) {
-      $('#qualYear').addClass('required');
+      $('#qualYear').addClass('required').focus();
       this.setState({formMessage: 'Please provide year.'});
     } else if (!description.trim()) {
-      $('#qualDescription').addClass('required');
+      $('#qualDescription').addClass('required').focus();
       this.setState({formMessage: 'Please provide description.'});
     } else {
       this.handleSubmit({school, course, year, description});
@@ -274,33 +273,35 @@ var QualificationForm = React.createClass({
   },
   render() {
     return (
-      <div id="qualification-form" className="">
-          <p id="form-message">{this.state.formMessage}</p>
-          <form encType="multipart/form-data" onSubmit={this.handleValidation}>
-            <fieldset className="form-group">
-              <label htmlFor="qualSchool">School</label>
-              <input type="text" className="form-control" id="qualSchool"
-                value={this.state.school} onChange={this.handleSchoolChange} />
-            </fieldset>
-            <fieldset className="form-group">
-              <label htmlFor="qualCourse">Course</label>
-              <input type="text" className="form-control" id="qualCourse"
-                value={this.state.course} onChange={this.handleCourseChange} />
-            </fieldset>
-            <fieldset className="form-group">
-              <label htmlFor="qualYear">Year of completion</label>
-              <YearsSelect value={this.state.year}
-                onSelectChange={this.handleYearChange} />
-            </fieldset>
-            <fieldset className="form-group">
-              <label htmlFor="qualDescription">Description</label>
-              <textarea className="form-control" id="qualDescription" rows="4"
-                value={this.state.description}
-                onChange={this.handleDescriptionChange} ></textarea>
-            </fieldset>
-            <PopupButtons />
-          </form>
-      </div>
+      <PopupForm>
+        <div id="qualification-form" className="">
+            <p id="form-message">{this.state.formMessage}</p>
+            <form encType="multipart/form-data" onSubmit={this.handleValidation}>
+              <fieldset className="form-group">
+                <label htmlFor="qualSchool">School</label>
+                <input type="text" className="form-control" id="qualSchool"
+                  value={this.state.school} onChange={this.handleSchoolChange} />
+              </fieldset>
+              <fieldset className="form-group">
+                <label htmlFor="qualCourse">Course</label>
+                <input type="text" className="form-control" id="qualCourse"
+                  value={this.state.course} onChange={this.handleCourseChange} />
+              </fieldset>
+              <fieldset className="form-group">
+                <label htmlFor="qualYear">Year of completion</label>
+                <YearsSelect value={this.state.year}
+                  onSelectChange={this.handleYearChange} />
+              </fieldset>
+              <fieldset className="form-group">
+                <label htmlFor="qualDescription">Description</label>
+                <textarea className="form-control" id="qualDescription" rows="4"
+                  value={this.state.description}
+                  onChange={this.handleDescriptionChange} ></textarea>
+              </fieldset>
+              <FormButtons />
+            </form>
+        </div>
+      </PopupForm>
     );
   }
 });
@@ -419,7 +420,7 @@ var SkillForm = React.createClass({
     $('.form-control').removeClass('required');
 
     if (!skill.trim()) {
-      $('#skillName').addClass('required');
+      $('#skillName').addClass('required').focus();
       $('#form-message').show();
 
       this.setState({formMessage: 'Please provide skill.'});
@@ -752,16 +753,16 @@ var ProjectForm = React.createClass({
     }
 
     if (!title.trim()) {
-      $('#projectTitle').addClass('required');
+      $('#projectTitle').addClass('required').focus();
       this.setState({formMessage: 'Please put in title.'});
     } else if (!year) {
-      $('#projectYear').addClass('required');
+      $('#projectYear').addClass('required').focus();
       this.setState({formMessage: 'Please put in year.'});
     } else if (!description.trim()) {
-      $('#projectDescription').addClass('required');
+      $('#projectDescription').addClass('required').focus();
       this.setState({formMessage: 'Please put in description.'});
     } else if (technologies.length == 0) {
-      $('#projectTechnologies').addClass('required');
+      $('#projectTechnologies').addClass('required').focus();
       this.setState({formMessage: 'Please put in at least one technology.'});
     } else if (pictureObj.length == 0) {
       this.setState({formMessage: 'Please upload a screenshot.'});
@@ -813,7 +814,7 @@ var ProjectForm = React.createClass({
                   onChange={this.handlePictureChange} />
                 <div id="imgContainer"></div>
               </fieldset>
-              <button type="submit" className="btn btn-primary">Save Project</button>
+              <FormButtons />
             </form>
           </div>
       </div>
@@ -949,7 +950,8 @@ var ProjectsPage = React.createClass({
   render() {
     return (
       <div>
-        <Link to="/project/new" className="btn btn-primary">New Project</Link>
+        <AddLink path={'/project/new'}
+          isModal={false} />
         <ProjectsList data={this.state.data} onProjectDelete={this.handleProjectDelete} />
       </div>
     );
@@ -970,7 +972,7 @@ var ProjectsList = React.createClass({
     });
 
     return (
-      <div id="projects-list" className="container">
+      <div id="projects-list">
         <div className="row">
           {projectItems}
         </div>

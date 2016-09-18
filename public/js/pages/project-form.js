@@ -188,16 +188,16 @@ var ProjectForm = React.createClass({
     }
 
     if (!title.trim()) {
-      $('#projectTitle').addClass('required');
+      $('#projectTitle').addClass('required').focus();
       this.setState({formMessage: 'Please put in title.'});
     } else if (!year) {
-      $('#projectYear').addClass('required');
+      $('#projectYear').addClass('required').focus();
       this.setState({formMessage: 'Please put in year.'});
     } else if (!description.trim()) {
-      $('#projectDescription').addClass('required');
+      $('#projectDescription').addClass('required').focus();
       this.setState({formMessage: 'Please put in description.'});
     } else if (technologies.length == 0) {
-      $('#projectTechnologies').addClass('required');
+      $('#projectTechnologies').addClass('required').focus();
       this.setState({formMessage: 'Please put in at least one technology.'});
     } else if (pictureObj.length == 0) {
       this.setState({formMessage: 'Please upload a screenshot.'});
@@ -249,7 +249,7 @@ var ProjectForm = React.createClass({
                   onChange={this.handlePictureChange} />
                 <div id="imgContainer"></div>
               </fieldset>
-              <button type="submit" className="btn btn-primary">Save Project</button>
+              <FormButtons />
             </form>
           </div>
       </div>

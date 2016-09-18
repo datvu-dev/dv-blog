@@ -38,7 +38,8 @@ var ProjectsPage = React.createClass({
   render() {
     return (
       <div>
-        <Link to="/project/new" className="btn btn-primary">New Project</Link>
+        <AddLink path={'/project/new'}
+          isModal={false} />
         <ProjectsList data={this.state.data} onProjectDelete={this.handleProjectDelete} />
       </div>
     );
@@ -59,7 +60,7 @@ var ProjectsList = React.createClass({
     });
 
     return (
-      <div id="projects-list" className="container">
+      <div id="projects-list">
         <div className="row">
           {projectItems}
         </div>

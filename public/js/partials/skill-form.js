@@ -15,7 +15,7 @@ var SkillForm = React.createClass({
     $('.form-control').removeClass('required');
 
     if (!skill.trim()) {
-      $('#skillName').addClass('required');
+      $('#skillName').addClass('required').focus();
       $('#form-message').show();
 
       this.setState({formMessage: 'Please provide skill.'});

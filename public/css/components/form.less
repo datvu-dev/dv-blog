@@ -1,6 +1,25 @@
+// Form Groups
+.form-group {
+  margin-bottom: 20px;
+}
+
+// Form Fields
+.form-control {
+  border: none;
+  border-bottom: 1px solid lighten(@grey, 5%);
+  .no-box-shadow();
+  .border-radius(0);
+
+  &:focus {
+    border: none;
+    border-bottom: 1px solid @theme;
+    .no-box-shadow();
+  }
+}
+
 // Required Field
 .required {
-  border: 1px solid @required;
+  border-bottom: 1px solid @required;
 }
 
 // Form Message
@@ -23,4 +42,20 @@
 .react-tagsinput-tag {
   border: none;
   padding: 5px 8px;
+}
+
+// Buttons
+.btn-main {
+  color: @white;
+  background-color: @theme;
+
+  &:hover, &:focus {
+    color: @white;
+    background-color: darken(@theme, 5%);
+    border-color: darken(@theme, 5%);
+  }
+
+  .btn + & {
+    margin-left: 5px;
+  }
 }
