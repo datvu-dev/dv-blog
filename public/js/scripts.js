@@ -190,6 +190,8 @@ var YearsSelect = React.createClass({
     )
   }
 });
+// public/js/partials/qualification-form.js
+
 var QualificationForm = React.createClass({
   getInitialState() {
     return {
@@ -309,6 +311,52 @@ var QualificationForm = React.createClass({
 QualificationForm.contextTypes = {
   router: React.PropTypes.object.isRequired
 }
+// public/js/partials/qualification.js
+
+var QualificationItem = React.createClass({
+  deleteItem() {
+    confirmAction('Are you sure?', {
+      description: 'Would you like to delete this qualification?',
+      confirmLabel: 'Delete',
+      abortLabel: 'Cancel'
+    }).then(() => {
+      this.props.onDelete(this.props.id);
+    });
+  },
+  render() {
+    let {id} = this.props;
+
+    return (
+      <div>
+        <span>{this.props.school}</span>
+        <span>{this.props.course}</span>
+        <p>
+          <EditLink path={`/resume/qualification/edit/${id}`}
+            isModal={true} />
+          <DeleteLink onDelete={this.deleteItem} />
+        </p>
+      </div>
+    );
+  }
+});
+
+var QualificationList = React.createClass({
+  render() {
+    let qualificationItems = this.props.data.map(item => {
+      return (
+        <QualificationItem school={item.school} course={item.course}
+        id={item._id} key={item._id} onDelete={this.props.onDelete} />
+      );
+    });
+
+    return (
+      <div>
+        {qualificationItems}
+      </div>
+    );
+  }
+});
+
 var Qualifications = React.createClass({
   loadQualifications() {
     $.ajax({
@@ -359,50 +407,8 @@ var Qualifications = React.createClass({
     );
   }
 });
+// public/js/partials/skill-form.js
 
-var QualificationList = React.createClass({
-  render() {
-    let qualificationItems = this.props.data.map(item => {
-      return (
-        <QualificationItem school={item.school} course={item.course}
-        id={item._id} key={item._id} onDelete={this.props.onDelete} />
-      );
-    });
-
-    return (
-      <div>
-        {qualificationItems}
-      </div>
-    );
-  }
-});
-
-var QualificationItem = React.createClass({
-  deleteItem() {
-    confirmAction('Are you sure?', {
-      description: 'Would you like to delete this qualification?',
-      confirmLabel: 'Delete',
-      abortLabel: 'Cancel'
-    }).then(() => {
-      this.props.onDelete(this.props.id);
-    });
-  },
-  render() {
-    let {id} = this.props;
-
-    return (
-      <div>
-        <span>{this.props.school}</span>
-        <span>{this.props.course}</span>
-        <p>
-          <EditLink path={`/resume/qualification/edit/${id}`}
-            isModal={true} />
-          <DeleteLink onDelete={this.deleteItem} />
-        </p>
-      </div>
-    );
-  }
-});
 var SkillForm = React.createClass({
   getInitialState() {
     return {
@@ -464,6 +470,45 @@ var SkillForm = React.createClass({
 SkillForm.contextTypes = {
   router: React.PropTypes.object.isRequired
 }
+// public/js/partials/skill.js
+
+var SkillItem = React.createClass({
+  deleteItem() {
+    confirmAction('Are you sure?', {
+      description: 'Would you like to delete this skill?',
+      confirmLabel: 'Delete',
+      abortLabel: 'Cancel'
+    }).then(() => {
+      this.props.onDelete(this.props.id);
+    });
+  },
+  render() {
+    return (
+      <span className="tag">
+        {this.props.skill}
+        <DeleteLink onDelete={this.deleteItem} linkText="X" linkClass="tag-remove" />
+      </span>
+    );
+  }
+});
+
+var SkillList = React.createClass({
+  render() {
+    let skillItems = this.props.data.map(item => {
+      return (
+        <SkillItem skill={item.skill} id={item._id} key={item._id}
+          onDelete={this.props.onDelete} />
+      );
+    });
+
+    return (
+      <div>
+        {skillItems}
+      </div>
+    );
+  }
+});
+
 var Skills = React.createClass({
   loadSkills() {
     $.ajax({
@@ -516,43 +561,6 @@ var Skills = React.createClass({
         {skillForm}
         <SkillList data={this.state.data} onDelete={this.handleDelete} />
       </div>
-    );
-  }
-});
-
-var SkillList = React.createClass({
-  render() {
-    let skillItems = this.props.data.map(item => {
-      return (
-        <SkillItem skill={item.skill} id={item._id} key={item._id}
-          onDelete={this.props.onDelete} />
-      );
-    });
-
-    return (
-      <div>
-        {skillItems}
-      </div>
-    );
-  }
-});
-
-var SkillItem = React.createClass({
-  deleteItem() {
-    confirmAction('Are you sure?', {
-      description: 'Would you like to delete this skill?',
-      confirmLabel: 'Delete',
-      abortLabel: 'Cancel'
-    }).then(() => {
-      this.props.onDelete(this.props.id);
-    });
-  },
-  render() {
-    return (
-      <span className="tag">
-        {this.props.skill}
-        <DeleteLink onDelete={this.deleteItem} linkText="X" linkClass="tag-remove" />
-      </span>
     );
   }
 });

@@ -1,3 +1,5 @@
+// public/js/partials/qualification-form.js
+
 var QualificationForm = React.createClass({
   getInitialState() {
     return {

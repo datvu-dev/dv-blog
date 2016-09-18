@@ -39456,6 +39456,8 @@ var YearsSelect = _react2.default.createClass({
     );
   }
 });
+// public/js/partials/qualification-form.js
+
 var QualificationForm = _react2.default.createClass({
   displayName: 'QualificationForm',
   getInitialState: function getInitialState() {
@@ -39620,36 +39622,97 @@ var QualificationForm = _react2.default.createClass({
 QualificationForm.contextTypes = {
   router: _react2.default.PropTypes.object.isRequired
 };
+// public/js/partials/qualification.js
+
+var QualificationItem = _react2.default.createClass({
+  displayName: 'QualificationItem',
+  deleteItem: function deleteItem() {
+    var _this3 = this;
+
+    confirmAction('Are you sure?', {
+      description: 'Would you like to delete this qualification?',
+      confirmLabel: 'Delete',
+      abortLabel: 'Cancel'
+    }).then(function () {
+      _this3.props.onDelete(_this3.props.id);
+    });
+  },
+  render: function render() {
+    var id = this.props.id;
+
+
+    return _react2.default.createElement(
+      'div',
+      null,
+      _react2.default.createElement(
+        'span',
+        null,
+        this.props.school
+      ),
+      _react2.default.createElement(
+        'span',
+        null,
+        this.props.course
+      ),
+      _react2.default.createElement(
+        'p',
+        null,
+        _react2.default.createElement(EditLink, { path: '/resume/qualification/edit/' + id,
+          isModal: true }),
+        _react2.default.createElement(DeleteLink, { onDelete: this.deleteItem })
+      )
+    );
+  }
+});
+
+var QualificationList = _react2.default.createClass({
+  displayName: 'QualificationList',
+  render: function render() {
+    var _this4 = this;
+
+    var qualificationItems = this.props.data.map(function (item) {
+      return _react2.default.createElement(QualificationItem, { school: item.school, course: item.course,
+        id: item._id, key: item._id, onDelete: _this4.props.onDelete });
+    });
+
+    return _react2.default.createElement(
+      'div',
+      null,
+      qualificationItems
+    );
+  }
+});
+
 var Qualifications = _react2.default.createClass({
   displayName: 'Qualifications',
   loadQualifications: function loadQualifications() {
-    var _this3 = this;
+    var _this5 = this;
 
     $.ajax({
       url: '/api/resume/qualification',
       dataType: 'json',
       cache: false,
       success: function success(data) {
-        _this3.setState({ data: data });
+        _this5.setState({ data: data });
       },
       error: function error(xhr, status, err) {
-        console.error(_this3.props.route.url, status, err.toString());
+        console.error(_this5.props.route.url, status, err.toString());
       }
     });
   },
   handleDelete: function handleDelete(id) {
-    var _this4 = this;
+    var _this6 = this;
 
     $.ajax({
       url: '/api/resume/qualification/' + id,
       dataType: 'json',
       type: 'DELETE',
       success: function success(data) {
-        _this4.setState({ data: data });
+        _this6.setState({ data: data });
       },
       error: function error(xhr, status, err) {
         // this.setState({data: comments});
-        console.error(_this4.props.route.url, status, err.toString());
+        console.error(_this6.props.route.url, status, err.toString());
       }
     });
   },
@@ -39681,65 +39744,8 @@ var Qualifications = _react2.default.createClass({
     );
   }
 });
+// public/js/partials/skill-form.js
 
-var QualificationList = _react2.default.createClass({
-  displayName: 'QualificationList',
-  render: function render() {
-    var _this5 = this;
-
-    var qualificationItems = this.props.data.map(function (item) {
-      return _react2.default.createElement(QualificationItem, { school: item.school, course: item.course,
-        id: item._id, key: item._id, onDelete: _this5.props.onDelete });
-    });
-
-    return _react2.default.createElement(
-      'div',
-      null,
-      qualificationItems
-    );
-  }
-});
-
-var QualificationItem = _react2.default.createClass({
-  displayName: 'QualificationItem',
-  deleteItem: function deleteItem() {
-    var _this6 = this;
-
-    confirmAction('Are you sure?', {
-      description: 'Would you like to delete this qualification?',
-      confirmLabel: 'Delete',
-      abortLabel: 'Cancel'
-    }).then(function () {
-      _this6.props.onDelete(_this6.props.id);
-    });
-  },
-  render: function render() {
-    var id = this.props.id;
-
-
-    return _react2.default.createElement(
-      'div',
-      null,
-      _react2.default.createElement(
-        'span',
-        null,
-        this.props.school
-      ),
-      _react2.default.createElement(
-        'span',
-        null,
-        this.props.course
-      ),
-      _react2.default.createElement(
-        'p',
-        null,
-        _react2.default.createElement(EditLink, { path: '/resume/qualification/edit/' + id,
-          isModal: true }),
-        _react2.default.createElement(DeleteLink, { onDelete: this.deleteItem })
-      )
-    );
-  }
-});
 var SkillForm = _react2.default.createClass({
   displayName: 'SkillForm',
   getInitialState: function getInitialState() {
@@ -39817,36 +39823,79 @@ var SkillForm = _react2.default.createClass({
 SkillForm.contextTypes = {
   router: _react2.default.PropTypes.object.isRequired
 };
+// public/js/partials/skill.js
+
+var SkillItem = _react2.default.createClass({
+  displayName: 'SkillItem',
+  deleteItem: function deleteItem() {
+    var _this8 = this;
+
+    confirmAction('Are you sure?', {
+      description: 'Would you like to delete this skill?',
+      confirmLabel: 'Delete',
+      abortLabel: 'Cancel'
+    }).then(function () {
+      _this8.props.onDelete(_this8.props.id);
+    });
+  },
+  render: function render() {
+    return _react2.default.createElement(
+      'span',
+      { className: 'tag' },
+      this.props.skill,
+      _react2.default.createElement(DeleteLink, { onDelete: this.deleteItem, linkText: 'X', linkClass: 'tag-remove' })
+    );
+  }
+});
+
+var SkillList = _react2.default.createClass({
+  displayName: 'SkillList',
+  render: function render() {
+    var _this9 = this;
+
+    var skillItems = this.props.data.map(function (item) {
+      return _react2.default.createElement(SkillItem, { skill: item.skill, id: item._id, key: item._id,
+        onDelete: _this9.props.onDelete });
+    });
+
+    return _react2.default.createElement(
+      'div',
+      null,
+      skillItems
+    );
+  }
+});
+
 var Skills = _react2.default.createClass({
   displayName: 'Skills',
   loadSkills: function loadSkills() {
-    var _this8 = this;
+    var _this10 = this;
 
     $.ajax({
       url: '/api/resume/skill',
       dataType: 'json',
       cache: false,
       success: function success(data) {
-        _this8.setState({ data: data });
+        _this10.setState({ data: data });
       },
       error: function error(xhr, status, err) {
-        console.error(_this8.props.route.url, status, err.toString());
+        console.error(_this10.props.route.url, status, err.toString());
       }
     });
   },
   handleDelete: function handleDelete(id) {
-    var _this9 = this;
+    var _this11 = this;
 
     $.ajax({
       url: '/api/resume/skill/' + id,
       dataType: 'json',
       type: 'DELETE',
       success: function success(data) {
-        _this9.setState({ data: data });
+        _this11.setState({ data: data });
       },
       error: function error(xhr, status, err) {
         // this.setState({data: comments});
-        console.error(_this9.props.route.url, status, err.toString());
+        console.error(_this11.props.route.url, status, err.toString());
       }
     });
   },
@@ -39880,47 +39929,6 @@ var Skills = _react2.default.createClass({
       ),
       skillForm,
       _react2.default.createElement(SkillList, { data: this.state.data, onDelete: this.handleDelete })
-    );
-  }
-});
-
-var SkillList = _react2.default.createClass({
-  displayName: 'SkillList',
-  render: function render() {
-    var _this10 = this;
-
-    var skillItems = this.props.data.map(function (item) {
-      return _react2.default.createElement(SkillItem, { skill: item.skill, id: item._id, key: item._id,
-        onDelete: _this10.props.onDelete });
-    });
-
-    return _react2.default.createElement(
-      'div',
-      null,
-      skillItems
-    );
-  }
-});
-
-var SkillItem = _react2.default.createClass({
-  displayName: 'SkillItem',
-  deleteItem: function deleteItem() {
-    var _this11 = this;
-
-    confirmAction('Are you sure?', {
-      description: 'Would you like to delete this skill?',
-      confirmLabel: 'Delete',
-      abortLabel: 'Cancel'
-    }).then(function () {
-      _this11.props.onDelete(_this11.props.id);
-    });
-  },
-  render: function render() {
-    return _react2.default.createElement(
-      'span',
-      { className: 'tag' },
-      this.props.skill,
-      _react2.default.createElement(DeleteLink, { onDelete: this.deleteItem, linkText: 'X', linkClass: 'tag-remove' })
     );
   }
 });

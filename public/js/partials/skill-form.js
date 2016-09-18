@@ -1,3 +1,5 @@
+// public/js/partials/skill-form.js
+
 var SkillForm = React.createClass({
   getInitialState() {
     return {
