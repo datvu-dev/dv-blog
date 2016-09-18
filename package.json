@@ -45,6 +45,7 @@
     "grunt-cli": "latest",
     "grunt-contrib-concat": "latest",
     "grunt-contrib-less": "latest",
-    "grunt-contrib-watch": "latest"
+    "grunt-contrib-watch": "latest",
+    "redux-devtools": "^3.3.1"
   }
 }
