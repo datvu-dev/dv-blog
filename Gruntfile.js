@@ -29,7 +29,7 @@ module.exports = function(grunt) {
           separator: ''
         },
         src: [
-          'public/js/import.js','public/js/components/*.js', 'public/js/partials/*.js', 'public/js/pages/*.js', 'public/js/app-wrapper.js'
+          'public/js/import.js','public/js/components/*.js', 'public/js/partials/*.js', 'public/js/pages/*.js', 'public/js/app.js'
         ],
         dest: 'public/js/scripts.js'
       },
@@ -62,7 +62,7 @@ module.exports = function(grunt) {
     },
     watch: {
       js: {
-        files: ['public/js/import.js', 'public/js/components/*.js', 'public/js/partials/*.js', 'public/js/pages/*.js', 'public/js/app-wrapper.js'],
+        files: ['public/js/import.js', 'public/js/components/*.js', 'public/js/partials/*.js', 'public/js/pages/*.js', 'public/js/app.js'],
         tasks: ['concat:scripts', 'browserify'],
         options: {
           livereload: true,
