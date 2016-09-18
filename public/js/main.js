@@ -39400,7 +39400,7 @@ var Modal = _react2.default.createClass({
 var PopupForm = _react2.default.createClass({
   displayName: 'PopupForm',
   render: function render() {
-    return _react2.default.createElement(Modal, null, _react2.default.createElement(
+    return _react2.default.createElement(
       'div',
       null,
       _react2.default.createElement(
@@ -39417,7 +39417,7 @@ var PopupForm = _react2.default.createClass({
         { className: 'modal-body' },
         this.props.children
       )
-    ));
+    );
   }
 });
 // public/js/components/year-dropdown.js
@@ -39552,62 +39552,66 @@ var QualificationForm = _react2.default.createClass({
   },
   render: function render() {
     return _react2.default.createElement(
-      'div',
-      { id: 'qualification-form', className: '' },
+      PopupForm,
+      null,
       _react2.default.createElement(
-        'p',
-        { id: 'form-message' },
-        this.state.formMessage
-      ),
-      _react2.default.createElement(
-        'form',
-        { encType: 'multipart/form-data', onSubmit: this.handleValidation },
+        'div',
+        { id: 'qualification-form', className: '' },
         _react2.default.createElement(
-          'fieldset',
-          { className: 'form-group' },
-          _react2.default.createElement(
-            'label',
-            { htmlFor: 'qualSchool' },
-            'School'
-          ),
-          _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'qualSchool',
-            value: this.state.school, onChange: this.handleSchoolChange })
+          'p',
+          { id: 'form-message' },
+          this.state.formMessage
         ),
         _react2.default.createElement(
-          'fieldset',
-          { className: 'form-group' },
+          'form',
+          { encType: 'multipart/form-data', onSubmit: this.handleValidation },
           _react2.default.createElement(
-            'label',
-            { htmlFor: 'qualCourse' },
-            'Course'
+            'fieldset',
+            { className: 'form-group' },
+            _react2.default.createElement(
+              'label',
+              { htmlFor: 'qualSchool' },
+              'School'
+            ),
+            _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'qualSchool',
+              value: this.state.school, onChange: this.handleSchoolChange })
           ),
-          _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'qualCourse',
-            value: this.state.course, onChange: this.handleCourseChange })
-        ),
-        _react2.default.createElement(
-          'fieldset',
-          { className: 'form-group' },
           _react2.default.createElement(
-            'label',
-            { htmlFor: 'qualYear' },
-            'Year of completion'
+            'fieldset',
+            { className: 'form-group' },
+            _react2.default.createElement(
+              'label',
+              { htmlFor: 'qualCourse' },
+              'Course'
+            ),
+            _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'qualCourse',
+              value: this.state.course, onChange: this.handleCourseChange })
           ),
-          _react2.default.createElement(YearsSelect, { value: this.state.year,
-            onSelectChange: this.handleYearChange })
-        ),
-        _react2.default.createElement(
-          'fieldset',
-          { className: 'form-group' },
           _react2.default.createElement(
-            'label',
-            { htmlFor: 'qualDescription' },
-            'Description'
+            'fieldset',
+            { className: 'form-group' },
+            _react2.default.createElement(
+              'label',
+              { htmlFor: 'qualYear' },
+              'Year of completion'
+            ),
+            _react2.default.createElement(YearsSelect, { value: this.state.year,
+              onSelectChange: this.handleYearChange })
           ),
-          _react2.default.createElement('textarea', { className: 'form-control', id: 'qualDescription', rows: '4',
-            value: this.state.description,
-            onChange: this.handleDescriptionChange })
-        ),
-        _react2.default.createElement(FormButtons, null)
+          _react2.default.createElement(
+            'fieldset',
+            { className: 'form-group' },
+            _react2.default.createElement(
+              'label',
+              { htmlFor: 'qualDescription' },
+              'Description'
+            ),
+            _react2.default.createElement('textarea', { className: 'form-control', id: 'qualDescription', rows: '4',
+              value: this.state.description,
+              onChange: this.handleDescriptionChange })
+          ),
+          _react2.default.createElement(FormButtons, null)
+        )
       )
     );
   }
