@@ -912,8 +912,60 @@ var Project = React.createClass({
 });
 // public/js/pages/projects-list.js
 
+var ProjectItem = React.createClass({
+  deleteItem() {
+    confirmAction('Are you sure?', {
+      description: 'Would you like to delete this project?',
+      confirmLabel: 'Delete',
+      abortLabel: 'Cancel'
+    }).then(() => {
+      this.props.onDelete(this.props.id);
+    });
+  },
+  render() {
+    let {id, img} = this.props;
+
+    return (
+      <div className="box col-md-6 col-lg-4">
+        <div className="box-img">
+          <img src={`/uploads/projects/${id}/${img}`} alt="Card image cap" />
+        </div>
+        <div className="box-content">
+          <h4 className="box-title">
+            <Link to={`/project/${id}`}>{this.props.title}</Link>
+          </h4>
+          <p className="box-text">This is a longer card with supporting text
+            below as a natural lead-in to additional content. This content is a
+            little bit longer.</p>
+          <EditLink path={`/project/${id}/edit`} isModal={false} />
+          <DeleteLink onDelete={this.deleteItem} />
+        </div>
+      </div>
+    )
+  }
+});
+
+var ProjectsList = React.createClass({
+  render() {
+    let projectItems = this.props.data.map(item => {
+      return (
+        <ProjectItem title={item.title} img={item.picture} id={item._id}
+          key={item._id} onDelete={this.props.onDelete} />
+      );
+    });
+
+    return (
+      <div id="projects-list">
+        <div className="row">
+          {projectItems}
+        </div>
+      </div>
+    )
+  }
+});
+
 var ProjectsPage = React.createClass({
-  loadProjectsList() {
+  loadProjects() {
     $.ajax({
       url: this.props.route.url,
       dataType: 'json',
@@ -927,7 +979,7 @@ var ProjectsPage = React.createClass({
       }
     });
   },
-  handleProjectDelete(id) {
+  handleDelete(id) {
     $.ajax({
       url: this.props.route.url + id,
       dataType: 'json',
@@ -945,14 +997,13 @@ var ProjectsPage = React.createClass({
     return {data: []};
   },
   componentDidMount() {
-    this.loadProjectsList();
+    this.loadProjects();
   },
   render() {
     return (
       <div>
-        <AddLink path={'/project/new'}
-          isModal={false} />
-        <ProjectsList data={this.state.data} onProjectDelete={this.handleProjectDelete} />
+        <AddLink path={'/project/new'} isModal={false} />
+        <ProjectsList data={this.state.data} onDelete={this.handleDelete} />
       </div>
     );
   }
@@ -961,60 +1012,6 @@ var ProjectsPage = React.createClass({
 ProjectsPage.contextTypes = {
   router: React.PropTypes.object.isRequired
 }
-
-var ProjectsList = React.createClass({
-  render() {
-    let projectItems = this.props.data.map(item => {
-      return (
-        <ProjectItem title={item.title} img={item.picture} id={item._id}
-          key={item._id} onProjectDelete={this.props.onProjectDelete} />
-      );
-    });
-
-    return (
-      <div id="projects-list">
-        <div className="row">
-          {projectItems}
-        </div>
-      </div>
-    )
-  }
-});
-
-var ProjectItem = React.createClass({
-  deleteProject() {
-    confirmAction('Are you sure?', {
-      description: 'Would you like to delete this project?',
-      confirmLabel: 'Delete',
-      abortLabel: 'Cancel'
-    }).then(() => {
-      this.props.onProjectDelete(this.props.id);
-    });
-  },
-  render() {
-    let {id, img} = this.props;
-
-    return (
-      <div className="box col-md-6 col-lg-4">
-        <div className="box-img">
-          <img src={`/uploads/projects/${id}/${img}`}
-            alt="Card image cap" />
-        </div>
-        <div className="box-content">
-          <h4 className="box-title"><Link to={`/project/${id}`}>
-            {this.props.title}</Link>
-          </h4>
-          <p className="box-text">This is a longer card with supporting text
-            below as a natural lead-in to additional content. This content is a
-            little bit longer.</p>
-          <EditLink path={`/project/${id}/edit`}
-            isModal={false} />
-          <DeleteLink onDelete={this.deleteProject} />
-        </div>
-      </div>
-    )
-  }
-});
 // public/js/pages/resume.js
 
 var ResumePage = React.createClass({

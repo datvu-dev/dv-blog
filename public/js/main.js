@@ -40369,94 +40369,17 @@ var Project = _react2.default.createClass({
 });
 // public/js/pages/projects-list.js
 
-var ProjectsPage = _react2.default.createClass({
-  displayName: 'ProjectsPage',
-  loadProjectsList: function loadProjectsList() {
-    var _this19 = this;
-
-    $.ajax({
-      url: this.props.route.url,
-      dataType: 'json',
-      cache: false,
-      success: function success(data) {
-        // console.log(data);
-        _this19.setState({ data: data });
-      },
-      error: function error(xhr, status, err) {
-        console.error(_this19.props.route.url, status, err.toString());
-      }
-    });
-  },
-  handleProjectDelete: function handleProjectDelete(id) {
-    var _this20 = this;
-
-    $.ajax({
-      url: this.props.route.url + id,
-      dataType: 'json',
-      type: 'DELETE',
-      success: function success(data) {
-        _this20.setState({ data: data });
-      },
-      error: function error(xhr, status, err) {
-        // this.setState({data: comments});
-        console.error(_this20.props.route.url, status, err.toString());
-      }
-    });
-  },
-  getInitialState: function getInitialState() {
-    return { data: [] };
-  },
-  componentDidMount: function componentDidMount() {
-    this.loadProjectsList();
-  },
-  render: function render() {
-    return _react2.default.createElement(
-      'div',
-      null,
-      _react2.default.createElement(AddLink, { path: '/project/new',
-        isModal: false }),
-      _react2.default.createElement(ProjectsList, { data: this.state.data, onProjectDelete: this.handleProjectDelete })
-    );
-  }
-});
-
-ProjectsPage.contextTypes = {
-  router: _react2.default.PropTypes.object.isRequired
-};
-
-var ProjectsList = _react2.default.createClass({
-  displayName: 'ProjectsList',
-  render: function render() {
-    var _this21 = this;
-
-    var projectItems = this.props.data.map(function (item) {
-      return _react2.default.createElement(ProjectItem, { title: item.title, img: item.picture, id: item._id,
-        key: item._id, onProjectDelete: _this21.props.onProjectDelete });
-    });
-
-    return _react2.default.createElement(
-      'div',
-      { id: 'projects-list' },
-      _react2.default.createElement(
-        'div',
-        { className: 'row' },
-        projectItems
-      )
-    );
-  }
-});
-
 var ProjectItem = _react2.default.createClass({
   displayName: 'ProjectItem',
-  deleteProject: function deleteProject() {
-    var _this22 = this;
+  deleteItem: function deleteItem() {
+    var _this19 = this;
 
     confirmAction('Are you sure?', {
       description: 'Would you like to delete this project?',
       confirmLabel: 'Delete',
       abortLabel: 'Cancel'
     }).then(function () {
-      _this22.props.onProjectDelete(_this22.props.id);
+      _this19.props.onDelete(_this19.props.id);
     });
   },
   render: function render() {
@@ -40471,8 +40394,7 @@ var ProjectItem = _react2.default.createClass({
       _react2.default.createElement(
         'div',
         { className: 'box-img' },
-        _react2.default.createElement('img', { src: '/uploads/projects/' + id + '/' + img,
-          alt: 'Card image cap' })
+        _react2.default.createElement('img', { src: '/uploads/projects/' + id + '/' + img, alt: 'Card image cap' })
       ),
       _react2.default.createElement(
         'div',
@@ -40491,13 +40413,88 @@ var ProjectItem = _react2.default.createClass({
           { className: 'box-text' },
           'This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.'
         ),
-        _react2.default.createElement(EditLink, { path: '/project/' + id + '/edit',
-          isModal: false }),
-        _react2.default.createElement(DeleteLink, { onDelete: this.deleteProject })
+        _react2.default.createElement(EditLink, { path: '/project/' + id + '/edit', isModal: false }),
+        _react2.default.createElement(DeleteLink, { onDelete: this.deleteItem })
       )
     );
   }
 });
+
+var ProjectsList = _react2.default.createClass({
+  displayName: 'ProjectsList',
+  render: function render() {
+    var _this20 = this;
+
+    var projectItems = this.props.data.map(function (item) {
+      return _react2.default.createElement(ProjectItem, { title: item.title, img: item.picture, id: item._id,
+        key: item._id, onDelete: _this20.props.onDelete });
+    });
+
+    return _react2.default.createElement(
+      'div',
+      { id: 'projects-list' },
+      _react2.default.createElement(
+        'div',
+        { className: 'row' },
+        projectItems
+      )
+    );
+  }
+});
+
+var ProjectsPage = _react2.default.createClass({
+  displayName: 'ProjectsPage',
+  loadProjects: function loadProjects() {
+    var _this21 = this;
+
+    $.ajax({
+      url: this.props.route.url,
+      dataType: 'json',
+      cache: false,
+      success: function success(data) {
+        // console.log(data);
+        _this21.setState({ data: data });
+      },
+      error: function error(xhr, status, err) {
+        console.error(_this21.props.route.url, status, err.toString());
+      }
+    });
+  },
+  handleDelete: function handleDelete(id) {
+    var _this22 = this;
+
+    $.ajax({
+      url: this.props.route.url + id,
+      dataType: 'json',
+      type: 'DELETE',
+      success: function success(data) {
+        _this22.setState({ data: data });
+      },
+      error: function error(xhr, status, err) {
+        // this.setState({data: comments});
+        console.error(_this22.props.route.url, status, err.toString());
+      }
+    });
+  },
+  getInitialState: function getInitialState() {
+    return { data: [] };
+  },
+  componentDidMount: function componentDidMount() {
+    this.loadProjects();
+  },
+  render: function render() {
+    return _react2.default.createElement(
+      'div',
+      null,
+      _react2.default.createElement(AddLink, { path: '/project/new', isModal: false }),
+      _react2.default.createElement(ProjectsList, { data: this.state.data, onDelete: this.handleDelete })
+    );
+  }
+});
+
+ProjectsPage.contextTypes = {
+  router: _react2.default.PropTypes.object.isRequired
+};
 // public/js/pages/resume.js
 
 var ResumePage = _react2.default.createClass({
