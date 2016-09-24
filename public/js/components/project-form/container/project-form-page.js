@@ -43,21 +43,95 @@ const ProjectFormPage = React.createClass({
       }
     })
   },
+  loadTagSuggestions() {
+    let skillsUrl = 'http://trendyskills.com/service?q=keywords&key=77MGlB3wzQbD9KfZ';
+
+    $.ajax({
+      url: skillsUrl,
+      method: 'GET',
+      dataType: 'jsonp',
+      success: res => {
+        let suggestionsArr = [];
+
+        res.keywords.map(item => {
+          suggestionsArr.push(item.keyName);
+        });
+
+        this.setState({suggestions: suggestionsArr});
+
+      },
+      error: (xhr, status, err) => {
+        console.error(status, err.toString());
+      }
+    });
+  },
+  loadProject(id) {
+    this.serverRequest = $.ajax({
+      url: this.props.route.url + id,
+      dataType: 'json',
+      cache: false,
+      success: data => {
+        this.setState(data[0]);
+
+        let projectID = this.props.params.id;
+        let picName = data[0]['picture'];
+
+        var imgCtr = $('<img/>').prop('src', `/uploads/projects/${projectID}/${picName}`);
+        $('#imgContainer').html(imgCtr);
+      },
+      error: (xhr, status, err) => {
+        console.error(this.props.route.url, status, err.toString());
+      }
+    });
+  },
+  componentDidMount() {
+    this.loadTagSuggestions();
+
+    if (this.props.params.id) {
+      this.loadProject(this.props.params.id);
+    }
+  },
+  componentWillUnmount() {
+    if (this.serverRequest) {
+      this.serverRequest.abort();
+    }
+  },
+  handleTitleInput(value) {
+    this.setState({title: value});
+  },
+  handleYearInput(value) {
+    this.setState({year: value});
+  },
+  handleDescriptionInput(value) {
+    this.setState({description: value});
+  },
+  handleTechnologyInput(value) {
+    this.setState({technologies: value});
+  },
+  handlePictureInput(value) {
+    this.setState({picture: value});
+  },
   getInitialState() {
-    return {data: {
+    return {
       title : '',
       year : '',
       picture: '',
       description: '',
       technologies: [],
       suggestions: []
-    }};
+    };
   },
   render() {
     return (
       <div>
-        <ProjectForm onProjectSubmit={this.handleProjectSubmit}
-          data={this.state.data} projectID={this.props.params.id} />
+        <ProjectForm
+          onProjectSubmit={this.handleProjectSubmit}
+          data={this.state}
+          onTitleChange={this.handleTitleInput}
+          onYearChange={this.handleYearInput}
+          onDescriptionChange={this.handleDescriptionInput}
+          onTechnologyChange={this.handleTechnologyInput}
+          onPictureChange={this.handlePictureInput} />
       </div>
     );
   }

@@ -7,94 +7,34 @@ import FormButtons from '../../utilities/form-buttons';
 
 const ProjectForm = React.createClass({
   getInitialState() {
-    return this.props.data;
-  },
-  getTagSuggestions() {
-    let skillsUrl = 'http://trendyskills.com/service?q=keywords&key=77MGlB3wzQbD9KfZ';
-
-    $.ajax({
-      url: skillsUrl,
-      method: 'GET',
-      dataType: 'jsonp',
-      success: res => {
-        let suggestionsArr = [];
-
-        res.keywords.map(item => {
-          suggestionsArr.push(item.keyName);
-        });
-
-        this.setState({suggestions: suggestionsArr});
-
-      },
-      error: (xhr, status, err) => {
-        console.error(status, err.toString());
-      }
-    });
+    return {formMessage: ''};
   },
   componentDidMount() {
     $('.tag-input input').addClass('form-control').attr('id', 'projectTechnologies').blur();
-
-    if (this.props.projectID) {
-      let projectID = this.props.projectID;
-
-      this.serverRequest = $.ajax({
-        url: `/api/projects/${projectID}`,
-        dataType: 'json',
-        cache: false,
-        success: data => {
-          // console.log(data);
-          this.setState(data[0]);
-          let picName = data[0]['picture'];
-
-          var imgCtr = $('<img/>').prop('src', `/uploads/projects/${projectID}/${picName}`);
-          $('#imgContainer').html(imgCtr);
-        },
-        error: (xhr, status, err) => {
-          console.error(this.props.route.url, status, err.toString());
-        }
-      });
-    }
-
-    this.getTagSuggestions();
-  },
-  componentWillUnmount() {
-    if (this.serverRequest) {
-      this.serverRequest.abort();
-    }
   },
   handleTitleChange(e) {
-    this.setState({title: e.target.value});
+    this.props.onTitleChange(e.target.value);
   },
   handleYearChange(value) {
-    this.setState({year: value});
+    this.props.onYearChange(value);
   },
   handleDescriptionChange(e) {
-    this.setState({description: e.target.value});
+    this.props.onDescriptionChange(e.target.value);
   },
   handleTechnologyChange(tags) {
-    this.setState({technologies: tags});
+    this.props.onTechnologyChange(tags);
   },
   handleDelete(i) {
-      let tags = this.state.technologies;
+      let tags = this.props.data.technologies;
       tags.splice(i, 1);
       this.handleTechnologyChange(tags);
   },
   handleAddition(tag) {
-      let tags = this.state.technologies;
+      let tags = this.props.data.technologies;
       tags.push({
           _id: tags.length + 1,
           text: tag
       });
-      this.handleTechnologyChange(tags);
-  },
-  handleDrag(tag, currPos, newPos) {
-      let tags = this.state.technologies;
-
-      // mutate array
-      tags.splice(currPos, 1);
-      tags.splice(newPos, 0, tag);
-
-      // re-render
       this.handleTechnologyChange(tags);
   },
   handlePictureChange(e) {
@@ -113,11 +53,11 @@ const ProjectForm = React.createClass({
       $('#imgContainer').html(imgCtr);
     }, 500);
 
-    this.setState({picture: e.target.files[0].name});
+    this.props.onPictureChange(e.target.files[0].name);
   },
   handleSubmit(e) {
     e.preventDefault();
-    let {title, year, description, technologies, picture} = this.state;
+    let {title, year, description, technologies, picture} = this.props.data;
     let pictureObj = $('#imgContainer img');
 
     $('#form-message').hide();
@@ -156,25 +96,25 @@ const ProjectForm = React.createClass({
               <fieldset className="form-group">
                 <label htmlFor="projectTitle">Title</label>
                 <input type="text" className="form-control" id="projectTitle"
-                  value={this.state.title} onChange={this.handleTitleChange} />
+                  value={this.props.data.title} onChange={this.handleTitleChange} />
               </fieldset>
               <fieldset className="form-group">
                 <label htmlFor="projectYear">Year of completion</label>
-                <YearSelect value={this.state.year} onSelectChange={this.handleYearChange} />
+                <YearSelect value={this.props.data.year} idName="projectYear"
+                  onSelectChange={this.handleYearChange} />
               </fieldset>
               <fieldset className="form-group">
                 <label htmlFor="projectDescription">Description</label>
                 <textarea className="form-control" id="projectDescription" rows="4"
-                  value={this.state.description}
+                  value={this.props.data.description}
                   onChange={this.handleDescriptionChange}></textarea>
               </fieldset>
               <fieldset className="form-group">
                 <label htmlFor="projectTechnologies">Technologies</label>
-                <ReactTags tags={this.state.technologies}
+                <ReactTags tags={this.props.data.technologies}
                     handleDelete={this.handleDelete}
                     handleAddition={this.handleAddition}
-                    handleDrag={this.handleDrag}
-                    suggestions={this.state.suggestions}
+                    suggestions={this.props.data.suggestions}
                     classNames={{
                       tags: 'tags-container',
                       tagInput: 'tag-input',
