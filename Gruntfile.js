@@ -52,7 +52,7 @@ module.exports = function(grunt) {
     watch: {
       js: {
         files: ['public/js/utilities/*.js', 'public/js/components/**/**.js', 'public/js/app.js'],
-        tasks: ['concat:scripts', 'browserify'],
+        tasks: ['browserify'],
         options: {
           livereload: true,
         }
