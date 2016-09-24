@@ -190,380 +190,6 @@ var YearsSelect = React.createClass({
     )
   }
 });
-// public/js/partials/qualification-form.js
-
-var QualificationForm = React.createClass({
-  getInitialState() {
-    return {
-      school : '',
-      course: '',
-      year : '',
-      description: ''
-    };
-  },
-  componentDidMount() {
-    let {id} = this.props.params ? this.props.params : null;
-
-    if (id) {
-      $.ajax({
-        url: `/api/resume/qualification/${id}`,
-        dataType: 'json',
-        cache: false,
-        success: data => {
-          this.setState(data[0]);
-        },
-        error: (xhr, status, err) => {
-          console.error(this.props.route.url, status, err.toString());
-        }
-      });
-    }
-  },
-  handleSchoolChange(e) {
-    this.setState({school: e.target.value});
-  },
-  handleCourseChange(e) {
-    this.setState({course: e.target.value});
-  },
-  handleYearChange(value) {
-    this.setState({year: value});
-  },
-  handleDescriptionChange(e) {
-    this.setState({description: e.target.value});
-  },
-  handleValidation(e) {
-    e.preventDefault();
-    let {school, course, year, description} = this.state;
-
-    $('#form-message').hide();
-    $('.form-control').removeClass('required');
-
-    if (!school.trim() || !course.trim() || !year || !description.trim()) {
-      $('#qualification-form #form-message').show();
-    }
-
-    if (!school.trim()) {
-      $('#qualSchool').addClass('required').focus();
-      this.setState({formMessage: 'Please provide school.'});
-    } else if (!course.trim()) {
-      $('#qualCourse').addClass('required').focus();
-      this.setState({formMessage: 'Please provide course.'});
-    } else if (!year) {
-      $('#qualYear').addClass('required').focus();
-      this.setState({formMessage: 'Please provide year.'});
-    } else if (!description.trim()) {
-      $('#qualDescription').addClass('required').focus();
-      this.setState({formMessage: 'Please provide description.'});
-    } else {
-      this.handleSubmit({school, course, year, description});
-    }
-  },
-  handleSubmit(item) {
-    let id = this.props.params.id ? this.props.params.id : '';
-
-    $.ajax({
-      url: `/api/resume/qualification/${id}`,
-      dataType: 'json',
-      type: 'POST',
-      data: item,
-      success: items => {
-        this.context.router.push('/resume');
-      },
-      error: (xhr, status, err) => {
-        console.error(status, err.toString());
-      }
-    });
-  },
-  render() {
-    return (
-      <PopupForm>
-        <div id="qualification-form" className="">
-            <p id="form-message">{this.state.formMessage}</p>
-            <form encType="multipart/form-data" onSubmit={this.handleValidation}>
-              <fieldset className="form-group">
-                <label htmlFor="qualSchool">School</label>
-                <input type="text" className="form-control" id="qualSchool"
-                  value={this.state.school} onChange={this.handleSchoolChange} />
-              </fieldset>
-              <fieldset className="form-group">
-                <label htmlFor="qualCourse">Course</label>
-                <input type="text" className="form-control" id="qualCourse"
-                  value={this.state.course} onChange={this.handleCourseChange} />
-              </fieldset>
-              <fieldset className="form-group">
-                <label htmlFor="qualYear">Year of completion</label>
-                <YearsSelect value={this.state.year}
-                  onSelectChange={this.handleYearChange} />
-              </fieldset>
-              <fieldset className="form-group">
-                <label htmlFor="qualDescription">Description</label>
-                <textarea className="form-control" id="qualDescription" rows="4"
-                  value={this.state.description}
-                  onChange={this.handleDescriptionChange} ></textarea>
-              </fieldset>
-              <FormButtons />
-            </form>
-        </div>
-      </PopupForm>
-    );
-  }
-});
-
-QualificationForm.contextTypes = {
-  router: React.PropTypes.object.isRequired
-}
-// public/js/partials/qualification.js
-
-var QualificationItem = React.createClass({
-  deleteItem() {
-    confirmAction('Are you sure?', {
-      description: 'Would you like to delete this qualification?',
-      confirmLabel: 'Delete',
-      abortLabel: 'Cancel'
-    }).then(() => {
-      this.props.onDelete(this.props.id);
-    });
-  },
-  render() {
-    let {id} = this.props;
-
-    return (
-      <div>
-        <span>{this.props.school}</span>
-        <span>{this.props.course}</span>
-        <p>
-          <EditLink path={`/resume/qualification/edit/${id}`}
-            isModal={true} />
-          <DeleteLink onDelete={this.deleteItem} />
-        </p>
-      </div>
-    );
-  }
-});
-
-var QualificationList = React.createClass({
-  render() {
-    let qualificationItems = this.props.data.map(item => {
-      return (
-        <QualificationItem school={item.school} course={item.course}
-        id={item._id} key={item._id} onDelete={this.props.onDelete} />
-      );
-    });
-
-    return (
-      <div>
-        {qualificationItems}
-      </div>
-    );
-  }
-});
-
-var Qualifications = React.createClass({
-  loadQualifications() {
-    $.ajax({
-      url: '/api/resume/qualification',
-      dataType: 'json',
-      cache: false,
-      success: data => {
-        this.setState({data: data});
-      },
-      error: (xhr, status, err) => {
-        console.error(this.props.route.url, status, err.toString());
-      }
-    });
-  },
-  handleDelete(id) {
-    $.ajax({
-      url: `/api/resume/qualification/${id}`,
-      dataType: 'json',
-      type: 'DELETE',
-      success: data => {
-        this.setState({data: data});
-      },
-      error: (xhr, status, err) => {
-        // this.setState({data: comments});
-        console.error(this.props.route.url, status, err.toString());
-      }
-    });
-  },
-  getInitialState() {
-    return {data: []};
-  },
-  componentDidMount() {
-    this.loadQualifications();
-  },
-  componentWillReceiveProps() {
-    this.loadQualifications();
-  },
-  render() {
-    return (
-      <div>
-        <div className="section-header">
-          <h2>Qualifications</h2>
-          <AddLink path={'/resume/qualification/add'}
-            isModal={true} />
-        </div>
-        <QualificationList data={this.state.data} onDelete={this.handleDelete} />
-      </div>
-    );
-  }
-});
-// public/js/partials/skill-form.js
-
-var SkillForm = React.createClass({
-  getInitialState() {
-    return {
-      skill : ''
-    };
-  },
-  handleSkillChange(e) {
-    this.setState({skill: e.target.value});
-  },
-  handleValidation(e) {
-    e.preventDefault();
-    let {skill} = this.state;
-
-    $('#form-message').hide();
-    $('.form-control').removeClass('required');
-
-    if (!skill.trim()) {
-      $('#skillName').addClass('required').focus();
-      $('#form-message').show();
-
-      this.setState({formMessage: 'Please provide skill.'});
-    } else {
-      $('#skillName').val('');
-      this.setState({skill: ''});
-
-      this.handleSubmit({skill});
-    }
-  },
-  handleSubmit(item) {
-    $.ajax({
-      url: '/api/resume/skill',
-      dataType: 'json',
-      type: 'POST',
-      data: item,
-      success: items => {
-        this.context.router.push('/resume');
-      },
-      error: (xhr, status, err) => {
-        console.error(status, err.toString());
-      }
-    });
-  },
-  render() {
-    return (
-      <div id="skill-form" className="">
-          <p id="form-message">{this.state.formMessage}</p>
-          <form encType="multipart/form-data" onSubmit={this.handleValidation}>
-            <fieldset className="form-group">
-              <label htmlFor="skillName">Add skill</label>
-              <input type="text" className="form-control" id="skillName"
-                value={this.state.skill} onChange={this.handleSkillChange} />
-            </fieldset>
-          </form>
-      </div>
-    );
-  }
-});
-
-SkillForm.contextTypes = {
-  router: React.PropTypes.object.isRequired
-}
-// public/js/partials/skill.js
-
-var SkillItem = React.createClass({
-  deleteItem() {
-    confirmAction('Are you sure?', {
-      description: 'Would you like to delete this skill?',
-      confirmLabel: 'Delete',
-      abortLabel: 'Cancel'
-    }).then(() => {
-      this.props.onDelete(this.props.id);
-    });
-  },
-  render() {
-    return (
-      <span className="tag">
-        {this.props.skill}
-        <DeleteLink onDelete={this.deleteItem} linkText="X" linkClass="tag-remove" />
-      </span>
-    );
-  }
-});
-
-var SkillList = React.createClass({
-  render() {
-    let skillItems = this.props.data.map(item => {
-      return (
-        <SkillItem skill={item.skill} id={item._id} key={item._id}
-          onDelete={this.props.onDelete} />
-      );
-    });
-
-    return (
-      <div>
-        {skillItems}
-      </div>
-    );
-  }
-});
-
-var Skills = React.createClass({
-  loadSkills() {
-    $.ajax({
-      url: '/api/resume/skill',
-      dataType: 'json',
-      cache: false,
-      success: data => {
-        this.setState({data: data});
-      },
-      error: (xhr, status, err) => {
-        console.error(this.props.route.url, status, err.toString());
-      }
-    });
-  },
-  handleDelete(id) {
-    $.ajax({
-      url: `/api/resume/skill/${id}`,
-      dataType: 'json',
-      type: 'DELETE',
-      success: data => {
-        this.setState({data: data});
-      },
-      error: (xhr, status, err) => {
-        // this.setState({data: comments});
-        console.error(this.props.route.url, status, err.toString());
-      }
-    });
-  },
-  getInitialState() {
-    return {data: []};
-  },
-  componentDidMount() {
-    this.loadSkills();
-  },
-  componentWillReceiveProps() {
-    this.loadSkills();
-  },
-  render() {
-    let skillForm;
-
-    if (localStorage.getItem('user')) {
-      skillForm = <SkillForm />;
-    }
-
-    return (
-      <div>
-        <div className="section-header">
-          <h2>Skills</h2>
-        </div>
-        {skillForm}
-        <SkillList data={this.state.data} onDelete={this.handleDelete} />
-      </div>
-    );
-  }
-});
 // public/js/pages/home.js
 
 var Home = React.createClass({
@@ -571,7 +197,72 @@ var Home = React.createClass({
     return (<h1>Welcome to Dat Vu Page</h1>);
   }
 });
-// public/js/pages/project-form.js
+// public/js/features/project/project-form/container/project-form-page.js
+
+var ProjectFormPage = React.createClass({
+  handleProjectSubmit(item) {
+    let id = this.props.params.id ? this.props.params.id : '';
+
+    $.ajax({
+      url: this.props.route.url + id,
+      dataType: 'json',
+      type: 'POST',
+      data: item,
+      success: data => {
+        if ($('#projectPicture')[0].files[0]) {
+          this.handleUpload();
+        }
+
+        this.context.router.push('/projects');
+      },
+      error: (xhr, status, err) => {
+        console.error(this.props.route.url, status, err.toString());
+      }
+    });
+  },
+  handleUpload() {
+    let formData = new FormData();
+    let fileObj = $('#projectPicture')[0].files[0];
+    formData.append('uploads[]', fileObj , fileObj.name);
+
+    $.ajax({
+      url: '/api/upload',
+      type: 'POST',
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: data => {
+
+      },
+      error: (xhr, status, err) => {
+        console.error(this.props.route.url, status, err.toString());
+      }
+    })
+  },
+  getInitialState() {
+    return {data: {
+      title : '',
+      year : '',
+      picture: '',
+      description: '',
+      technologies: [],
+      suggestions: []
+    }};
+  },
+  render() {
+    return (
+      <div>
+        <ProjectForm onProjectSubmit={this.handleProjectSubmit}
+          data={this.state.data} projectID={this.props.params.id} />
+      </div>
+    );
+  }
+});
+
+ProjectFormPage.contextTypes = {
+  router: React.PropTypes.object.isRequired
+}
+// public/js/features/project/project-form/presentation/project-form.js
 
 var ProjectForm = React.createClass({
   getInitialState() {
@@ -765,211 +456,9 @@ var ProjectForm = React.createClass({
     )
   }
 });
+// public/js/features/project/project-list/container/project-list-page.js
 
-var ProjectFormPage = React.createClass({
-  handleProjectSubmit(item) {
-    let id = this.props.params.id ? this.props.params.id : '';
-
-    $.ajax({
-      url: this.props.route.url + id,
-      dataType: 'json',
-      type: 'POST',
-      data: item,
-      success: data => {
-        if ($('#projectPicture')[0].files[0]) {
-          this.handleUpload();
-        }
-
-        this.context.router.push('/projects');
-      },
-      error: (xhr, status, err) => {
-        console.error(this.props.route.url, status, err.toString());
-      }
-    });
-  },
-  handleUpload() {
-    let formData = new FormData();
-    let fileObj = $('#projectPicture')[0].files[0];
-    formData.append('uploads[]', fileObj , fileObj.name);
-
-    $.ajax({
-      url: '/api/upload',
-      type: 'POST',
-      data: formData,
-      processData: false,
-      contentType: false,
-      success: data => {
-
-      },
-      error: (xhr, status, err) => {
-        console.error(this.props.route.url, status, err.toString());
-      }
-    })
-  },
-  getInitialState() {
-    return {data: {
-      title : '',
-      year : '',
-      picture: '',
-      description: '',
-      technologies: [],
-      suggestions: []
-    }};
-  },
-  render() {
-    return (
-      <div>
-        <ProjectForm onProjectSubmit={this.handleProjectSubmit}
-          data={this.state.data} projectID={this.props.params.id} />
-      </div>
-    );
-  }
-});
-
-ProjectFormPage.contextTypes = {
-  router: React.PropTypes.object.isRequired
-}
-// public/js/pages/project-view.js
-
-var Project = React.createClass({
-  deleteProject() {
-    confirmAction('Are you sure?', {
-      description: 'Would you like to delete this project?',
-      confirmLabel: 'Delete',
-      abortLabel: 'Cancel'
-    }).then(() => {
-      this.props.onDelete(this.props.data._id);
-    });
-  },
-  render() {
-    let {_id, title, picture, description, technologies} = this.props.data;
-    let picSrc = `/uploads/projects/${_id}/${picture}`;
-    let tagItems;
-
-    if (technologies) {
-      let count = 0;
-      tagItems = technologies.map(item => {
-        return (
-          <span key={item._id} className="tag">{item.text}</span>
-        );
-      });
-    }
-
-    return (
-      <div>
-        <h1>{title}</h1>
-        <EditLink path={`/project/${_id}/edit`} isModal={false} />
-        <DeleteLink onDelete={this.deleteProject} />
-        <p><img src={picSrc} /></p>
-        <p>{tagItems}</p>
-        <p>{description}</p>
-      </div>
-    )
-  }
-});
-
-var ProjectViewPage = React.createClass({
-  loadProject() {
-    let {id} = this.props.params;
-
-    $.ajax({
-      url: this.props.route.url + id,
-      dataType: 'json',
-      cache: false,
-      success: data => {    
-        this.setState({data: data[0]});
-      },
-      error: (xhr, status, err) => {
-        console.error(this.props.route.url, status, err.toString());
-      }
-    });
-  },
-  handleDelete(id) {
-    $.ajax({
-      url: this.props.route.url + id,
-      dataType: 'json',
-      type: 'DELETE',
-      success: data => {
-        this.context.router.push('/projects');
-      },
-      error: (xhr, status, err) => {
-        console.error(this.props.route.url, status, err.toString());
-      }
-    });
-  },
-  getInitialState() {
-    return {data: {}};
-  },
-  componentWillMount() {
-    this.loadProject();
-  },
-  render() {
-    return (
-      <div>
-        <Project data={this.state.data} onDelete={this.handleDelete} />
-      </div>
-    );
-  }
-});
-
-ProjectViewPage.contextTypes = {
-  router: React.PropTypes.object.isRequired
-}
-// public/js/pages/projects.js
-
-var ProjectItem = React.createClass({
-  deleteItem() {
-    confirmAction('Are you sure?', {
-      description: 'Would you like to delete this project?',
-      confirmLabel: 'Delete',
-      abortLabel: 'Cancel'
-    }).then(() => {
-      this.props.onDelete(this.props.id);
-    });
-  },
-  render() {
-    let {id, img} = this.props;
-
-    return (
-      <div className="box col-md-6 col-lg-4">
-        <div className="box-img">
-          <img src={`/uploads/projects/${id}/${img}`} alt="Card image cap" />
-        </div>
-        <div className="box-content">
-          <h4 className="box-title">
-            <Link to={`/project/${id}`}>{this.props.title}</Link>
-          </h4>
-          <p className="box-text">This is a longer card with supporting text
-            below as a natural lead-in to additional content. This content is a
-            little bit longer.</p>
-          <EditLink path={`/project/${id}/edit`} isModal={false} />
-          <DeleteLink onDelete={this.deleteItem} />
-        </div>
-      </div>
-    )
-  }
-});
-
-var ProjectsList = React.createClass({
-  render() {
-    let projectItems = this.props.data.map(item => {
-      return (
-        <ProjectItem title={item.title} img={item.picture} id={item._id}
-          key={item._id} onDelete={this.props.onDelete} />
-      );
-    });
-
-    return (
-      <div id="projects-list">
-        <div className="row">
-          {projectItems}
-        </div>
-      </div>
-    )
-  }
-});
-
-var ProjectsPage = React.createClass({
+var ProjectListPage = React.createClass({
   loadProjects() {
     $.ajax({
       url: this.props.route.url,
@@ -1008,15 +497,375 @@ var ProjectsPage = React.createClass({
     return (
       <div>
         <AddLink path={'/project/new'} isModal={false} />
-        <ProjectsList data={this.state.data} onDelete={this.handleDelete} />
+        <ProjectList data={this.state.data} onDelete={this.handleDelete} />
       </div>
     );
   }
 });
 
-ProjectsPage.contextTypes = {
+ProjectListPage.contextTypes = {
   router: React.PropTypes.object.isRequired
 }
+// public/js/features/project/project-list/presentation/projects.js
+
+var ProjectItem = React.createClass({
+  deleteItem() {
+    confirmAction('Are you sure?', {
+      description: 'Would you like to delete this project?',
+      confirmLabel: 'Delete',
+      abortLabel: 'Cancel'
+    }).then(() => {
+      this.props.onDelete(this.props.id);
+    });
+  },
+  render() {
+    let {id, img} = this.props;
+
+    return (
+      <div className="box col-md-6 col-lg-4">
+        <div className="box-img">
+          <img src={`/uploads/projects/${id}/${img}`} alt="Card image cap" />
+        </div>
+        <div className="box-content">
+          <h4 className="box-title">
+            <Link to={`/project/${id}`}>{this.props.title}</Link>
+          </h4>
+          <p className="box-text">This is a longer card with supporting text
+            below as a natural lead-in to additional content. This content is a
+            little bit longer.</p>
+          <EditLink path={`/project/${id}/edit`} isModal={false} />
+          <DeleteLink onDelete={this.deleteItem} />
+        </div>
+      </div>
+    )
+  }
+});
+// public/js/features/project/project-list/presentation/project-list.js
+
+var ProjectList = React.createClass({
+  render() {
+    let projectItems = this.props.data.map(item => {
+      return (
+        <ProjectItem title={item.title} img={item.picture} id={item._id}
+          key={item._id} onDelete={this.props.onDelete} />
+      );
+    });
+
+    return (
+      <div id="projects-list">
+        <div className="row">
+          {projectItems}
+        </div>
+      </div>
+    )
+  }
+});
+// public/js/features/project/project-view/container/project-view-page.js
+
+var ProjectViewPage = React.createClass({
+  loadProject() {
+    let {id} = this.props.params;
+
+    $.ajax({
+      url: this.props.route.url + id,
+      dataType: 'json',
+      cache: false,
+      success: data => {
+        this.setState({data: data[0]});
+      },
+      error: (xhr, status, err) => {
+        console.error(this.props.route.url, status, err.toString());
+      }
+    });
+  },
+  handleDelete(id) {
+    $.ajax({
+      url: this.props.route.url + id,
+      dataType: 'json',
+      type: 'DELETE',
+      success: data => {
+        this.context.router.push('/projects');
+      },
+      error: (xhr, status, err) => {
+        console.error(this.props.route.url, status, err.toString());
+      }
+    });
+  },
+  getInitialState() {
+    return {data: {}};
+  },
+  componentWillMount() {
+    this.loadProject();
+  },
+  render() {
+    return (
+      <div>
+        <Project data={this.state.data} onDelete={this.handleDelete} />
+      </div>
+    );
+  }
+});
+
+ProjectViewPage.contextTypes = {
+  router: React.PropTypes.object.isRequired
+}
+// public/js/features/project/project-view/presentation/project.js
+
+var Project = React.createClass({
+  deleteProject() {
+    confirmAction('Are you sure?', {
+      description: 'Would you like to delete this project?',
+      confirmLabel: 'Delete',
+      abortLabel: 'Cancel'
+    }).then(() => {
+      this.props.onDelete(this.props.data._id);
+    });
+  },
+  render() {
+    let {_id, title, picture, description, technologies} = this.props.data;
+    let picSrc = `/uploads/projects/${_id}/${picture}`;
+    let tagItems;
+
+    if (technologies) {
+      let count = 0;
+      tagItems = technologies.map(item => {
+        return (
+          <span key={item._id} className="tag">{item.text}</span>
+        );
+      });
+    }
+
+    return (
+      <div>
+        <h1>{title}</h1>
+        <EditLink path={`/project/${_id}/edit`} isModal={false} />
+        <DeleteLink onDelete={this.deleteProject} />
+        <p><img src={picSrc} /></p>
+        <p>{tagItems}</p>
+        <p>{description}</p>
+      </div>
+    )
+  }
+});
+// public/js/features/resume/qualification/container/qualifications.js
+
+var Qualifications = React.createClass({
+  loadQualifications() {
+    $.ajax({
+      url: '/api/resume/qualification',
+      dataType: 'json',
+      cache: false,
+      success: data => {
+        this.setState({data: data});
+      },
+      error: (xhr, status, err) => {
+        console.error(this.props.route.url, status, err.toString());
+      }
+    });
+  },
+  handleDelete(id) {
+    $.ajax({
+      url: `/api/resume/qualification/${id}`,
+      dataType: 'json',
+      type: 'DELETE',
+      success: data => {
+        this.setState({data: data});
+      },
+      error: (xhr, status, err) => {
+        // this.setState({data: comments});
+        console.error(this.props.route.url, status, err.toString());
+      }
+    });
+  },
+  getInitialState() {
+    return {data: []};
+  },
+  componentDidMount() {
+    this.loadQualifications();
+  },
+  componentWillReceiveProps() {
+    this.loadQualifications();
+  },
+  render() {
+    return (
+      <div>
+        <div className="section-header">
+          <h2>Qualifications</h2>
+          <AddLink path={'/resume/qualification/add'}
+            isModal={true} />
+        </div>
+        <QualificationList data={this.state.data} onDelete={this.handleDelete} />
+      </div>
+    );
+  }
+});
+// public/js/partials/qualification-form.js
+
+var QualificationForm = React.createClass({
+  getInitialState() {
+    return {
+      school : '',
+      course: '',
+      year : '',
+      description: ''
+    };
+  },
+  componentDidMount() {
+    let {id} = this.props.params ? this.props.params : null;
+
+    if (id) {
+      $.ajax({
+        url: `/api/resume/qualification/${id}`,
+        dataType: 'json',
+        cache: false,
+        success: data => {
+          this.setState(data[0]);
+        },
+        error: (xhr, status, err) => {
+          console.error(this.props.route.url, status, err.toString());
+        }
+      });
+    }
+  },
+  handleSchoolChange(e) {
+    this.setState({school: e.target.value});
+  },
+  handleCourseChange(e) {
+    this.setState({course: e.target.value});
+  },
+  handleYearChange(value) {
+    this.setState({year: value});
+  },
+  handleDescriptionChange(e) {
+    this.setState({description: e.target.value});
+  },
+  handleValidation(e) {
+    e.preventDefault();
+    let {school, course, year, description} = this.state;
+
+    $('#form-message').hide();
+    $('.form-control').removeClass('required');
+
+    if (!school.trim() || !course.trim() || !year || !description.trim()) {
+      $('#qualification-form #form-message').show();
+    }
+
+    if (!school.trim()) {
+      $('#qualSchool').addClass('required').focus();
+      this.setState({formMessage: 'Please provide school.'});
+    } else if (!course.trim()) {
+      $('#qualCourse').addClass('required').focus();
+      this.setState({formMessage: 'Please provide course.'});
+    } else if (!year) {
+      $('#qualYear').addClass('required').focus();
+      this.setState({formMessage: 'Please provide year.'});
+    } else if (!description.trim()) {
+      $('#qualDescription').addClass('required').focus();
+      this.setState({formMessage: 'Please provide description.'});
+    } else {
+      this.handleSubmit({school, course, year, description});
+    }
+  },
+  handleSubmit(item) {
+    let id = this.props.params.id ? this.props.params.id : '';
+
+    $.ajax({
+      url: `/api/resume/qualification/${id}`,
+      dataType: 'json',
+      type: 'POST',
+      data: item,
+      success: items => {
+        this.context.router.push('/resume');
+      },
+      error: (xhr, status, err) => {
+        console.error(status, err.toString());
+      }
+    });
+  },
+  render() {
+    return (
+      <PopupForm>
+        <div id="qualification-form" className="">
+            <p id="form-message">{this.state.formMessage}</p>
+            <form encType="multipart/form-data" onSubmit={this.handleValidation}>
+              <fieldset className="form-group">
+                <label htmlFor="qualSchool">School</label>
+                <input type="text" className="form-control" id="qualSchool"
+                  value={this.state.school} onChange={this.handleSchoolChange} />
+              </fieldset>
+              <fieldset className="form-group">
+                <label htmlFor="qualCourse">Course</label>
+                <input type="text" className="form-control" id="qualCourse"
+                  value={this.state.course} onChange={this.handleCourseChange} />
+              </fieldset>
+              <fieldset className="form-group">
+                <label htmlFor="qualYear">Year of completion</label>
+                <YearsSelect value={this.state.year}
+                  onSelectChange={this.handleYearChange} />
+              </fieldset>
+              <fieldset className="form-group">
+                <label htmlFor="qualDescription">Description</label>
+                <textarea className="form-control" id="qualDescription" rows="4"
+                  value={this.state.description}
+                  onChange={this.handleDescriptionChange} ></textarea>
+              </fieldset>
+              <FormButtons />
+            </form>
+        </div>
+      </PopupForm>
+    );
+  }
+});
+
+QualificationForm.contextTypes = {
+  router: React.PropTypes.object.isRequired
+}
+// public/js/features/resume/qualification/presentation/qualification-item.js
+
+var QualificationItem = React.createClass({
+  deleteItem() {
+    confirmAction('Are you sure?', {
+      description: 'Would you like to delete this qualification?',
+      confirmLabel: 'Delete',
+      abortLabel: 'Cancel'
+    }).then(() => {
+      this.props.onDelete(this.props.id);
+    });
+  },
+  render() {
+    let {id} = this.props;
+
+    return (
+      <div>
+        <span>{this.props.school}</span>
+        <span>{this.props.course}</span>
+        <p>
+          <EditLink path={`/resume/qualification/edit/${id}`}
+            isModal={true} />
+          <DeleteLink onDelete={this.deleteItem} />
+        </p>
+      </div>
+    );
+  }
+});
+// public/js/features/resume/qualification/presentation/qualification-list.js
+
+var QualificationList = React.createClass({
+  render() {
+    let qualificationItems = this.props.data.map(item => {
+      return (
+        <QualificationItem school={item.school} course={item.course}
+        id={item._id} key={item._id} onDelete={this.props.onDelete} />
+      );
+    });
+
+    return (
+      <div>
+        {qualificationItems}
+      </div>
+    );
+  }
+});
 // public/js/pages/resume.js
 
 var ResumePage = React.createClass({
@@ -1029,158 +878,163 @@ var ResumePage = React.createClass({
     );
   }
 });
-// js/scripts.js
+// public/js/features/resume/skill/container/skills.js
 
-var TodoBox = React.createClass({
-  loadToDoList: function() {
+var Skills = React.createClass({
+  loadSkills() {
     $.ajax({
-      url: this.props.route.url,
+      url: '/api/resume/skill',
       dataType: 'json',
       cache: false,
-      success: function(data) {
+      success: data => {
         this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         console.error(this.props.route.url, status, err.toString());
-      }.bind(this)
+      }
     });
   },
-  handleTodoSubmit: function(item) {
-    var items = this.state.data;
-    var newItems = items.concat([item]);
-    this.setState({data: newItems});
+  handleDelete(id) {
     $.ajax({
-      url: this.props.route.url,
+      url: `/api/resume/skill/${id}`,
+      dataType: 'json',
+      type: 'DELETE',
+      success: data => {
+        this.setState({data: data});
+      },
+      error: (xhr, status, err) => {
+        // this.setState({data: comments});
+        console.error(this.props.route.url, status, err.toString());
+      }
+    });
+  },
+  getInitialState() {
+    return {data: []};
+  },
+  componentDidMount() {
+    this.loadSkills();
+  },
+  componentWillReceiveProps() {
+    this.loadSkills();
+  },
+  render() {
+    let skillForm;
+
+    if (localStorage.getItem('user')) {
+      skillForm = <SkillForm />;
+    }
+
+    return (
+      <div>
+        <div className="section-header">
+          <h2>Skills</h2>
+        </div>
+        {skillForm}
+        <SkillList data={this.state.data} onDelete={this.handleDelete} />
+      </div>
+    );
+  }
+});
+// public/js/features/resume/skill/presentation/skill-form.js
+
+var SkillForm = React.createClass({
+  getInitialState() {
+    return {
+      skill : ''
+    };
+  },
+  handleSkillChange(e) {
+    this.setState({skill: e.target.value});
+  },
+  handleValidation(e) {
+    e.preventDefault();
+    let {skill} = this.state;
+
+    $('#form-message').hide();
+    $('.form-control').removeClass('required');
+
+    if (!skill.trim()) {
+      $('#skillName').addClass('required').focus();
+      $('#form-message').show();
+
+      this.setState({formMessage: 'Please provide skill.'});
+    } else {
+      $('#skillName').val('');
+      this.setState({skill: ''});
+
+      this.handleSubmit({skill});
+    }
+  },
+  handleSubmit(item) {
+    $.ajax({
+      url: '/api/resume/skill',
       dataType: 'json',
       type: 'POST',
       data: item,
-      success: function(data) {
-        this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        this.setState({data: items});
-        console.error(this.props.route.url, status, err.toString());
-      }.bind(this)
+      success: items => {
+        this.context.router.push('/resume');
+      },
+      error: (xhr, status, err) => {
+        console.error(status, err.toString());
+      }
     });
   },
-  handleTodoDelete: function(id) {
-    // var items = this.state.data;
-    // var newItems = items.concat([item]);
-    // this.setState({data: newItems});
-    $.ajax({
-      url: '/api/todos/' + id,
-      dataType: 'json',
-      type: 'DELETE',
-      data: item,
-      success: function(data) {
-        // this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        // this.setState({data: comments});
-        console.error(this.props.route.url, status, err.toString());
-      }.bind(this)
-    });
-  },
-  getInitialState: function() {
-    return {data: []};
-  },
-  componentDidMount: function() {
-    this.loadToDoList();
-  },
-  render: function() {
+  render() {
     return (
-      <div>
-        <Banner data={this.state.data} />
-        <TodoList onTodoDelete={this.handleTodoDelete} data={this.state.data} />
-        <TodoForm onTodoSubmit={this.handleTodoSubmit} />
+      <div id="skill-form" className="">
+          <p id="form-message">{this.state.formMessage}</p>
+          <form encType="multipart/form-data" onSubmit={this.handleValidation}>
+            <fieldset className="form-group">
+              <label htmlFor="skillName">Add skill</label>
+              <input type="text" className="form-control" id="skillName"
+                value={this.state.skill} onChange={this.handleSkillChange} />
+            </fieldset>
+          </form>
       </div>
     );
   }
 });
 
-var Banner = React.createClass({
-  render: function() {
+SkillForm.contextTypes = {
+  router: React.PropTypes.object.isRequired
+}
+// public/js/features/resume/skill/presentation/skill-item.js
+
+var SkillItem = React.createClass({
+  deleteItem() {
+    confirmAction('Are you sure?', {
+      description: 'Would you like to delete this skill?',
+      confirmLabel: 'Delete',
+      abortLabel: 'Cancel'
+    }).then(() => {
+      this.props.onDelete(this.props.id);
+    });
+  },
+  render() {
     return (
-      <div className="jumbotron text-center">
-          <h1>I am a Todo-aholic <span className="label label-info">{this.props.data.length}</span></h1>
-      </div>
-    )
+      <span className="tag">
+        {this.props.skill}
+        <DeleteLink onDelete={this.deleteItem} linkText="X" linkClass="tag-remove" />
+      </span>
+    );
   }
 });
+// public/js/features/resume/skill/presentation/skill-list.js
 
-var TodoList = React.createClass({
-  render: function() {
-    var todoItems = this.props.data.map(function(item) {
+var SkillList = React.createClass({
+  render() {
+    let skillItems = this.props.data.map(item => {
       return (
-        <TodoItem text={item.text} id={item._id} key={item._id} />
+        <SkillItem skill={item.skill} id={item._id} key={item._id}
+          onDelete={this.props.onDelete} />
       );
     });
 
     return (
-      <div id="todo-list" className="row">
-          <div className="col-sm-4 col-sm-offset-4">
-              {todoItems}
-          </div>
+      <div>
+        {skillItems}
       </div>
-    )
-  }
-});
-
-var TodoItem = React.createClass({
-  handleComplete: function() {
-    $.ajax({
-      url: '/api/todos/' + this.props.id,
-      dataType: 'json',
-      type: 'DELETE',
-      success: function(data) {
-        // this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        // this.setState({data: comments});
-        console.error(this.props.route.url, status, err.toString());
-      }.bind(this)
-    });
-  },
-  render: function() {
-    return (
-      <div className="checkbox">
-          <label>
-              <input type="checkbox" onChange={this.handleComplete} /> {this.props.text}
-          </label>
-      </div>
-    )
-  }
-});
-
-var TodoForm = React.createClass({
-  getInitialState: function() {
-    return {text: ''};
-  },
-  handleTextChange: function(e) {
-    this.setState({text: e.target.value});
-  },
-  handleSubmit: function(e) {
-    e.preventDefault();
-    var text = this.state.text.trim();
-    if (!text) {
-      return;
-    }
-    this.props.onTodoSubmit({text: text});
-    this.setState({text: ''});
-  },
-  render: function() {
-    return (
-      <div id="todo-form" className="row">
-          <div className="col-sm-8 col-sm-offset-2 text-center">
-              <form onSubmit={this.handleSubmit}>
-                  <div className="form-group">
-                      <input type="text" className="form-control input-lg text-center" placeholder="I want to buy a puppy that will love me forever" value={this.state.text} onChange={this.handleTextChange}/>
-                  </div>
-                  <button type="submit" className="btn btn-primary btn-lg">Add</button>
-              </form>
-          </div>
-      </div>
-    )
+    );
   }
 });
 // public/js/app-wrapper.js
@@ -1226,7 +1080,6 @@ var App = React.createClass({
             <Link to="/">Home</Link>
             <Link to="/resume">Resume</Link>
             <Link to="/projects">Projects</Link>
-            <Link to="/todos">To-do List</Link>
           </nav>
         </header>
         <div id="content">
@@ -1248,11 +1101,10 @@ ReactDOM.render(
   <Router history={browserHistory}>
     <Route path="/" component={App}>
       <IndexRoute component={Home}/>
-      <Route path="todos" url="/api/todos" component={TodoBox} />
       <Route path="resume" url="/api/resume/" component={ResumePage} />
       <Route path="resume/qualification/add" url="/api/resume/qualification" component={QualificationForm} />
       <Route path="resume/qualification/edit/:id" url="/api/resume/qualification" component={QualificationForm} />
-      <Route path="projects" url="/api/projects/" component={ProjectsPage} />
+      <Route path="projects" url="/api/projects/" component={ProjectListPage} />
       <Route path="project/new" url="/api/projects/" component={ProjectFormPage} />
       <Route path="project/:id" url="/api/projects/" component={ProjectViewPage} />
       <Route path="project/:id/edit" url="/api/projects/" component={ProjectFormPage} />
