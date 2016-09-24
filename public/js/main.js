@@ -39862,53 +39862,28 @@ var ProjectFormPage = _react2.default.createClass({
       }
     });
   },
-  loadTagSuggestions: function loadTagSuggestions() {
-    var _this3 = this;
-
-    var skillsUrl = 'http://trendyskills.com/service?q=keywords&key=77MGlB3wzQbD9KfZ';
-
-    $.ajax({
-      url: skillsUrl,
-      method: 'GET',
-      dataType: 'jsonp',
-      success: function success(res) {
-        var suggestionsArr = [];
-
-        res.keywords.map(function (item) {
-          suggestionsArr.push(item.keyName);
-        });
-
-        _this3.setState({ suggestions: suggestionsArr });
-      },
-      error: function error(xhr, status, err) {
-        console.error(status, err.toString());
-      }
-    });
-  },
   loadProject: function loadProject(id) {
-    var _this4 = this;
+    var _this3 = this;
 
     this.serverRequest = $.ajax({
       url: this.props.route.url + id,
       dataType: 'json',
       cache: false,
       success: function success(data) {
-        _this4.setState(data[0]);
+        _this3.setState(data[0]);
 
-        var projectID = _this4.props.params.id;
+        var projectID = _this3.props.params.id;
         var picName = data[0]['picture'];
 
         var imgCtr = $('<img/>').prop('src', '/uploads/projects/' + projectID + '/' + picName);
         $('#imgContainer').html(imgCtr);
       },
       error: function error(xhr, status, err) {
-        console.error(_this4.props.route.url, status, err.toString());
+        console.error(_this3.props.route.url, status, err.toString());
       }
     });
   },
   componentDidMount: function componentDidMount() {
-    this.loadTagSuggestions();
-
     if (this.props.params.id) {
       this.loadProject(this.props.params.id);
     }
@@ -39939,8 +39914,7 @@ var ProjectFormPage = _react2.default.createClass({
       year: '',
       picture: '',
       description: '',
-      technologies: [],
-      suggestions: []
+      technologies: []
     };
   },
   render: function render() {
@@ -40137,13 +40111,11 @@ var ProjectForm = _react2.default.createClass({
             _react2.default.createElement(_reactTagInput.WithContext, { tags: this.props.data.technologies,
               handleDelete: this.handleDelete,
               handleAddition: this.handleAddition,
-              suggestions: this.props.data.suggestions,
               classNames: {
                 tags: 'tags-container',
                 tagInput: 'tag-input',
                 tag: 'tag',
-                remove: 'tag-remove',
-                suggestions: 'tag-suggestions'
+                remove: 'tag-remove'
               }
             })
           ),
