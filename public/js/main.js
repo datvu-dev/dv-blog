@@ -39653,277 +39653,139 @@ var _reactDom2 = _interopRequireDefault(_reactDom);
 
 var _reactRouter = require('react-router');
 
-var _reactTagInput = require('react-tag-input');
+var _modal = require('./components/utilities/modal');
+
+var _modal2 = _interopRequireDefault(_modal);
+
+var _home = require('./components/home/home');
+
+var _home2 = _interopRequireDefault(_home);
+
+var _resumePage = require('./components/resume/resume-page');
+
+var _resumePage2 = _interopRequireDefault(_resumePage);
+
+var _qualificationForm = require('./components/qualification/presentation/qualification-form');
+
+var _qualificationForm2 = _interopRequireDefault(_qualificationForm);
+
+var _projectListPage = require('./components/project-list/container/project-list-page');
+
+var _projectListPage2 = _interopRequireDefault(_projectListPage);
+
+var _projectFormPage = require('./components/project-form/container/project-form-page');
+
+var _projectFormPage2 = _interopRequireDefault(_projectFormPage);
+
+var _projectViewPage = require('./components/project-view/container/project-view-page');
+
+var _projectViewPage2 = _interopRequireDefault(_projectViewPage);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// public/js/import.js
+// public/js/app-wrapper.js
 
-var AddLink = _react2.default.createClass({
-  displayName: 'AddLink',
-  render: function render() {
-    var linkItem = void 0;
-
-    if (localStorage.getItem('user')) {
-      linkItem = _react2.default.createElement(
-        _reactRouter.Link,
-        { to: {
-            pathname: this.props.path,
-            state: { modal: this.props.isModal }
-          } },
-        'Add'
-      );
+var App = _react2.default.createClass({
+  displayName: 'App',
+  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+    // if we changed routes...
+    if (nextProps.location.key !== this.props.location.key && nextProps.location.state && nextProps.location.state.modal) {
+      // save the old children (just like animation)
+      this.previousChildren = this.props.children;
     }
-
-    return _react2.default.createElement(
-      'span',
-      null,
-      linkItem
-    );
-  }
-});
-// public/js/components/confirm-dialog.js
-
-var Promise = $.Deferred;
-
-var Confirm = _react2.default.createClass({
-  displayName: 'Confirm',
-  getDefaultProps: function getDefaultProps() {
-    return {
-      confirmLabel: 'OK',
-      abortLabel: 'Cancel'
-    };
-  },
-  abort: function abort() {
-    return this.promise.reject();
-  },
-  confirm: function confirm() {
-    return this.promise.resolve();
   },
   componentDidMount: function componentDidMount() {
-    this.promise = new Promise();
+    $.ajax({
+      url: '/api/checkauthentication',
+      dataType: 'json',
+      cache: false,
+      success: function success(authenticated) {
+        if (authenticated) {
+          localStorage.setItem('user', 'datvu');
+        } else {
+          localStorage.removeItem('user');
+        }
+      },
+      error: function error(xhr, status, err) {
+        console.error(status, err.toString());
+      }
+    });
   },
   render: function render() {
-    return _react2.default.createElement(Modal, null, _react2.default.createElement(
+    var location = this.props.location;
+
+    var isModal = location.state && location.state.modal && this.previousChildren;
+
+    return _react2.default.createElement(
       'div',
       null,
       _react2.default.createElement(
-        'div',
-        { className: 'modal-header' },
+        'header',
+        null,
         _react2.default.createElement(
-          'h4',
-          { className: 'modal-title' },
-          this.props.message
-        )
-      ),
-      _react2.default.createElement(
-        'div',
-        { className: 'modal-body' },
-        this.props.description ? this.props.description : ''
-      ),
-      _react2.default.createElement(
-        'div',
-        { className: 'modal-footer' },
-        _react2.default.createElement(
-          'div',
-          { className: 'text-right' },
+          'nav',
+          null,
           _react2.default.createElement(
-            'button',
-            { role: 'abort', type: 'button', className: 'btn btn-default',
-              onClick: this.abort },
-            this.props.abortLabel
+            _reactRouter.Link,
+            { to: '/' },
+            'Home'
           ),
           _react2.default.createElement(
-            'button',
-            { role: 'confirm', type: 'button', className: 'btn btn-main',
-              ref: 'confirm', onClick: this.confirm },
-            this.props.confirmLabel
-          )
-        )
-      )
-    ));
-  }
-});
-
-var confirmAction = function confirmAction(message) {
-  var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-
-  var props = $.extend({ message: message }, options);
-  var wrapper = document.body.appendChild(document.createElement('div'));
-  var component = _reactDom2.default.render(_react2.default.createElement(Confirm, props), wrapper);
-
-  var cleanup = function cleanup() {
-    _reactDom2.default.unmountComponentAtNode(wrapper);
-    setTimeout(function () {
-      wrapper.remove();
-    });
-  };
-
-  return component.promise.always(cleanup).promise();
-};
-var DeleteLink = _react2.default.createClass({
-  displayName: 'DeleteLink',
-  render: function render() {
-    var linkItem = void 0;
-    var text = this.props.linkText ? this.props.linkText : 'Remove';
-    var className = this.props.linkClass ? this.props.linkClass : 'utility-link';
-
-    if (localStorage.getItem('user')) {
-      linkItem = _react2.default.createElement(
-        'a',
-        { className: className,
-          onClick: this.props.onDelete },
-        _react2.default.createElement(
-          'small',
-          null,
-          text
-        )
-      );
-    }
-
-    return _react2.default.createElement(
-      'span',
-      null,
-      linkItem
-    );
-  }
-});
-var EditLink = _react2.default.createClass({
-  displayName: 'EditLink',
-  render: function render() {
-    var linkItem = void 0;
-
-    if (localStorage.getItem('user')) {
-      linkItem = _react2.default.createElement(
-        _reactRouter.Link,
-        { className: 'utility-link', to: {
-            pathname: this.props.path,
-            state: { modal: this.props.isModal }
-          } },
-        _react2.default.createElement(
-          'small',
-          null,
-          'Edit'
-        )
-      );
-    }
-
-    return _react2.default.createElement(
-      'span',
-      null,
-      linkItem
-    );
-  }
-});
-var FormButtons = _react2.default.createClass({
-  displayName: 'FormButtons',
-  cancel: function cancel() {
-    window.history.back();;
-  },
-  render: function render() {
-    return _react2.default.createElement(
-      'div',
-      { className: 'text-right' },
-      _react2.default.createElement(
-        'button',
-        { type: 'button', className: 'btn btn-default', onClick: this.cancel },
-        'Cancel'
-      ),
-      _react2.default.createElement(
-        'button',
-        { type: 'submit', className: 'btn btn-main', onClick: this.submit },
-        'Save'
-      )
-    );
-  }
-});
-// public/js/components/modal.js
-
-var Modal = _react2.default.createClass({
-  displayName: 'Modal',
-  render: function render() {
-    return _react2.default.createElement(
-      'div',
-      { id: 'modal' },
-      _react2.default.createElement('div', { className: 'modal-backdrop in' }),
-      _react2.default.createElement(
-        'div',
-        { className: 'modal in', tabIndex: '-1', role: 'dialog', 'aria-hidden': 'false', ref: 'modal', style: { display: 'block' } },
-        _react2.default.createElement(
-          'div',
-          { className: 'modal-dialog' },
+            _reactRouter.Link,
+            { to: '/resume' },
+            'Resume'
+          ),
           _react2.default.createElement(
-            'div',
-            { className: 'modal-content' },
-            this.props.children
+            _reactRouter.Link,
+            { to: '/projects' },
+            'Projects'
           )
         )
-      )
-    );
-  }
-});
-// public/js/components/popup-form.js
-
-var PopupForm = _react2.default.createClass({
-  displayName: 'PopupForm',
-  render: function render() {
-    return _react2.default.createElement(
-      'div',
-      null,
+      ),
       _react2.default.createElement(
         'div',
-        { className: 'modal-header' },
-        _react2.default.createElement(
-          'h4',
-          { className: 'modal-title' },
-          'Add New Thing'
+        { id: 'content' },
+        isModal ? this.previousChildren : this.props.children,
+        isModal && _react2.default.createElement(
+          _modal2.default,
+          { isOpen: true, returnTo: location.state.returnTo },
+          this.props.children
         )
       ),
-      _react2.default.createElement(
-        'div',
-        { className: 'modal-body' },
-        this.props.children
-      )
+      _react2.default.createElement('footer', null)
     );
   }
 });
-// public/js/components/year-dropdown.js
 
-var YearsSelect = _react2.default.createClass({
-  displayName: 'YearsSelect',
-  onSelectChange: function onSelectChange(e) {
-    this.props.onSelectChange(e.target.value);
-  },
-  render: function render() {
-    var currentYear = new Date().getFullYear();
-    var years = [];
-    var startYear = 2010;
+_reactDom2.default.render(_react2.default.createElement(
+  _reactRouter.Router,
+  { history: _reactRouter.browserHistory },
+  _react2.default.createElement(
+    _reactRouter.Route,
+    { path: '/', component: App },
+    _react2.default.createElement(_reactRouter.IndexRoute, { component: _home2.default }),
+    _react2.default.createElement(_reactRouter.Route, { path: 'resume', url: '/api/resume/', component: _resumePage2.default }),
+    _react2.default.createElement(_reactRouter.Route, { path: 'resume/qualification/add', url: '/api/resume/qualification', component: _qualificationForm2.default }),
+    _react2.default.createElement(_reactRouter.Route, { path: 'resume/qualification/edit/:id', url: '/api/resume/qualification', component: _qualificationForm2.default }),
+    _react2.default.createElement(_reactRouter.Route, { path: 'projects', url: '/api/projects/', component: _projectListPage2.default }),
+    _react2.default.createElement(_reactRouter.Route, { path: 'project/new', url: '/api/projects/', component: _projectFormPage2.default }),
+    _react2.default.createElement(_reactRouter.Route, { path: 'project/:id', url: '/api/projects/', component: _projectViewPage2.default }),
+    _react2.default.createElement(_reactRouter.Route, { path: 'project/:id/edit', url: '/api/projects/', component: _projectFormPage2.default })
+  )
+), document.getElementById('main'));
 
-    while (startYear <= currentYear) {
-      years.push(startYear++);
-    }
+},{"./components/home/home":685,"./components/project-form/container/project-form-page":686,"./components/project-list/container/project-list-page":688,"./components/project-view/container/project-view-page":691,"./components/qualification/presentation/qualification-form":694,"./components/resume/resume-page":697,"./components/utilities/modal":707,"react":673,"react-dom":274,"react-router":304}],685:[function(require,module,exports){
+'use strict';
 
-    var yearItems = years.map(function (item) {
-      return _react2.default.createElement(
-        'option',
-        { key: item, value: item },
-        item
-      );
-    });
-
-    return _react2.default.createElement(
-      'select',
-      { className: 'form-control', id: 'projectYear', value: this.props.value, onChange: this.onSelectChange },
-      _react2.default.createElement(
-        'option',
-        { value: '', disabled: 'disabled' },
-        ' -- Select year --'
-      ),
-      yearItems
-    );
-  }
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
-// public/js/pages/home.js
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Home = _react2.default.createClass({
   displayName: 'Home',
@@ -39934,7 +39796,27 @@ var Home = _react2.default.createClass({
       'Welcome to Dat Vu Page'
     );
   }
+}); // public/js/pages/home.js
+
+exports.default = Home;
+
+},{"react":673}],686:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _projectForm = require('../presentation/project-form');
+
+var _projectForm2 = _interopRequireDefault(_projectForm);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 // public/js/features/project/project-form/container/project-form-page.js
 
 var ProjectFormPage = _react2.default.createClass({
@@ -39994,7 +39876,7 @@ var ProjectFormPage = _react2.default.createClass({
     return _react2.default.createElement(
       'div',
       null,
-      _react2.default.createElement(ProjectForm, { onProjectSubmit: this.handleProjectSubmit,
+      _react2.default.createElement(_projectForm2.default, { onProjectSubmit: this.handleProjectSubmit,
         data: this.state.data, projectID: this.props.params.id })
     );
   }
@@ -40003,6 +39885,32 @@ var ProjectFormPage = _react2.default.createClass({
 ProjectFormPage.contextTypes = {
   router: _react2.default.PropTypes.object.isRequired
 };
+
+exports.default = ProjectFormPage;
+
+},{"../presentation/project-form":687,"react":673}],687:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactTagInput = require('react-tag-input');
+
+var _yearSelect = require('../../utilities/year-select');
+
+var _yearSelect2 = _interopRequireDefault(_yearSelect);
+
+var _formButtons = require('../../utilities/form-buttons');
+
+var _formButtons2 = _interopRequireDefault(_formButtons);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 // public/js/features/project/project-form/presentation/project-form.js
 
 var ProjectForm = _react2.default.createClass({
@@ -40011,7 +39919,7 @@ var ProjectForm = _react2.default.createClass({
     return this.props.data;
   },
   getTagSuggestions: function getTagSuggestions() {
-    var _this3 = this;
+    var _this = this;
 
     var skillsUrl = 'http://trendyskills.com/service?q=keywords&key=77MGlB3wzQbD9KfZ';
 
@@ -40026,7 +39934,7 @@ var ProjectForm = _react2.default.createClass({
           suggestionsArr.push(item.keyName);
         });
 
-        _this3.setState({ suggestions: suggestionsArr });
+        _this.setState({ suggestions: suggestionsArr });
       },
       error: function error(xhr, status, err) {
         console.error(status, err.toString());
@@ -40034,28 +39942,28 @@ var ProjectForm = _react2.default.createClass({
     });
   },
   componentDidMount: function componentDidMount() {
-    var _this4 = this;
+    var _this2 = this;
 
     $('.tag-input input').addClass('form-control').attr('id', 'projectTechnologies').blur();
 
     if (this.props.projectID) {
       (function () {
-        var projectID = _this4.props.projectID;
+        var projectID = _this2.props.projectID;
 
-        _this4.serverRequest = $.ajax({
+        _this2.serverRequest = $.ajax({
           url: '/api/projects/' + projectID,
           dataType: 'json',
           cache: false,
           success: function success(data) {
             // console.log(data);
-            _this4.setState(data[0]);
+            _this2.setState(data[0]);
             var picName = data[0]['picture'];
 
             var imgCtr = $('<img/>').prop('src', '/uploads/projects/' + projectID + '/' + picName);
             $('#imgContainer').html(imgCtr);
           },
           error: function error(xhr, status, err) {
-            console.error(_this4.props.route.url, status, err.toString());
+            console.error(_this2.props.route.url, status, err.toString());
           }
         });
       })();
@@ -40191,7 +40099,7 @@ var ProjectForm = _react2.default.createClass({
               { htmlFor: 'projectYear' },
               'Year of completion'
             ),
-            _react2.default.createElement(YearsSelect, { value: this.state.year, onSelectChange: this.handleYearChange })
+            _react2.default.createElement(_yearSelect2.default, { value: this.state.year, onSelectChange: this.handleYearChange })
           ),
           _react2.default.createElement(
             'fieldset',
@@ -40239,45 +40147,66 @@ var ProjectForm = _react2.default.createClass({
               onChange: this.handlePictureChange }),
             _react2.default.createElement('div', { id: 'imgContainer' })
           ),
-          _react2.default.createElement(FormButtons, null)
+          _react2.default.createElement(_formButtons2.default, null)
         )
       )
     );
   }
 });
-// public/js/features/project/project-list/container/project-list-page.js
+
+exports.default = ProjectForm;
+
+},{"../../utilities/form-buttons":706,"../../utilities/year-select":709,"react":673,"react-tag-input":315}],688:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _addLink = require('../../utilities/add-link');
+
+var _addLink2 = _interopRequireDefault(_addLink);
+
+var _projectList = require('../presentation/project-list');
+
+var _projectList2 = _interopRequireDefault(_projectList);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var ProjectListPage = _react2.default.createClass({
   displayName: 'ProjectListPage',
   loadProjects: function loadProjects() {
-    var _this5 = this;
+    var _this = this;
 
     $.ajax({
       url: this.props.route.url,
       dataType: 'json',
       cache: false,
       success: function success(data) {
-        // console.log(data);
-        _this5.setState({ data: data });
+        _this.setState({ data: data });
       },
       error: function error(xhr, status, err) {
-        console.error(_this5.props.route.url, status, err.toString());
+        console.error(_this.props.route.url, status, err.toString());
       }
     });
   },
   handleDelete: function handleDelete(id) {
-    var _this6 = this;
+    var _this2 = this;
 
     $.ajax({
       url: this.props.route.url + id,
       dataType: 'json',
       type: 'DELETE',
       success: function success(data) {
-        _this6.setState({ data: data });
+        _this2.setState({ data: data });
       },
       error: function error(xhr, status, err) {
         // this.setState({data: comments});
-        console.error(_this6.props.route.url, status, err.toString());
+        console.error(_this2.props.route.url, status, err.toString());
       }
     });
   },
@@ -40291,28 +40220,56 @@ var ProjectListPage = _react2.default.createClass({
     return _react2.default.createElement(
       'div',
       null,
-      _react2.default.createElement(AddLink, { path: '/project/new', isModal: false }),
-      _react2.default.createElement(ProjectList, { data: this.state.data, onDelete: this.handleDelete })
+      _react2.default.createElement(_addLink2.default, { path: '/project/new', isModal: false }),
+      _react2.default.createElement(_projectList2.default, { data: this.state.data, onDelete: this.handleDelete })
     );
   }
-});
+}); // public/js/features/project/project-list/container/project-list-page.js
 
 ProjectListPage.contextTypes = {
   router: _react2.default.PropTypes.object.isRequired
 };
-// public/js/features/project/project-list/presentation/projects.js
+
+exports.default = ProjectListPage;
+
+},{"../../utilities/add-link":702,"../presentation/project-list":690,"react":673}],689:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouter = require('react-router');
+
+var _editLink = require('../../utilities/edit-link');
+
+var _editLink2 = _interopRequireDefault(_editLink);
+
+var _deleteLink = require('../../utilities/delete-link');
+
+var _deleteLink2 = _interopRequireDefault(_deleteLink);
+
+var _confirmDialog = require('../../utilities/confirm-dialog');
+
+var _confirmDialog2 = _interopRequireDefault(_confirmDialog);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var ProjectItem = _react2.default.createClass({
   displayName: 'ProjectItem',
   deleteItem: function deleteItem() {
-    var _this7 = this;
+    var _this = this;
 
-    confirmAction('Are you sure?', {
+    (0, _confirmDialog2.default)('Are you sure?', {
       description: 'Would you like to delete this project?',
       confirmLabel: 'Delete',
       abortLabel: 'Cancel'
     }).then(function () {
-      _this7.props.onDelete(_this7.props.id);
+      _this.props.onDelete(_this.props.id);
     });
   },
   render: function render() {
@@ -40346,22 +40303,42 @@ var ProjectItem = _react2.default.createClass({
           { className: 'box-text' },
           'This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.'
         ),
-        _react2.default.createElement(EditLink, { path: '/project/' + id + '/edit', isModal: false }),
-        _react2.default.createElement(DeleteLink, { onDelete: this.deleteItem })
+        _react2.default.createElement(_editLink2.default, { path: '/project/' + id + '/edit', isModal: false }),
+        _react2.default.createElement(_deleteLink2.default, { onDelete: this.deleteItem })
       )
     );
   }
+}); // public/js/features/project/project-list/presentation/projects.js
+
+exports.default = ProjectItem;
+
+},{"../../utilities/confirm-dialog":703,"../../utilities/delete-link":704,"../../utilities/edit-link":705,"react":673,"react-router":304}],690:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _projectItem = require('./project-item');
+
+var _projectItem2 = _interopRequireDefault(_projectItem);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 // public/js/features/project/project-list/presentation/project-list.js
 
 var ProjectList = _react2.default.createClass({
   displayName: 'ProjectList',
   render: function render() {
-    var _this8 = this;
+    var _this = this;
 
     var projectItems = this.props.data.map(function (item) {
-      return _react2.default.createElement(ProjectItem, { title: item.title, img: item.picture, id: item._id,
-        key: item._id, onDelete: _this8.props.onDelete });
+      return _react2.default.createElement(_projectItem2.default, { title: item.title, img: item.picture, id: item._id,
+        key: item._id, onDelete: _this.props.onDelete });
     });
 
     return _react2.default.createElement(
@@ -40375,12 +40352,32 @@ var ProjectList = _react2.default.createClass({
     );
   }
 });
+
+exports.default = ProjectList;
+
+},{"./project-item":689,"react":673}],691:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _project = require('../presentation/project');
+
+var _project2 = _interopRequireDefault(_project);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 // public/js/features/project/project-view/container/project-view-page.js
 
 var ProjectViewPage = _react2.default.createClass({
   displayName: 'ProjectViewPage',
   loadProject: function loadProject() {
-    var _this9 = this;
+    var _this = this;
 
     var id = this.props.params.id;
 
@@ -40390,25 +40387,25 @@ var ProjectViewPage = _react2.default.createClass({
       dataType: 'json',
       cache: false,
       success: function success(data) {
-        _this9.setState({ data: data[0] });
+        _this.setState({ data: data[0] });
       },
       error: function error(xhr, status, err) {
-        console.error(_this9.props.route.url, status, err.toString());
+        console.error(_this.props.route.url, status, err.toString());
       }
     });
   },
   handleDelete: function handleDelete(id) {
-    var _this10 = this;
+    var _this2 = this;
 
     $.ajax({
       url: this.props.route.url + id,
       dataType: 'json',
       type: 'DELETE',
       success: function success(data) {
-        _this10.context.router.push('/projects');
+        _this2.context.router.push('/projects');
       },
       error: function error(xhr, status, err) {
-        console.error(_this10.props.route.url, status, err.toString());
+        console.error(_this2.props.route.url, status, err.toString());
       }
     });
   },
@@ -40422,7 +40419,7 @@ var ProjectViewPage = _react2.default.createClass({
     return _react2.default.createElement(
       'div',
       null,
-      _react2.default.createElement(Project, { data: this.state.data, onDelete: this.handleDelete })
+      _react2.default.createElement(_project2.default, { data: this.state.data, onDelete: this.handleDelete })
     );
   }
 });
@@ -40430,19 +40427,47 @@ var ProjectViewPage = _react2.default.createClass({
 ProjectViewPage.contextTypes = {
   router: _react2.default.PropTypes.object.isRequired
 };
+
+exports.default = ProjectViewPage;
+
+},{"../presentation/project":692,"react":673}],692:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _editLink = require('../../utilities/edit-link');
+
+var _editLink2 = _interopRequireDefault(_editLink);
+
+var _deleteLink = require('../../utilities/delete-link');
+
+var _deleteLink2 = _interopRequireDefault(_deleteLink);
+
+var _confirmDialog = require('../../utilities/confirm-dialog');
+
+var _confirmDialog2 = _interopRequireDefault(_confirmDialog);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 // public/js/features/project/project-view/presentation/project.js
 
 var Project = _react2.default.createClass({
   displayName: 'Project',
   deleteProject: function deleteProject() {
-    var _this11 = this;
+    var _this = this;
 
-    confirmAction('Are you sure?', {
+    (0, _confirmDialog2.default)('Are you sure?', {
       description: 'Would you like to delete this project?',
       confirmLabel: 'Delete',
       abortLabel: 'Cancel'
     }).then(function () {
-      _this11.props.onDelete(_this11.props.data._id);
+      _this.props.onDelete(_this.props.data._id);
     });
   },
   render: function render() {
@@ -40475,8 +40500,8 @@ var Project = _react2.default.createClass({
         null,
         title
       ),
-      _react2.default.createElement(EditLink, { path: '/project/' + _id + '/edit', isModal: false }),
-      _react2.default.createElement(DeleteLink, { onDelete: this.deleteProject }),
+      _react2.default.createElement(_editLink2.default, { path: '/project/' + _id + '/edit', isModal: false }),
+      _react2.default.createElement(_deleteLink2.default, { onDelete: this.deleteProject }),
       _react2.default.createElement(
         'p',
         null,
@@ -40495,38 +40520,60 @@ var Project = _react2.default.createClass({
     );
   }
 });
-// public/js/features/resume/qualification/container/qualifications.js
+
+exports.default = Project;
+
+},{"../../utilities/confirm-dialog":703,"../../utilities/delete-link":704,"../../utilities/edit-link":705,"react":673}],693:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _addLink = require('../../utilities/add-link');
+
+var _addLink2 = _interopRequireDefault(_addLink);
+
+var _qualificationList = require('../presentation/qualification-list');
+
+var _qualificationList2 = _interopRequireDefault(_qualificationList);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Qualifications = _react2.default.createClass({
   displayName: 'Qualifications',
   loadQualifications: function loadQualifications() {
-    var _this12 = this;
+    var _this = this;
 
     $.ajax({
       url: '/api/resume/qualification',
       dataType: 'json',
       cache: false,
       success: function success(data) {
-        _this12.setState({ data: data });
+        _this.setState({ data: data });
       },
       error: function error(xhr, status, err) {
-        console.error(_this12.props.route.url, status, err.toString());
+        console.error(_this.props.route.url, status, err.toString());
       }
     });
   },
   handleDelete: function handleDelete(id) {
-    var _this13 = this;
+    var _this2 = this;
 
     $.ajax({
       url: '/api/resume/qualification/' + id,
       dataType: 'json',
       type: 'DELETE',
       success: function success(data) {
-        _this13.setState({ data: data });
+        _this2.setState({ data: data });
       },
       error: function error(xhr, status, err) {
         // this.setState({data: comments});
-        console.error(_this13.props.route.url, status, err.toString());
+        console.error(_this2.props.route.url, status, err.toString());
       }
     });
   },
@@ -40551,13 +40598,40 @@ var Qualifications = _react2.default.createClass({
           null,
           'Qualifications'
         ),
-        _react2.default.createElement(AddLink, { path: '/resume/qualification/add',
-          isModal: true })
+        _react2.default.createElement(_addLink2.default, { path: '/resume/qualification/add', isModal: true })
       ),
-      _react2.default.createElement(QualificationList, { data: this.state.data, onDelete: this.handleDelete })
+      _react2.default.createElement(_qualificationList2.default, { data: this.state.data, onDelete: this.handleDelete })
     );
   }
+}); // public/js/features/resume/qualification/container/qualifications.js
+
+exports.default = Qualifications;
+
+},{"../../utilities/add-link":702,"../presentation/qualification-list":696,"react":673}],694:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _popupForm = require('../../utilities/popup-form');
+
+var _popupForm2 = _interopRequireDefault(_popupForm);
+
+var _formButtons = require('../../utilities/form-buttons');
+
+var _formButtons2 = _interopRequireDefault(_formButtons);
+
+var _yearSelect = require('../../utilities/year-select');
+
+var _yearSelect2 = _interopRequireDefault(_yearSelect);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 // public/js/partials/qualification-form.js
 
 var QualificationForm = _react2.default.createClass({
@@ -40571,7 +40645,7 @@ var QualificationForm = _react2.default.createClass({
     };
   },
   componentDidMount: function componentDidMount() {
-    var _this14 = this;
+    var _this = this;
 
     var _ref = this.props.params ? this.props.params : null;
 
@@ -40584,10 +40658,10 @@ var QualificationForm = _react2.default.createClass({
         dataType: 'json',
         cache: false,
         success: function success(data) {
-          _this14.setState(data[0]);
+          _this.setState(data[0]);
         },
         error: function error(xhr, status, err) {
-          console.error(_this14.props.route.url, status, err.toString());
+          console.error(_this.props.route.url, status, err.toString());
         }
       });
     }
@@ -40606,11 +40680,11 @@ var QualificationForm = _react2.default.createClass({
   },
   handleValidation: function handleValidation(e) {
     e.preventDefault();
-    var _state2 = this.state;
-    var school = _state2.school;
-    var course = _state2.course;
-    var year = _state2.year;
-    var description = _state2.description;
+    var _state = this.state;
+    var school = _state.school;
+    var course = _state.course;
+    var year = _state.year;
+    var description = _state.description;
 
 
     $('#form-message').hide();
@@ -40637,7 +40711,7 @@ var QualificationForm = _react2.default.createClass({
     }
   },
   handleSubmit: function handleSubmit(item) {
-    var _this15 = this;
+    var _this2 = this;
 
     var id = this.props.params.id ? this.props.params.id : '';
 
@@ -40647,7 +40721,7 @@ var QualificationForm = _react2.default.createClass({
       type: 'POST',
       data: item,
       success: function success(items) {
-        _this15.context.router.push('/resume');
+        _this2.context.router.push('/resume');
       },
       error: function error(xhr, status, err) {
         console.error(status, err.toString());
@@ -40656,7 +40730,7 @@ var QualificationForm = _react2.default.createClass({
   },
   render: function render() {
     return _react2.default.createElement(
-      PopupForm,
+      _popupForm2.default,
       null,
       _react2.default.createElement(
         'div',
@@ -40699,7 +40773,7 @@ var QualificationForm = _react2.default.createClass({
               { htmlFor: 'qualYear' },
               'Year of completion'
             ),
-            _react2.default.createElement(YearsSelect, { value: this.state.year,
+            _react2.default.createElement(_yearSelect2.default, { value: this.state.year,
               onSelectChange: this.handleYearChange })
           ),
           _react2.default.createElement(
@@ -40714,7 +40788,7 @@ var QualificationForm = _react2.default.createClass({
               value: this.state.description,
               onChange: this.handleDescriptionChange })
           ),
-          _react2.default.createElement(FormButtons, null)
+          _react2.default.createElement(_formButtons2.default, null)
         )
       )
     );
@@ -40724,19 +40798,47 @@ var QualificationForm = _react2.default.createClass({
 QualificationForm.contextTypes = {
   router: _react2.default.PropTypes.object.isRequired
 };
+
+exports.default = QualificationForm;
+
+},{"../../utilities/form-buttons":706,"../../utilities/popup-form":708,"../../utilities/year-select":709,"react":673}],695:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _editLink = require('../../utilities/edit-link');
+
+var _editLink2 = _interopRequireDefault(_editLink);
+
+var _deleteLink = require('../../utilities/delete-link');
+
+var _deleteLink2 = _interopRequireDefault(_deleteLink);
+
+var _confirmDialog = require('../../utilities/confirm-dialog');
+
+var _confirmDialog2 = _interopRequireDefault(_confirmDialog);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 // public/js/features/resume/qualification/presentation/qualification-item.js
 
 var QualificationItem = _react2.default.createClass({
   displayName: 'QualificationItem',
   deleteItem: function deleteItem() {
-    var _this16 = this;
+    var _this = this;
 
-    confirmAction('Are you sure?', {
+    (0, _confirmDialog2.default)('Are you sure?', {
       description: 'Would you like to delete this qualification?',
       confirmLabel: 'Delete',
       abortLabel: 'Cancel'
     }).then(function () {
-      _this16.props.onDelete(_this16.props.id);
+      _this.props.onDelete(_this.props.id);
     });
   },
   render: function render() {
@@ -40759,23 +40861,43 @@ var QualificationItem = _react2.default.createClass({
       _react2.default.createElement(
         'p',
         null,
-        _react2.default.createElement(EditLink, { path: '/resume/qualification/edit/' + id,
+        _react2.default.createElement(_editLink2.default, { path: '/resume/qualification/edit/' + id,
           isModal: true }),
-        _react2.default.createElement(DeleteLink, { onDelete: this.deleteItem })
+        _react2.default.createElement(_deleteLink2.default, { onDelete: this.deleteItem })
       )
     );
   }
 });
+
+exports.default = QualificationItem;
+
+},{"../../utilities/confirm-dialog":703,"../../utilities/delete-link":704,"../../utilities/edit-link":705,"react":673}],696:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _qualificationItem = require('./qualification-item');
+
+var _qualificationItem2 = _interopRequireDefault(_qualificationItem);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 // public/js/features/resume/qualification/presentation/qualification-list.js
 
 var QualificationList = _react2.default.createClass({
   displayName: 'QualificationList',
   render: function render() {
-    var _this17 = this;
+    var _this = this;
 
     var qualificationItems = this.props.data.map(function (item) {
-      return _react2.default.createElement(QualificationItem, { school: item.school, course: item.course,
-        id: item._id, key: item._id, onDelete: _this17.props.onDelete });
+      return _react2.default.createElement(_qualificationItem2.default, { school: item.school, course: item.course,
+        id: item._id, key: item._id, onDelete: _this.props.onDelete });
     });
 
     return _react2.default.createElement(
@@ -40785,7 +40907,29 @@ var QualificationList = _react2.default.createClass({
     );
   }
 });
-// public/js/pages/resume.js
+
+exports.default = QualificationList;
+
+},{"./qualification-item":695,"react":673}],697:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _qualifications = require('../qualification/container/qualifications');
+
+var _qualifications2 = _interopRequireDefault(_qualifications);
+
+var _skills = require('../skill/container/skills');
+
+var _skills2 = _interopRequireDefault(_skills);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var ResumePage = _react2.default.createClass({
   displayName: 'ResumePage',
@@ -40793,43 +40937,65 @@ var ResumePage = _react2.default.createClass({
     return _react2.default.createElement(
       'div',
       null,
-      _react2.default.createElement(Qualifications, null),
-      _react2.default.createElement(Skills, null)
+      _react2.default.createElement(_qualifications2.default, null),
+      _react2.default.createElement(_skills2.default, null)
     );
   }
+}); // public/js/pages/resume.js
+
+exports.default = ResumePage;
+
+},{"../qualification/container/qualifications":693,"../skill/container/skills":698,"react":673}],698:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
-// public/js/features/resume/skill/container/skills.js
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _skillForm = require('../presentation/skill-form');
+
+var _skillForm2 = _interopRequireDefault(_skillForm);
+
+var _skillList = require('../presentation/skill-list');
+
+var _skillList2 = _interopRequireDefault(_skillList);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Skills = _react2.default.createClass({
   displayName: 'Skills',
   loadSkills: function loadSkills() {
-    var _this18 = this;
+    var _this = this;
 
     $.ajax({
       url: '/api/resume/skill',
       dataType: 'json',
       cache: false,
       success: function success(data) {
-        _this18.setState({ data: data });
+        _this.setState({ data: data });
       },
       error: function error(xhr, status, err) {
-        console.error(_this18.props.route.url, status, err.toString());
+        console.error(_this.props.route.url, status, err.toString());
       }
     });
   },
   handleDelete: function handleDelete(id) {
-    var _this19 = this;
+    var _this2 = this;
 
     $.ajax({
       url: '/api/resume/skill/' + id,
       dataType: 'json',
       type: 'DELETE',
       success: function success(data) {
-        _this19.setState({ data: data });
+        _this2.setState({ data: data });
       },
       error: function error(xhr, status, err) {
         // this.setState({data: comments});
-        console.error(_this19.props.route.url, status, err.toString());
+        console.error(_this2.props.route.url, status, err.toString());
       }
     });
   },
@@ -40846,7 +41012,7 @@ var Skills = _react2.default.createClass({
     var skillForm = void 0;
 
     if (localStorage.getItem('user')) {
-      skillForm = _react2.default.createElement(SkillForm, null);
+      skillForm = _react2.default.createElement(_skillForm2.default, null);
     }
 
     return _react2.default.createElement(
@@ -40862,11 +41028,25 @@ var Skills = _react2.default.createClass({
         )
       ),
       skillForm,
-      _react2.default.createElement(SkillList, { data: this.state.data, onDelete: this.handleDelete })
+      _react2.default.createElement(_skillList2.default, { data: this.state.data, onDelete: this.handleDelete })
     );
   }
+}); // public/js/features/resume/skill/container/skills.js
+
+exports.default = Skills;
+
+},{"../presentation/skill-form":699,"../presentation/skill-list":701,"react":673}],699:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
-// public/js/features/resume/skill/presentation/skill-form.js
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var SkillForm = _react2.default.createClass({
   displayName: 'SkillForm',
@@ -40899,7 +41079,7 @@ var SkillForm = _react2.default.createClass({
     }
   },
   handleSubmit: function handleSubmit(item) {
-    var _this20 = this;
+    var _this = this;
 
     $.ajax({
       url: '/api/resume/skill',
@@ -40907,7 +41087,7 @@ var SkillForm = _react2.default.createClass({
       type: 'POST',
       data: item,
       success: function success(items) {
-        _this20.context.router.push('/resume');
+        _this.context.router.push('/resume');
       },
       error: function error(xhr, status, err) {
         console.error(status, err.toString());
@@ -40940,24 +41120,46 @@ var SkillForm = _react2.default.createClass({
       )
     );
   }
-});
+}); // public/js/features/resume/skill/presentation/skill-form.js
 
 SkillForm.contextTypes = {
   router: _react2.default.PropTypes.object.isRequired
 };
-// public/js/features/resume/skill/presentation/skill-item.js
+
+exports.default = SkillForm;
+
+},{"react":673}],700:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _deleteLink = require('../../utilities/delete-link');
+
+var _deleteLink2 = _interopRequireDefault(_deleteLink);
+
+var _confirmDialog = require('../../utilities/confirm-dialog');
+
+var _confirmDialog2 = _interopRequireDefault(_confirmDialog);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var SkillItem = _react2.default.createClass({
   displayName: 'SkillItem',
   deleteItem: function deleteItem() {
-    var _this21 = this;
+    var _this = this;
 
-    confirmAction('Are you sure?', {
+    (0, _confirmDialog2.default)('Are you sure?', {
       description: 'Would you like to delete this skill?',
       confirmLabel: 'Delete',
       abortLabel: 'Cancel'
     }).then(function () {
-      _this21.props.onDelete(_this21.props.id);
+      _this.props.onDelete(_this.props.id);
     });
   },
   render: function render() {
@@ -40965,20 +41167,40 @@ var SkillItem = _react2.default.createClass({
       'span',
       { className: 'tag' },
       this.props.skill,
-      _react2.default.createElement(DeleteLink, { onDelete: this.deleteItem, linkText: 'X', linkClass: 'tag-remove' })
+      _react2.default.createElement(_deleteLink2.default, { onDelete: this.deleteItem, linkText: 'X', linkClass: 'tag-remove' })
     );
   }
+}); // public/js/features/resume/skill/presentation/skill-item.js
+
+exports.default = SkillItem;
+
+},{"../../utilities/confirm-dialog":703,"../../utilities/delete-link":704,"react":673}],701:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _skillItem = require('./skill-item');
+
+var _skillItem2 = _interopRequireDefault(_skillItem);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 // public/js/features/resume/skill/presentation/skill-list.js
 
 var SkillList = _react2.default.createClass({
   displayName: 'SkillList',
   render: function render() {
-    var _this22 = this;
+    var _this = this;
 
     var skillItems = this.props.data.map(function (item) {
-      return _react2.default.createElement(SkillItem, { skill: item.skill, id: item._id, key: item._id,
-        onDelete: _this22.props.onDelete });
+      return _react2.default.createElement(_skillItem2.default, { skill: item.skill, id: item._id, key: item._id,
+        onDelete: _this.props.onDelete });
     });
 
     return _react2.default.createElement(
@@ -40988,95 +41210,403 @@ var SkillList = _react2.default.createClass({
     );
   }
 });
-// public/js/app-wrapper.js
-"use strict";
-var App = _react2.default.createClass({
-  displayName: 'App',
-  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-    // if we changed routes...
-    if (nextProps.location.key !== this.props.location.key && nextProps.location.state && nextProps.location.state.modal) {
-      // save the old children (just like animation)
-      this.previousChildren = this.props.children;
-    }
-  },
-  componentDidMount: function componentDidMount() {
-    $.ajax({
-      url: '/api/checkauthentication',
-      dataType: 'json',
-      cache: false,
-      success: function success(authenticated) {
-        if (authenticated) {
-          localStorage.setItem('user', 'datvu');
-        } else {
-          localStorage.removeItem('user');
-        }
-      },
-      error: function error(xhr, status, err) {
-        console.error(status, err.toString());
-      }
-    });
-  },
-  render: function render() {
-    var location = this.props.location;
 
-    var isModal = location.state && location.state.modal && this.previousChildren;
+exports.default = SkillList;
+
+},{"./skill-item":700,"react":673}],702:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouter = require('react-router');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var AddLink = _react2.default.createClass({
+  displayName: 'AddLink',
+  render: function render() {
+    var linkItem = void 0;
+
+    if (localStorage.getItem('user')) {
+      linkItem = _react2.default.createElement(
+        _reactRouter.Link,
+        { to: {
+            pathname: this.props.path,
+            state: { modal: this.props.isModal }
+          } },
+        'Add'
+      );
+    }
 
     return _react2.default.createElement(
-      'div',
+      'span',
       null,
-      _react2.default.createElement(
-        'header',
-        null,
-        _react2.default.createElement(
-          'nav',
-          null,
-          _react2.default.createElement(
-            _reactRouter.Link,
-            { to: '/' },
-            'Home'
-          ),
-          _react2.default.createElement(
-            _reactRouter.Link,
-            { to: '/resume' },
-            'Resume'
-          ),
-          _react2.default.createElement(
-            _reactRouter.Link,
-            { to: '/projects' },
-            'Projects'
-          )
-        )
-      ),
-      _react2.default.createElement(
-        'div',
-        { id: 'content' },
-        isModal ? this.previousChildren : this.props.children,
-        isModal && _react2.default.createElement(
-          Modal,
-          { isOpen: true, returnTo: location.state.returnTo },
-          this.props.children
-        )
-      ),
-      _react2.default.createElement('footer', null)
+      linkItem
     );
   }
 });
 
-_reactDom2.default.render(_react2.default.createElement(
-  _reactRouter.Router,
-  { history: _reactRouter.browserHistory },
-  _react2.default.createElement(
-    _reactRouter.Route,
-    { path: '/', component: App },
-    _react2.default.createElement(_reactRouter.IndexRoute, { component: Home }),
-    _react2.default.createElement(_reactRouter.Route, { path: 'resume', url: '/api/resume/', component: ResumePage }),
-    _react2.default.createElement(_reactRouter.Route, { path: 'resume/qualification/add', url: '/api/resume/qualification', component: QualificationForm }),
-    _react2.default.createElement(_reactRouter.Route, { path: 'resume/qualification/edit/:id', url: '/api/resume/qualification', component: QualificationForm }),
-    _react2.default.createElement(_reactRouter.Route, { path: 'projects', url: '/api/projects/', component: ProjectListPage }),
-    _react2.default.createElement(_reactRouter.Route, { path: 'project/new', url: '/api/projects/', component: ProjectFormPage }),
-    _react2.default.createElement(_reactRouter.Route, { path: 'project/:id', url: '/api/projects/', component: ProjectViewPage }),
-    _react2.default.createElement(_reactRouter.Route, { path: 'project/:id/edit', url: '/api/projects/', component: ProjectFormPage })
-  )
-), document.getElementById('main'));
+exports.default = AddLink;
 
-},{"react":673,"react-dom":274,"react-router":304,"react-tag-input":315}]},{},[684]);
+},{"react":673,"react-router":304}],703:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+var _modal = require('./modal');
+
+var _modal2 = _interopRequireDefault(_modal);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Promise = $.Deferred; // public/js/components/confirm-dialog.js
+
+var Confirm = _react2.default.createClass({
+  displayName: 'Confirm',
+  getDefaultProps: function getDefaultProps() {
+    return {
+      confirmLabel: 'OK',
+      abortLabel: 'Cancel'
+    };
+  },
+  abort: function abort() {
+    return this.promise.reject();
+  },
+  confirm: function confirm() {
+    return this.promise.resolve();
+  },
+  componentDidMount: function componentDidMount() {
+    this.promise = new Promise();
+  },
+  render: function render() {
+    return _react2.default.createElement(_modal2.default, null, _react2.default.createElement(
+      'div',
+      null,
+      _react2.default.createElement(
+        'div',
+        { className: 'modal-header' },
+        _react2.default.createElement(
+          'h4',
+          { className: 'modal-title' },
+          this.props.message
+        )
+      ),
+      _react2.default.createElement(
+        'div',
+        { className: 'modal-body' },
+        this.props.description ? this.props.description : ''
+      ),
+      _react2.default.createElement(
+        'div',
+        { className: 'modal-footer' },
+        _react2.default.createElement(
+          'div',
+          { className: 'text-right' },
+          _react2.default.createElement(
+            'button',
+            { role: 'abort', type: 'button', className: 'btn btn-default',
+              onClick: this.abort },
+            this.props.abortLabel
+          ),
+          _react2.default.createElement(
+            'button',
+            { role: 'confirm', type: 'button', className: 'btn btn-main',
+              ref: 'confirm', onClick: this.confirm },
+            this.props.confirmLabel
+          )
+        )
+      )
+    ));
+  }
+});
+
+var confirmAction = function confirmAction(message) {
+  var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+  var props = $.extend({ message: message }, options);
+  var wrapper = document.body.appendChild(document.createElement('div'));
+  var component = _reactDom2.default.render(_react2.default.createElement(Confirm, props), wrapper);
+
+  var cleanup = function cleanup() {
+    _reactDom2.default.unmountComponentAtNode(wrapper);
+    setTimeout(function () {
+      wrapper.remove();
+    });
+  };
+
+  return component.promise.always(cleanup).promise();
+};
+
+exports.default = confirmAction;
+
+},{"./modal":707,"react":673,"react-dom":274}],704:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var DeleteLink = _react2.default.createClass({
+  displayName: 'DeleteLink',
+  render: function render() {
+    var linkItem = void 0;
+    var text = this.props.linkText ? this.props.linkText : 'Remove';
+    var className = this.props.linkClass ? this.props.linkClass : 'utility-link';
+
+    if (localStorage.getItem('user')) {
+      linkItem = _react2.default.createElement(
+        'a',
+        { className: className,
+          onClick: this.props.onDelete },
+        _react2.default.createElement(
+          'small',
+          null,
+          text
+        )
+      );
+    }
+
+    return _react2.default.createElement(
+      'span',
+      null,
+      linkItem
+    );
+  }
+});
+
+exports.default = DeleteLink;
+
+},{"react":673}],705:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouter = require('react-router');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var EditLink = _react2.default.createClass({
+  displayName: 'EditLink',
+  render: function render() {
+    var linkItem = void 0;
+
+    if (localStorage.getItem('user')) {
+      linkItem = _react2.default.createElement(
+        _reactRouter.Link,
+        { className: 'utility-link', to: {
+            pathname: this.props.path,
+            state: { modal: this.props.isModal }
+          } },
+        _react2.default.createElement(
+          'small',
+          null,
+          'Edit'
+        )
+      );
+    }
+
+    return _react2.default.createElement(
+      'span',
+      null,
+      linkItem
+    );
+  }
+});
+
+exports.default = EditLink;
+
+},{"react":673,"react-router":304}],706:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var FormButtons = _react2.default.createClass({
+  displayName: "FormButtons",
+  cancel: function cancel() {
+    window.history.back();;
+  },
+  render: function render() {
+    return _react2.default.createElement(
+      "div",
+      { className: "text-right" },
+      _react2.default.createElement(
+        "button",
+        { type: "button", className: "btn btn-default", onClick: this.cancel },
+        "Cancel"
+      ),
+      _react2.default.createElement(
+        "button",
+        { type: "submit", className: "btn btn-main", onClick: this.submit },
+        "Save"
+      )
+    );
+  }
+});
+
+exports.default = FormButtons;
+
+},{"react":673}],707:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Modal = _react2.default.createClass({
+  displayName: 'Modal',
+  render: function render() {
+    return _react2.default.createElement(
+      'div',
+      { id: 'modal' },
+      _react2.default.createElement('div', { className: 'modal-backdrop in' }),
+      _react2.default.createElement(
+        'div',
+        { className: 'modal in', tabIndex: '-1', role: 'dialog', 'aria-hidden': 'false', ref: 'modal', style: { display: 'block' } },
+        _react2.default.createElement(
+          'div',
+          { className: 'modal-dialog' },
+          _react2.default.createElement(
+            'div',
+            { className: 'modal-content' },
+            this.props.children
+          )
+        )
+      )
+    );
+  }
+}); // public/js/components/modal.js
+
+exports.default = Modal;
+
+},{"react":673}],708:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var PopupForm = _react2.default.createClass({
+  displayName: "PopupForm",
+  render: function render() {
+    return _react2.default.createElement(
+      "div",
+      null,
+      _react2.default.createElement(
+        "div",
+        { className: "modal-header" },
+        _react2.default.createElement(
+          "h4",
+          { className: "modal-title" },
+          "Add New Thing"
+        )
+      ),
+      _react2.default.createElement(
+        "div",
+        { className: "modal-body" },
+        this.props.children
+      )
+    );
+  }
+}); // public/js/components/popup-form.js
+
+exports.default = PopupForm;
+
+},{"react":673}],709:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var YearSelect = _react2.default.createClass({
+  displayName: "YearSelect",
+  onSelectChange: function onSelectChange(e) {
+    this.props.onSelectChange(e.target.value);
+  },
+  render: function render() {
+    var currentYear = new Date().getFullYear();
+    var years = [];
+    var startYear = 2010;
+
+    while (startYear <= currentYear) {
+      years.push(startYear++);
+    }
+
+    var yearItems = years.map(function (item) {
+      return _react2.default.createElement(
+        "option",
+        { key: item, value: item },
+        item
+      );
+    });
+
+    return _react2.default.createElement(
+      "select",
+      { className: "form-control", id: "projectYear", value: this.props.value, onChange: this.onSelectChange },
+      _react2.default.createElement(
+        "option",
+        { value: "", disabled: "disabled" },
+        " -- Select year --"
+      ),
+      yearItems
+    );
+  }
+}); // public/js/components/year-dropdown.js
+
+exports.default = YearSelect;
+
+},{"react":673}]},{},[684]);

@@ -1,6 +1,17 @@
 // public/js/app-wrapper.js
-"use strict";
-var App = React.createClass({
+
+import React from 'react';
+import ReactDOM from 'react-dom';
+import {Router, Route, IndexRoute, IndexLink, Link, browserHistory} from 'react-router';
+import Modal from './components/utilities/modal';
+import Home from './components/home/home';
+import ResumePage from './components/resume/resume-page';
+import QualificationForm from './components/qualification/presentation/qualification-form';
+import ProjectListPage from './components/project-list/container/project-list-page';
+import ProjectFormPage from './components/project-form/container/project-form-page';
+import ProjectViewPage from './components/project-view/container/project-view-page';
+
+const App = React.createClass({
   componentWillReceiveProps(nextProps) {
     // if we changed routes...
     if (nextProps.location.key !== this.props.location.key &&

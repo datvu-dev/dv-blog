@@ -2,13 +2,11 @@ module.exports = function(grunt) {
 
   grunt.registerTask('watch', [ 'watch' ]);
   grunt.registerTask('default', [
-    'concat:scripts',
     'concat:libraries',
     'less',
     'browserify'
   ]);
   grunt.registerTask('serve', [
-    'concat:scripts',
     'concat:libraries',
     'less',
     'browserify',
@@ -24,15 +22,6 @@ module.exports = function(grunt) {
       }
     },
     concat: {
-      scripts: {
-        options: {
-          separator: ''
-        },
-        src: [
-          'public/js/import.js','public/js/utilities/*.js', 'public/js/features/**/**.js', 'public/js/app.js'
-        ],
-        dest: 'public/js/scripts.js'
-      },
       libraries: {
         options: {
           separator: ''
@@ -49,7 +38,7 @@ module.exports = function(grunt) {
     browserify: {
       dist: {
         files: {
-          'public/js/main.js': ['public/js/scripts.js']
+          'public/js/main.js': ['public/js/app.js']
         },
         options: {
           transform: [
@@ -62,7 +51,7 @@ module.exports = function(grunt) {
     },
     watch: {
       js: {
-        files: ['public/js/import.js','public/js/utilities/*.js', 'public/js/features/**/**.js', 'public/js/app.js'],
+        files: ['public/js/utilities/*.js', 'public/js/components/**/**.js', 'public/js/app.js'],
         tasks: ['concat:scripts', 'browserify'],
         options: {
           livereload: true,
