@@ -41,7 +41,6 @@ var App = React.createClass({
             <Link to="/">Home</Link>
             <Link to="/resume">Resume</Link>
             <Link to="/projects">Projects</Link>
-            <Link to="/todos">To-do List</Link>
           </nav>
         </header>
         <div id="content">
@@ -63,11 +62,10 @@ ReactDOM.render(
   <Router history={browserHistory}>
     <Route path="/" component={App}>
       <IndexRoute component={Home}/>
-      <Route path="todos" url="/api/todos" component={TodoBox} />
       <Route path="resume" url="/api/resume/" component={ResumePage} />
       <Route path="resume/qualification/add" url="/api/resume/qualification" component={QualificationForm} />
       <Route path="resume/qualification/edit/:id" url="/api/resume/qualification" component={QualificationForm} />
-      <Route path="projects" url="/api/projects/" component={ProjectsPage} />
+      <Route path="projects" url="/api/projects/" component={ProjectListPage} />
       <Route path="project/new" url="/api/projects/" component={ProjectFormPage} />
       <Route path="project/:id" url="/api/projects/" component={ProjectViewPage} />
       <Route path="project/:id/edit" url="/api/projects/" component={ProjectFormPage} />

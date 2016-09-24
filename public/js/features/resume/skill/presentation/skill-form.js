@@ -1,4 +1,4 @@
-// public/js/partials/skill-form.js
+// public/js/features/resume/skill/presentation/skill-form.js
 
 var SkillForm = React.createClass({
   getInitialState() {

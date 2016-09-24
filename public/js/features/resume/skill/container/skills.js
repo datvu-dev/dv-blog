@@ -1,41 +1,4 @@
-// public/js/partials/skill.js
-
-var SkillItem = React.createClass({
-  deleteItem() {
-    confirmAction('Are you sure?', {
-      description: 'Would you like to delete this skill?',
-      confirmLabel: 'Delete',
-      abortLabel: 'Cancel'
-    }).then(() => {
-      this.props.onDelete(this.props.id);
-    });
-  },
-  render() {
-    return (
-      <span className="tag">
-        {this.props.skill}
-        <DeleteLink onDelete={this.deleteItem} linkText="X" linkClass="tag-remove" />
-      </span>
-    );
-  }
-});
-
-var SkillList = React.createClass({
-  render() {
-    let skillItems = this.props.data.map(item => {
-      return (
-        <SkillItem skill={item.skill} id={item._id} key={item._id}
-          onDelete={this.props.onDelete} />
-      );
-    });
-
-    return (
-      <div>
-        {skillItems}
-      </div>
-    );
-  }
-});
+// public/js/features/resume/skill/container/skills.js
 
 var Skills = React.createClass({
   loadSkills() {
