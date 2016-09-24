@@ -39862,22 +39862,99 @@ var ProjectFormPage = _react2.default.createClass({
       }
     });
   },
+  loadTagSuggestions: function loadTagSuggestions() {
+    var _this3 = this;
+
+    var skillsUrl = 'http://trendyskills.com/service?q=keywords&key=77MGlB3wzQbD9KfZ';
+
+    $.ajax({
+      url: skillsUrl,
+      method: 'GET',
+      dataType: 'jsonp',
+      success: function success(res) {
+        var suggestionsArr = [];
+
+        res.keywords.map(function (item) {
+          suggestionsArr.push(item.keyName);
+        });
+
+        _this3.setState({ suggestions: suggestionsArr });
+      },
+      error: function error(xhr, status, err) {
+        console.error(status, err.toString());
+      }
+    });
+  },
+  loadProject: function loadProject(id) {
+    var _this4 = this;
+
+    this.serverRequest = $.ajax({
+      url: this.props.route.url + id,
+      dataType: 'json',
+      cache: false,
+      success: function success(data) {
+        _this4.setState(data[0]);
+
+        var projectID = _this4.props.params.id;
+        var picName = data[0]['picture'];
+
+        var imgCtr = $('<img/>').prop('src', '/uploads/projects/' + projectID + '/' + picName);
+        $('#imgContainer').html(imgCtr);
+      },
+      error: function error(xhr, status, err) {
+        console.error(_this4.props.route.url, status, err.toString());
+      }
+    });
+  },
+  componentDidMount: function componentDidMount() {
+    this.loadTagSuggestions();
+
+    if (this.props.params.id) {
+      this.loadProject(this.props.params.id);
+    }
+  },
+  componentWillUnmount: function componentWillUnmount() {
+    if (this.serverRequest) {
+      this.serverRequest.abort();
+    }
+  },
+  handleTitleInput: function handleTitleInput(value) {
+    this.setState({ title: value });
+  },
+  handleYearInput: function handleYearInput(value) {
+    this.setState({ year: value });
+  },
+  handleDescriptionInput: function handleDescriptionInput(value) {
+    this.setState({ description: value });
+  },
+  handleTechnologyInput: function handleTechnologyInput(value) {
+    this.setState({ technologies: value });
+  },
+  handlePictureInput: function handlePictureInput(value) {
+    this.setState({ picture: value });
+  },
   getInitialState: function getInitialState() {
-    return { data: {
-        title: '',
-        year: '',
-        picture: '',
-        description: '',
-        technologies: [],
-        suggestions: []
-      } };
+    return {
+      title: '',
+      year: '',
+      picture: '',
+      description: '',
+      technologies: [],
+      suggestions: []
+    };
   },
   render: function render() {
     return _react2.default.createElement(
       'div',
       null,
-      _react2.default.createElement(_projectForm2.default, { onProjectSubmit: this.handleProjectSubmit,
-        data: this.state.data, projectID: this.props.params.id })
+      _react2.default.createElement(_projectForm2.default, {
+        onProjectSubmit: this.handleProjectSubmit,
+        data: this.state,
+        onTitleChange: this.handleTitleInput,
+        onYearChange: this.handleYearInput,
+        onDescriptionChange: this.handleDescriptionInput,
+        onTechnologyChange: this.handleTechnologyInput,
+        onPictureChange: this.handlePictureInput })
     );
   }
 });
@@ -39916,99 +39993,34 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var ProjectForm = _react2.default.createClass({
   displayName: 'ProjectForm',
   getInitialState: function getInitialState() {
-    return this.props.data;
-  },
-  getTagSuggestions: function getTagSuggestions() {
-    var _this = this;
-
-    var skillsUrl = 'http://trendyskills.com/service?q=keywords&key=77MGlB3wzQbD9KfZ';
-
-    $.ajax({
-      url: skillsUrl,
-      method: 'GET',
-      dataType: 'jsonp',
-      success: function success(res) {
-        var suggestionsArr = [];
-
-        res.keywords.map(function (item) {
-          suggestionsArr.push(item.keyName);
-        });
-
-        _this.setState({ suggestions: suggestionsArr });
-      },
-      error: function error(xhr, status, err) {
-        console.error(status, err.toString());
-      }
-    });
+    return { formMessage: '' };
   },
   componentDidMount: function componentDidMount() {
-    var _this2 = this;
-
     $('.tag-input input').addClass('form-control').attr('id', 'projectTechnologies').blur();
-
-    if (this.props.projectID) {
-      (function () {
-        var projectID = _this2.props.projectID;
-
-        _this2.serverRequest = $.ajax({
-          url: '/api/projects/' + projectID,
-          dataType: 'json',
-          cache: false,
-          success: function success(data) {
-            // console.log(data);
-            _this2.setState(data[0]);
-            var picName = data[0]['picture'];
-
-            var imgCtr = $('<img/>').prop('src', '/uploads/projects/' + projectID + '/' + picName);
-            $('#imgContainer').html(imgCtr);
-          },
-          error: function error(xhr, status, err) {
-            console.error(_this2.props.route.url, status, err.toString());
-          }
-        });
-      })();
-    }
-
-    this.getTagSuggestions();
-  },
-  componentWillUnmount: function componentWillUnmount() {
-    if (this.serverRequest) {
-      this.serverRequest.abort();
-    }
   },
   handleTitleChange: function handleTitleChange(e) {
-    this.setState({ title: e.target.value });
+    this.props.onTitleChange(e.target.value);
   },
   handleYearChange: function handleYearChange(value) {
-    this.setState({ year: value });
+    this.props.onYearChange(value);
   },
   handleDescriptionChange: function handleDescriptionChange(e) {
-    this.setState({ description: e.target.value });
+    this.props.onDescriptionChange(e.target.value);
   },
   handleTechnologyChange: function handleTechnologyChange(tags) {
-    this.setState({ technologies: tags });
+    this.props.onTechnologyChange(tags);
   },
   handleDelete: function handleDelete(i) {
-    var tags = this.state.technologies;
+    var tags = this.props.data.technologies;
     tags.splice(i, 1);
     this.handleTechnologyChange(tags);
   },
   handleAddition: function handleAddition(tag) {
-    var tags = this.state.technologies;
+    var tags = this.props.data.technologies;
     tags.push({
       _id: tags.length + 1,
       text: tag
     });
-    this.handleTechnologyChange(tags);
-  },
-  handleDrag: function handleDrag(tag, currPos, newPos) {
-    var tags = this.state.technologies;
-
-    // mutate array
-    tags.splice(currPos, 1);
-    tags.splice(newPos, 0, tag);
-
-    // re-render
     this.handleTechnologyChange(tags);
   },
   handlePictureChange: function handlePictureChange(e) {
@@ -40027,16 +40039,16 @@ var ProjectForm = _react2.default.createClass({
       $('#imgContainer').html(imgCtr);
     }, 500);
 
-    this.setState({ picture: e.target.files[0].name });
+    this.props.onPictureChange(e.target.files[0].name);
   },
   handleSubmit: function handleSubmit(e) {
     e.preventDefault();
-    var _state = this.state;
-    var title = _state.title;
-    var year = _state.year;
-    var description = _state.description;
-    var technologies = _state.technologies;
-    var picture = _state.picture;
+    var _props$data = this.props.data;
+    var title = _props$data.title;
+    var year = _props$data.year;
+    var description = _props$data.description;
+    var technologies = _props$data.technologies;
+    var picture = _props$data.picture;
 
     var pictureObj = $('#imgContainer img');
 
@@ -40089,7 +40101,7 @@ var ProjectForm = _react2.default.createClass({
               'Title'
             ),
             _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'projectTitle',
-              value: this.state.title, onChange: this.handleTitleChange })
+              value: this.props.data.title, onChange: this.handleTitleChange })
           ),
           _react2.default.createElement(
             'fieldset',
@@ -40099,7 +40111,8 @@ var ProjectForm = _react2.default.createClass({
               { htmlFor: 'projectYear' },
               'Year of completion'
             ),
-            _react2.default.createElement(_yearSelect2.default, { value: this.state.year, onSelectChange: this.handleYearChange })
+            _react2.default.createElement(_yearSelect2.default, { value: this.props.data.year, idName: 'projectYear',
+              onSelectChange: this.handleYearChange })
           ),
           _react2.default.createElement(
             'fieldset',
@@ -40110,7 +40123,7 @@ var ProjectForm = _react2.default.createClass({
               'Description'
             ),
             _react2.default.createElement('textarea', { className: 'form-control', id: 'projectDescription', rows: '4',
-              value: this.state.description,
+              value: this.props.data.description,
               onChange: this.handleDescriptionChange })
           ),
           _react2.default.createElement(
@@ -40121,11 +40134,10 @@ var ProjectForm = _react2.default.createClass({
               { htmlFor: 'projectTechnologies' },
               'Technologies'
             ),
-            _react2.default.createElement(_reactTagInput.WithContext, { tags: this.state.technologies,
+            _react2.default.createElement(_reactTagInput.WithContext, { tags: this.props.data.technologies,
               handleDelete: this.handleDelete,
               handleAddition: this.handleAddition,
-              handleDrag: this.handleDrag,
-              suggestions: this.state.suggestions,
+              suggestions: this.props.data.suggestions,
               classNames: {
                 tags: 'tags-container',
                 tagInput: 'tag-input',
@@ -41596,7 +41608,8 @@ var YearSelect = _react2.default.createClass({
 
     return _react2.default.createElement(
       "select",
-      { className: "form-control", id: "projectYear", value: this.props.value, onChange: this.onSelectChange },
+      { className: "form-control", id: this.props.idName,
+        value: this.props.value, onChange: this.onSelectChange },
       _react2.default.createElement(
         "option",
         { value: "", disabled: "disabled" },
