@@ -43,28 +43,6 @@ const ProjectFormPage = React.createClass({
       }
     })
   },
-  loadTagSuggestions() {
-    let skillsUrl = 'http://trendyskills.com/service?q=keywords&key=77MGlB3wzQbD9KfZ';
-
-    $.ajax({
-      url: skillsUrl,
-      method: 'GET',
-      dataType: 'jsonp',
-      success: res => {
-        let suggestionsArr = [];
-
-        res.keywords.map(item => {
-          suggestionsArr.push(item.keyName);
-        });
-
-        this.setState({suggestions: suggestionsArr});
-
-      },
-      error: (xhr, status, err) => {
-        console.error(status, err.toString());
-      }
-    });
-  },
   loadProject(id) {
     this.serverRequest = $.ajax({
       url: this.props.route.url + id,
@@ -85,8 +63,6 @@ const ProjectFormPage = React.createClass({
     });
   },
   componentDidMount() {
-    this.loadTagSuggestions();
-
     if (this.props.params.id) {
       this.loadProject(this.props.params.id);
     }
@@ -118,7 +94,6 @@ const ProjectFormPage = React.createClass({
       picture: '',
       description: '',
       technologies: [],
-      suggestions: []
     };
   },
   render() {

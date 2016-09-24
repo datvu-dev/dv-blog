@@ -113,14 +113,12 @@ const ProjectForm = React.createClass({
                 <label htmlFor="projectTechnologies">Technologies</label>
                 <ReactTags tags={this.props.data.technologies}
                     handleDelete={this.handleDelete}
-                    handleAddition={this.handleAddition}
-                    suggestions={this.props.data.suggestions}
+                    handleAddition={this.handleAddition}                  
                     classNames={{
                       tags: 'tags-container',
                       tagInput: 'tag-input',
                       tag: 'tag',
                       remove: 'tag-remove',
-                      suggestions: 'tag-suggestions'
                     }}
                   />
               </fieldset>
