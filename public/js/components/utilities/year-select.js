@@ -22,9 +22,10 @@ const YearSelect = React.createClass({
     });
 
     return (
-      <select className="form-control" id="projectYear" value={this.props.value} onChange={this.onSelectChange}>
-        <option value="" disabled="disabled"> -- Select year --</option>
-        {yearItems}
+      <select className="form-control" id={this.props.idName}
+        value={this.props.value} onChange={this.onSelectChange}>
+          <option value="" disabled="disabled"> -- Select year --</option>
+          {yearItems}
       </select>
     )
   }
