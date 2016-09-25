@@ -41041,21 +41041,21 @@ var Confirm = _react2.default.createClass({
       null,
       _react2.default.createElement(
         'div',
-        { className: 'modal-header' },
+        { className: 'popup-header' },
         _react2.default.createElement(
           'h4',
-          { className: 'modal-title' },
+          { className: 'popup-title' },
           this.props.message
         )
       ),
       _react2.default.createElement(
         'div',
-        { className: 'modal-body' },
+        { className: 'popup-body' },
         this.props.description ? this.props.description : ''
       ),
       _react2.default.createElement(
         'div',
-        { className: 'modal-footer' },
+        { className: 'popup-footer' },
         _react2.default.createElement(
           'div',
           { className: 'text-right' },
@@ -41240,17 +41240,17 @@ var Modal = _react2.default.createClass({
   render: function render() {
     return _react2.default.createElement(
       'div',
-      { id: 'modal' },
-      _react2.default.createElement('div', { className: 'modal-backdrop in' }),
+      { id: 'popup' },
+      _react2.default.createElement('div', { className: 'popup-backdrop in' }),
       _react2.default.createElement(
         'div',
-        { className: 'modal in', tabIndex: '-1', role: 'dialog', 'aria-hidden': 'false', ref: 'modal', style: { display: 'block' } },
+        { className: 'popup in', tabIndex: '-1', role: 'dialog', 'aria-hidden': 'false', ref: 'popup', style: { display: 'block' } },
         _react2.default.createElement(
           'div',
-          { className: 'modal-dialog' },
+          { className: 'popup-dialog' },
           _react2.default.createElement(
             'div',
-            { className: 'modal-content' },
+            { className: 'popup-content' },
             this.props.children
           )
         )
@@ -41312,16 +41312,16 @@ var PopupForm = _react2.default.createClass({
       null,
       _react2.default.createElement(
         "div",
-        { className: "modal-header" },
+        { className: "popup-header" },
         _react2.default.createElement(
           "h4",
-          { className: "modal-title" },
-          "Add New Thing"
+          { className: "popup-title" },
+          "Add New"
         )
       ),
       _react2.default.createElement(
         "div",
-        { className: "modal-body" },
+        { className: "popup-body" },
         this.props.children
       )
     );
