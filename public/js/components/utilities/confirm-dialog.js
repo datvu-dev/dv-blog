@@ -26,13 +26,13 @@ const Confirm = React.createClass({
   render() {
     return React.createElement(Modal, null,
       <div>
-        <div className="modal-header">
-          <h4 className="modal-title">{this.props.message}</h4>
+        <div className="popup-header">
+          <h4 className="popup-title">{this.props.message}</h4>
         </div>
-        <div className="modal-body">
+        <div className="popup-body">
           {this.props.description ? this.props.description : ''}
         </div>
-        <div className="modal-footer">
+        <div className="popup-footer">
           <div className="text-right">
             <button role="abort" type="button" className="btn btn-default"
               onClick={this.abort}>{this.props.abortLabel}</button>
