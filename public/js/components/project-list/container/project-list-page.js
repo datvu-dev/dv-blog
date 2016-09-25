@@ -1,6 +1,7 @@
 // public/js/features/project/project-list/container/project-list-page.js
 
 import React from 'react';
+import PageTitle from '../../utilities/page-title';
 import AddLink from '../../utilities/add-link';
 import ProjectList from '../presentation/project-list';
 
@@ -10,7 +11,7 @@ const ProjectListPage = React.createClass({
       url: this.props.route.url,
       dataType: 'json',
       cache: false,
-      success: data => {        
+      success: data => {
         this.setState({data: data});
       },
       error: (xhr, status, err) => {
@@ -41,6 +42,7 @@ const ProjectListPage = React.createClass({
   render() {
     return (
       <div>
+        <PageTitle text="Projects" />
         <AddLink path={'/project/new'} isModal={false} />
         <ProjectList data={this.state.data} onDelete={this.handleDelete} />
       </div>

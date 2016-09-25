@@ -30,8 +30,7 @@ const Project = React.createClass({
     }
 
     return (
-      <div>
-        <h1>{title}</h1>
+      <div>      
         <EditLink path={`/project/${_id}/edit`} isModal={false} />
         <DeleteLink onDelete={this.deleteProject} />
         <p><img src={picSrc} /></p>

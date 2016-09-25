@@ -1,6 +1,7 @@
 // public/js/features/project/project-view/container/project-view-page.js
 
 import React from 'react';
+import PageTitle from '../../utilities/page-title';
 import Project from '../presentation/project';
 
 const ProjectViewPage = React.createClass({
@@ -41,6 +42,7 @@ const ProjectViewPage = React.createClass({
   render() {
     return (
       <div>
+        <PageTitle text={this.state.data.title} />
         <Project data={this.state.data} onDelete={this.handleDelete} />
       </div>
     );

@@ -1,6 +1,7 @@
 // public/js/features/project/project-form/container/project-form-page.js
 
 import React from 'react';
+import PageTitle from '../../utilities/page-title';
 import ProjectForm from '../presentation/project-form';
 
 const ProjectFormPage = React.createClass({
@@ -65,6 +66,11 @@ const ProjectFormPage = React.createClass({
   componentDidMount() {
     if (this.props.params.id) {
       this.loadProject(this.props.params.id);
+
+      this.setState({type: 'Edit Project'});
+    }
+    else {
+      this.setState({type: 'Add Project'});
     }
   },
   componentWillUnmount() {
@@ -99,6 +105,7 @@ const ProjectFormPage = React.createClass({
   render() {
     return (
       <div>
+        <PageTitle text={this.state.type} />
         <ProjectForm
           onProjectSubmit={this.handleProjectSubmit}
           data={this.state}

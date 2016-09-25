@@ -1,10 +1,15 @@
 // public/js/pages/home.js
 
 import React from 'react';
+import PageTitle from '../utilities/page-title';
 
 const Home = React.createClass({
   render() {
-    return (<h1>Welcome to Dat Vu Page</h1>);
+    return (
+      <div>
+        <PageTitle text="Home" />        
+      </div>
+    );
   }
 });
 
