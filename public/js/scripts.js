@@ -39517,22 +39517,28 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _pageTitle = require('../utilities/page-title');
+
+var _pageTitle2 = _interopRequireDefault(_pageTitle);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// public/js/pages/home.js
 
 var Home = _react2.default.createClass({
   displayName: 'Home',
   render: function render() {
     return _react2.default.createElement(
-      'h1',
+      'div',
       null,
-      'Welcome to Dat Vu Page'
+      _react2.default.createElement(_pageTitle2.default, { text: 'Home' })
     );
   }
-}); // public/js/pages/home.js
+});
 
 exports.default = Home;
 
-},{"react":521}],529:[function(require,module,exports){
+},{"../utilities/page-title":551,"react":521}],529:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -39543,13 +39549,15 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _pageTitle = require('../../utilities/page-title');
+
+var _pageTitle2 = _interopRequireDefault(_pageTitle);
+
 var _projectForm = require('../presentation/project-form');
 
 var _projectForm2 = _interopRequireDefault(_projectForm);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-// public/js/features/project/project-form/container/project-form-page.js
 
 var ProjectFormPage = _react2.default.createClass({
   displayName: 'ProjectFormPage',
@@ -39618,6 +39626,10 @@ var ProjectFormPage = _react2.default.createClass({
   componentDidMount: function componentDidMount() {
     if (this.props.params.id) {
       this.loadProject(this.props.params.id);
+
+      this.setState({ type: 'Edit Project' });
+    } else {
+      this.setState({ type: 'Add Project' });
     }
   },
   componentWillUnmount: function componentWillUnmount() {
@@ -39653,6 +39665,7 @@ var ProjectFormPage = _react2.default.createClass({
     return _react2.default.createElement(
       'div',
       null,
+      _react2.default.createElement(_pageTitle2.default, { text: this.state.type }),
       _react2.default.createElement(_projectForm2.default, {
         onProjectSubmit: this.handleProjectSubmit,
         data: this.state,
@@ -39663,7 +39676,7 @@ var ProjectFormPage = _react2.default.createClass({
         onPictureChange: this.handlePictureInput })
     );
   }
-});
+}); // public/js/features/project/project-form/container/project-form-page.js
 
 ProjectFormPage.contextTypes = {
   router: _react2.default.PropTypes.object.isRequired
@@ -39671,7 +39684,7 @@ ProjectFormPage.contextTypes = {
 
 exports.default = ProjectFormPage;
 
-},{"../presentation/project-form":530,"react":521}],530:[function(require,module,exports){
+},{"../../utilities/page-title":551,"../presentation/project-form":530,"react":521}],530:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -39872,7 +39885,7 @@ var ProjectForm = _react2.default.createClass({
 
 exports.default = ProjectForm;
 
-},{"../../utilities/form-buttons":549,"../../utilities/year-select":552,"react":521,"react-tag-input":99}],531:[function(require,module,exports){
+},{"../../utilities/form-buttons":549,"../../utilities/year-select":553,"react":521,"react-tag-input":99}],531:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -39883,6 +39896,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _pageTitle = require('../../utilities/page-title');
+
+var _pageTitle2 = _interopRequireDefault(_pageTitle);
+
 var _addLink = require('../../utilities/add-link');
 
 var _addLink2 = _interopRequireDefault(_addLink);
@@ -39892,6 +39909,8 @@ var _projectList = require('../presentation/project-list');
 var _projectList2 = _interopRequireDefault(_projectList);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// public/js/features/project/project-list/container/project-list-page.js
 
 var ProjectListPage = _react2.default.createClass({
   displayName: 'ProjectListPage',
@@ -39936,11 +39955,12 @@ var ProjectListPage = _react2.default.createClass({
     return _react2.default.createElement(
       'div',
       null,
+      _react2.default.createElement(_pageTitle2.default, { text: 'Projects' }),
       _react2.default.createElement(_addLink2.default, { path: '/project/new', isModal: false }),
       _react2.default.createElement(_projectList2.default, { data: this.state.data, onDelete: this.handleDelete })
     );
   }
-}); // public/js/features/project/project-list/container/project-list-page.js
+});
 
 ProjectListPage.contextTypes = {
   router: _react2.default.PropTypes.object.isRequired
@@ -39948,7 +39968,7 @@ ProjectListPage.contextTypes = {
 
 exports.default = ProjectListPage;
 
-},{"../../utilities/add-link":545,"../presentation/project-list":533,"react":521}],532:[function(require,module,exports){
+},{"../../utilities/add-link":545,"../../utilities/page-title":551,"../presentation/project-list":533,"react":521}],532:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -40082,13 +40102,15 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _pageTitle = require('../../utilities/page-title');
+
+var _pageTitle2 = _interopRequireDefault(_pageTitle);
+
 var _project = require('../presentation/project');
 
 var _project2 = _interopRequireDefault(_project);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-// public/js/features/project/project-view/container/project-view-page.js
 
 var ProjectViewPage = _react2.default.createClass({
   displayName: 'ProjectViewPage',
@@ -40135,10 +40157,11 @@ var ProjectViewPage = _react2.default.createClass({
     return _react2.default.createElement(
       'div',
       null,
+      _react2.default.createElement(_pageTitle2.default, { text: this.state.data.title }),
       _react2.default.createElement(_project2.default, { data: this.state.data, onDelete: this.handleDelete })
     );
   }
-});
+}); // public/js/features/project/project-view/container/project-view-page.js
 
 ProjectViewPage.contextTypes = {
   router: _react2.default.PropTypes.object.isRequired
@@ -40146,7 +40169,7 @@ ProjectViewPage.contextTypes = {
 
 exports.default = ProjectViewPage;
 
-},{"../presentation/project":535,"react":521}],535:[function(require,module,exports){
+},{"../../utilities/page-title":551,"../presentation/project":535,"react":521}],535:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -40211,11 +40234,6 @@ var Project = _react2.default.createClass({
     return _react2.default.createElement(
       'div',
       null,
-      _react2.default.createElement(
-        'h1',
-        null,
-        title
-      ),
       _react2.default.createElement(_editLink2.default, { path: '/project/' + _id + '/edit', isModal: false }),
       _react2.default.createElement(_deleteLink2.default, { onDelete: this.deleteProject }),
       _react2.default.createElement(
@@ -40517,7 +40535,7 @@ QualificationForm.contextTypes = {
 
 exports.default = QualificationForm;
 
-},{"../../utilities/form-buttons":549,"../../utilities/popup-form":551,"../../utilities/year-select":552,"react":521}],538:[function(require,module,exports){
+},{"../../utilities/form-buttons":549,"../../utilities/popup-form":552,"../../utilities/year-select":553,"react":521}],538:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -40637,6 +40655,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _pageTitle = require('../utilities/page-title');
+
+var _pageTitle2 = _interopRequireDefault(_pageTitle);
+
 var _qualifications = require('../qualification/container/qualifications');
 
 var _qualifications2 = _interopRequireDefault(_qualifications);
@@ -40647,21 +40669,24 @@ var _skills2 = _interopRequireDefault(_skills);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// public/js/pages/resume.js
+
 var ResumePage = _react2.default.createClass({
   displayName: 'ResumePage',
   render: function render() {
     return _react2.default.createElement(
       'div',
       null,
+      _react2.default.createElement(_pageTitle2.default, { text: 'Resume' }),
       _react2.default.createElement(_qualifications2.default, null),
       _react2.default.createElement(_skills2.default, null)
     );
   }
-}); // public/js/pages/resume.js
+});
 
 exports.default = ResumePage;
 
-},{"../qualification/container/qualifications":536,"../skill/container/skills":541,"react":521}],541:[function(require,module,exports){
+},{"../qualification/container/qualifications":536,"../skill/container/skills":541,"../utilities/page-title":551,"react":521}],541:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -41249,6 +41274,36 @@ var _react2 = _interopRequireDefault(_react);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var PageTitle = _react2.default.createClass({
+  displayName: "PageTitle",
+  render: function render() {
+    return _react2.default.createElement(
+      "div",
+      { className: "title" },
+      _react2.default.createElement(
+        "h1",
+        null,
+        this.props.text
+      )
+    );
+  }
+});
+
+exports.default = PageTitle;
+
+},{"react":521}],552:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var PopupForm = _react2.default.createClass({
   displayName: "PopupForm",
   render: function render() {
@@ -41275,7 +41330,7 @@ var PopupForm = _react2.default.createClass({
 
 exports.default = PopupForm;
 
-},{"react":521}],552:[function(require,module,exports){
+},{"react":521}],553:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
