@@ -40,6 +40,11 @@ const App = React.createClass({
       }
     });
   },
+  toggleNav() {
+    let nav = $('#topnav');
+
+    nav.toggleClass('open');
+  },
   render() {
     let {location} = this.props;
     let isModal = (location.state && location.state.modal &&
@@ -48,11 +53,20 @@ const App = React.createClass({
     return (
       <div>
         <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/resume">Resume</Link>
-            <Link to="/projects">Projects</Link>
-          </nav>
+          <ul className="topnav" id="topnav">
+            <li><Link to="/"><img id="logo" src="/img/logo.png" /></Link></li>
+            <li><Link to="/#" className="link">About me</Link></li>
+            <li><Link to="/resume" className="link">Resume</Link></li>
+            <li><Link to="/projects" className="link">Projects</Link></li>
+            <li><Link to="/#" className="link">Contact</Link></li>
+            <li className="icon">
+              <a href="javascript:void(0)" className="bars" onClick={this.toggleNav}>
+                <span className="icon-bar"></span>
+                <span className="icon-bar"></span>
+                <span className="icon-bar"></span>
+              </a>
+            </li>
+          </ul>
         </header>
         <div id="content">
           {isModal ? this.previousChildren : this.props.children}

@@ -1,11 +1,99 @@
 header {
-  height: 50px;
-  border-bottom: 1px solid @theme;
+    height: 50px;
 }
 
-nav a {
-  display: inline-block;
-  height: 50px;
-  line-height: 50px;
-  margin-right: 20px;
+#logo {
+    width: auto;
+    height: 20px;
+}
+
+ul.topnav {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: lighten(@black, 20%);
+
+    li {
+        float: left;
+
+        a {
+            display: inline-block;
+            color: @white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            .transition-all();
+
+            &.link:hover {
+                background-color: darken(@grey, 30%);
+            }
+        }
+    }
+
+    .icon {
+        display: none;
+    }
+}
+
+.bars {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.icon-bar {
+    width: 25px;
+    height: 4px;
+    border-top: 1px solid @theme;
+    margin-bottom: 4px;
+    display: block;
+
+    &:nth-child(3) {
+      margin-bottom: 0;
+    }
+}
+
+
+@media screen and (max-width:680px) {
+  ul.topnav {
+      li:not(:first-child) {
+          display: none;
+      }
+
+      li.icon {
+          float: right;
+          display: inline-block;
+      }
+  }
+
+  ul.topnav.open {
+      position: relative;
+      z-index: 1;
+
+      .icon-bar:nth-child(1) {
+          transform: rotate(45deg) translateY(7px) translateX(5px);
+      }
+      .icon-bar:nth-child(2) {
+          transform: rotate(-45deg);
+      }
+      .icon-bar:nth-child(3) {
+          transform: scale(0);
+      }
+
+      li {
+          float: none;
+          display: inline;
+
+          a {
+              display: block;
+              text-align: left;
+          }
+
+          &.icon {
+              position: absolute;
+              right: 0;
+              top: 0;
+          }
+      }
+  }
 }
