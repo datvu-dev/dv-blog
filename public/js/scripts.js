@@ -39397,6 +39397,11 @@ var App = _react2.default.createClass({
       }
     });
   },
+  toggleNav: function toggleNav() {
+    var nav = $('#topnav');
+
+    nav.toggleClass('open');
+  },
   render: function render() {
     var location = this.props.location;
 
@@ -39409,22 +39414,63 @@ var App = _react2.default.createClass({
         'header',
         null,
         _react2.default.createElement(
-          'nav',
-          null,
+          'ul',
+          { className: 'topnav', id: 'topnav' },
           _react2.default.createElement(
-            _reactRouter.Link,
-            { to: '/' },
-            'Home'
+            'li',
+            null,
+            _react2.default.createElement(
+              _reactRouter.Link,
+              { to: '/' },
+              _react2.default.createElement('img', { id: 'logo', src: '/img/logo.png' })
+            )
           ),
           _react2.default.createElement(
-            _reactRouter.Link,
-            { to: '/resume' },
-            'Resume'
+            'li',
+            null,
+            _react2.default.createElement(
+              _reactRouter.Link,
+              { to: '/#', className: 'link' },
+              'About me'
+            )
           ),
           _react2.default.createElement(
-            _reactRouter.Link,
-            { to: '/projects' },
-            'Projects'
+            'li',
+            null,
+            _react2.default.createElement(
+              _reactRouter.Link,
+              { to: '/resume', className: 'link' },
+              'Resume'
+            )
+          ),
+          _react2.default.createElement(
+            'li',
+            null,
+            _react2.default.createElement(
+              _reactRouter.Link,
+              { to: '/projects', className: 'link' },
+              'Projects'
+            )
+          ),
+          _react2.default.createElement(
+            'li',
+            null,
+            _react2.default.createElement(
+              _reactRouter.Link,
+              { to: '/#', className: 'link' },
+              'Contact'
+            )
+          ),
+          _react2.default.createElement(
+            'li',
+            { className: 'icon' },
+            _react2.default.createElement(
+              'a',
+              { href: 'javascript:void(0)', className: 'bars', onClick: this.toggleNav },
+              _react2.default.createElement('span', { className: 'icon-bar' }),
+              _react2.default.createElement('span', { className: 'icon-bar' }),
+              _react2.default.createElement('span', { className: 'icon-bar' })
+            )
           )
         )
       ),
